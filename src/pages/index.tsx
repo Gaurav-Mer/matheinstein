@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import HeroSection from "./components/landing/HeroSection";
 import HowItWorks from "./components/landing/HowItWorks";
 import WhyChooseUs from "./components/landing/WhyChooseUs";
+import SeeTheDifference from "./components/landing/SeeTheDifference";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,14 +27,29 @@ const inter = Inter({
 export default function Home() {
   return (
     <div
-      className={`${geistSans.className}  ${poppins.variable} ${inter.variable}  font-sans grid grid-rows-[20px_1fr_20px] min-h-dvh`}
+      className={`${geistSans.className} ${poppins.variable} ${inter.variable} font-sans min-h-screen flex flex-col`}
     >
-      <main>
+      {/* Navbar */}
+      <header className="sticky top-0 z-50">
         <Navbar />
-        <HeroSection />
-        <HowItWorks />
-        <WhyChooseUs />
+      </header>
+
+      {/* Main content */}
+      <main className="flex-1 overflow-y-auto">
+        <section>
+          <HeroSection />
+        </section>
+        <section>
+          <HowItWorks />
+        </section>
+        <section>
+          <WhyChooseUs />
+        </section>
+        <section>
+          <SeeTheDifference />
+        </section>
       </main>
     </div>
+
   );
 }

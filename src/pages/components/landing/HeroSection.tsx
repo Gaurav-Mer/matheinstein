@@ -7,12 +7,8 @@ import { Add, Divide, Hero, Message, Multiply } from "@/components/svgs/teachers
 
 const HeroSection = () => {
     return (
-        <section className="relative overflow-hidden bg-white  py-10 px-6 md:px-12">
+        <section className="relative overflow-hidden bg-white  py-10 px-6 md:px-12 h-full">
             {/* Background decorative elements */}
-            <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute -top-40 -right-32 w-80 h-80 bg-blue-100 rounded-full opacity-30 blur-3xl"></div>
-                <div className="absolute -bottom-40 -left-32 w-80 h-80 bg-purple-100 rounded-full opacity-30 blur-3xl"></div>
-            </div>
 
             <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
                 {/* Left side: Text content */}

@@ -93,55 +93,68 @@ export default function HowItWorks() {
                 initial="hidden"
                 whileInView="show"
                 viewport={{ once: true }}
-                className="mt-16 grid gap-10 md:gap-12 lg:grid-cols-2"
+                className="mt-20 grid gap-12 lg:grid-cols-2"
             >
                 {steps.map((item, index) => (
                     <motion.div
                         key={index}
                         variants={cardVariants}
                         whileHover={{
-                            y: -8,
-                            boxShadow: "0 18px 40px rgba(0,0,0,0.08)",
+                            scale: 1.03,
+                            y: -10,
+                            boxShadow: "0 20px 45px rgba(0,0,0,0.12)",
                         }}
-                        className="relative flex flex-col md:flex-row items-center gap-6 p-8 rounded-3xl border border-gray-200 bg-white shadow-sm"
+                        transition={{ type: "spring", stiffness: 120, damping: 14 }}
+                        className="relative flex flex-col md:flex-row items-center gap-6 p-10 rounded-3xl border border-gray-200 bg-white shadow-md overflow-hidden"
                     >
+                        {/* Subtle background math grid */}
+                        <div className="absolute inset-0 opacity-[0.04] pointer-events-none bg-[radial-gradient(circle_at_center,black_1px,transparent_1px)] [background-size:20px_20px]" />
+
                         {/* Step Number */}
-                        <div className="flex items-center justify-center w-14 h-14 rounded-full bg-black text-white text-lg font-bold shadow-md">
+                        <motion.div
+                            whileHover={{ scale: 1.1, rotate: -2 }}
+                            transition={{ type: "spring", stiffness: 150 }}
+                            className="flex items-center justify-center w-14 h-14 rounded-full bg-black text-white text-lg font-bold shadow-lg relative z-10"
+                        >
                             {`0${index + 1}`}
-                        </div>
+                        </motion.div>
 
                         {/* Text */}
-                        <div className="flex-1 text-center md:text-left">
-                            <h3 className="text-2xl md:text-3xl font-semibold text-gray-800">
+                        <div className="flex-1 text-center md:text-left relative z-10">
+                            <h3 className="text-2xl md:text-3xl font-semibold text-gray-900">
                                 {item.title}
                             </h3>
-                            <p className="mt-2 text-gray-600 text-base md:text-lg">
+                            <p className="mt-3 text-gray-600 text-base md:text-lg leading-relaxed">
                                 {item.desc}
                             </p>
                         </div>
 
-                        {/* Icon with 3D effect */}
+                        {/* Icon with 3D premium effect */}
                         <motion.div
                             whileHover={{
-                                scale: 1.15,
+                                scale: 1.2,
                                 y: -6,
-                                rotate: index % 2 === 0 ? 4 : -4,
+                                rotate: index % 2 === 0 ? 6 : -6,
                             }}
                             transition={{ type: "spring", stiffness: 120, damping: 10 }}
-                            className="flex-shrink-0 w-20 h-20 flex items-center justify-center rounded-2xl bg-white shadow-lg border border-gray-200 relative z-10"
+                            className="flex-shrink-0 w-20 h-20 flex items-center justify-center rounded-2xl bg-white shadow-lg border border-gray-200 relative z-20"
                             style={{ perspective: "1000px" }}
                         >
                             <motion.div
-                                whileHover={{ rotateY: index % 2 === 0 ? 12 : -12 }}
-                                transition={{ duration: 0.5 }}
+                                whileHover={{ rotateY: index % 2 === 0 ? 14 : -14, scale: 1.1 }}
+                                transition={{ duration: 0.4 }}
                                 className="w-14 h-14 flex items-center justify-center"
                             >
                                 {item.svg}
                             </motion.div>
                         </motion.div>
+
+                        {/* Glow math effect */}
+                        <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-transparent via-black/5 to-transparent opacity-0 group-hover:opacity-100 blur-2xl transition duration-500" />
                     </motion.div>
                 ))}
             </motion.div>
+
         </section>
     );
 }
