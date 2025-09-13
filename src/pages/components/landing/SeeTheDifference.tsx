@@ -38,7 +38,7 @@ export default function SeeTheDifference() {
                 viewport={{ once: true }}
                 className="relative text-4xl md:text-6xl font-extrabold text-center bg-primary text-white  -rotate-1"
             >
-                How It Works
+                See the difference
             </motion.h2>
             <div className="relative max-w-6xl mx-auto px-6 text-center mt-8">
 

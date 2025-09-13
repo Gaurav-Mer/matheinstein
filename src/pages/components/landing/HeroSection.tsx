@@ -68,7 +68,6 @@ const HeroSection = () => {
                         </div>
                     </div>
                 </motion.div>
-
                 {/* Right side: Hero Image with clean design */}
                 <motion.div
                     initial={{ opacity: 0, x: 20 }}
@@ -76,6 +75,8 @@ const HeroSection = () => {
                     transition={{ duration: 0.6, delay: 0.2 }}
                     className="relative flex justify-center lg:justify-end"
                 >
+                    <SVGLINE />
+                    {/* <SECONDSVG /> */}
                     <div className="relative">
                         {/* Main image container */}
                         <motion.div
@@ -84,14 +85,14 @@ const HeroSection = () => {
                             transition={{ duration: 0.8, delay: 0.3 }}
                         // className="relative bg-secondary/20 rounded-4xl rotate-6 shadow-2xl p-6"
                         >
-                            {/* <Image
-                                src="/hero.jpg"
+                            <Image
+                                src="/hero.png"
                                 alt="Interactive Math Learning Visual"
-                                height={450}
-                                width={450}
-                                className="rounded-xl -rotate-6"
-                            /> */}
-                            <Hero />
+                                height={500}
+                                width={500}
+                                className="rounded-xl -rotate-6 md:block hidden"
+                            />
+                            {/* <Hero /> */}
                         </motion.div>
 
                         {/* Floating math elements - subtle and professional */}
@@ -177,3 +178,81 @@ const HeroSection = () => {
 
 export default HeroSection;
 
+
+
+const SVGLINE = () => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 220" preserveAspectRatio="none" className="w-full absolute -top-20 -rotate-12 right-0">
+            <path d="M 0 120 C 140 40 260 200 420 120 C 580 40 700 200 860 120 C 1020 40 1140 200 1400 120"
+                fill="none" stroke="#F3F4F6" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" opacity="0.6" />
+            <path d="M 0 120 C 140 40 260 200 420 120 C 580 40 700 200 860 120 C 1020 40 1140 200 1400 120"
+                fill="none" stroke="#F59E0B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+            <circle cx="140" cy="40" r="6" fill="#F59E0B" />
+            <circle cx="420" cy="120" r="6" fill="#F59E0B" />
+            <circle cx="700" cy="200" r="6" fill="#F59E0B" />
+            <circle cx="980" cy="120" r="6" fill="#F59E0B" />
+            <circle cx="1160" cy="200" r="6" fill="#F59E0B" />
+            <text x="120" y="12" font-size="26" fill="#111827" font-family="Inter, system-ui, sans-serif" opacity="0.85">∑</text>
+            <text x="380" y="200" font-size="20" fill="#111827" font-family="Inter, system-ui, sans-serif" opacity="0.85">π</text>
+            <text x="680" y="26" font-size="20" fill="#111827" font-family="Inter, system-ui, sans-serif" opacity="0.85">√</text>
+            <text x="980" y="28" font-size="20" fill="#111827" font-family="Inter, system-ui, sans-serif" opacity="0.85">÷</text>
+        </svg>
+
+    )
+}
+
+const SECONDSVG = () => {
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 1400 220"
+            preserveAspectRatio="none"
+            className="w-full h-60 scale-125 absolute -top-40 -rotate-12 z-10"
+        >
+            {/* Background soft curve */}
+            <path
+                d="M 0 140 C 180 60 320 200 500 140 C 680 80 880 200 1100 140 C 1260 80 1400 160 1400 160"
+                fill="none"
+                stroke="url(#grad1)"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                opacity="0.8"
+            />
+            {/* Secondary subtle curve */}
+            <path
+                d="M 0 160 C 200 100 400 220 620 160 C 840 100 1040 220 1260 160 C 1350 140 1400 180 1400 180"
+                fill="none"
+                stroke="url(#grad2)"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                opacity="0.5"
+            />
+
+            {/* Gradient defs */}
+            <defs>
+                <linearGradient id="grad1" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#F59E0B" />
+                    <stop offset="100%" stopColor="#EF4444" />
+                </linearGradient>
+                <linearGradient id="grad2" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#3B82F6" />
+                    <stop offset="100%" stopColor="#8B5CF6" />
+                </linearGradient>
+            </defs>
+
+            {/* Elegant math symbols placed along the curve */}
+            <text x="120" y="80" fontSize="20" fill="#111827" opacity="0.9">∑</text>
+            <text x="360" y="180" fontSize="20" fill="#111827" opacity="0.9">π</text>
+            <text x="680" y="90" fontSize="22" fill="#111827" opacity="0.9">√</text>
+            <text x="980" y="160" fontSize="20" fill="#111827" opacity="0.9">÷</text>
+            <text x="1240" y="100" fontSize="22" fill="#111827" opacity="0.9">∞</text>
+
+            {/* Subtle glowing circles as anchor points */}
+            <circle cx="180" cy="60" r="4" fill="#F59E0B" opacity="0.7" />
+            <circle cx="500" cy="140" r="4" fill="#EF4444" opacity="0.7" />
+            <circle cx="880" cy="200" r="4" fill="#3B82F6" opacity="0.7" />
+            <circle cx="1260" cy="160" r="4" fill="#8B5CF6" opacity="0.7" />
+        </svg>
+
+    )
+}

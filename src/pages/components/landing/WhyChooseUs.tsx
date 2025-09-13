@@ -40,7 +40,7 @@ const mathSymbols = ["π", "√", "∑", "∞", "+"];
 
 export default function WhyChooseUs() {
     return (
-        <section className="py-24 bg-white relative overflow-hidden">
+        <section id="whyus" className="py-24 bg-white relative overflow-hidden">
             {/* Background floating math symbols */}
             {mathSymbols.map((symbol, i) => (
                 <motion.span
