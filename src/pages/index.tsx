@@ -5,6 +5,9 @@ import HeroSection from "./components/landing/HeroSection";
 import HowItWorks from "./components/landing/HowItWorks";
 import WhyChooseUs from "./components/landing/WhyChooseUs";
 import SeeTheDifference from "./components/landing/SeeTheDifference";
+import QuickMathTest from "./components/landing/QuickMathTest";
+import Testimonials from "./components/landing/Testimonials";
+import BeforeAndAfter from "./components/landing/BeforeAndAfter";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,6 +50,15 @@ export default function Home() {
         </section>
         <section>
           <SeeTheDifference />
+        </section>
+        <section>
+          <QuickMathTest />
+        </section>
+        <section>
+          <Testimonials />
+        </section>
+        <section>
+          <BeforeAndAfter />
         </section>
       </main>
     </div>
