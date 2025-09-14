@@ -49,7 +49,7 @@ export default function Footer() {
                 <div>
                     <h4 className="font-semibold text-gray-900 mb-3">Support</h4>
                     <p className="flex items-center gap-2 text-sm text-gray-700">
-                        <Mail className="w-4 h-4" /> mathEinstein@gmail.com
+                        <Mail className="w-4 h-4" /> matheinstein1@gmail.com
                     </p>
                     <p className="flex items-center gap-2 text-sm text-gray-700 mt-2">
                         <Phone className="w-4 h-4" /> +91 98765 43210

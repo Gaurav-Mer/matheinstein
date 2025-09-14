@@ -31,55 +31,67 @@ const inter = Inter({
   variable: "--font-inter",
 })
 
+import Script from "next/script";
+import { useEffect } from "react";
+import BookDemo from "./components/booking/BookDemo";
+
 export default function Home() {
+
   return (
-    <div
-      className={`${geistSans.className} ${poppins.variable} ${inter.variable} font-sans min-h-screen flex flex-col`}
-    >
-      {/* Navbar */}
-      <header className="sticky top-0 z-50">
-        <Navbar />
-      </header>
+    <>
+      {/* <Script
+        src="https://app.tutorbird.com/Widget/v4/Widget.ashx?settings=eyJTY2hvb2xJRCI6InNjaF9ZOGhKRCIsIldlYnNpdGVJRCI6Indic181TmJKeCIsIldlYnNpdGVCbG9ja0lEIjoid2JiX05UN0xKcSJ9"
+        strategy="afterInteractive"
+      /> */}
 
-      {/* Main content */}
-      <main className="flex-1 overflow-y-auto">
-        <section>
-          <HeroSection />
-        </section>
-        <section>
-          <HowItWorks />
-        </section>
-        <section>
-          <WhyChooseUs />
-        </section>
-        <section>
-          <SeeTheDifference />
-        </section>
-        <section>
-          <QuickMathTest />
-        </section>
-        <section>
-          <Testimonials />
-        </section>
-        <section>
-          <BeforeAndAfter />
-        </section>
-        <section>
-          <CurriculumPath />
-        </section>
 
-        <section>
-          <AboutUs />
-        </section>
+      <div
+        className={`${geistSans.className} ${poppins.variable} ${inter.variable} font-sans min-h-screen flex flex-col`}
+      >
+        {/* Navbar */}
+        <header className="sticky top-0 z-50">
+          <Navbar />
+        </header>
 
-        <section>
-          <FAQS />
-        </section>
-        <section>
-          <Footer />
-        </section>
-      </main>
-    </div>
+        {/* Main content */}
+        <main className="flex-1 overflow-y-auto">
+          <section>
+            <HeroSection />
+          </section>
+          <section>
+            <HowItWorks />
+          </section>
+          <section>
+            <WhyChooseUs />
+          </section>
+          <section>
+            <SeeTheDifference />
+          </section>
+          <section>
+            <QuickMathTest />
+          </section>
+          <section>
+            <Testimonials />
+          </section>
+          <section>
+            <BeforeAndAfter />
+          </section>
+          <section>
+            <CurriculumPath />
+          </section>
 
+          <section>
+            <AboutUs />
+          </section>
+          <section>
+            <FAQS />
+          </section>
+          <BookDemo />
+          <section>
+            <Footer />
+          </section>
+        </main>
+      </div>
+    </>
   );
 }

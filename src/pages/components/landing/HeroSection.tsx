@@ -4,10 +4,13 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Bag } from "@/components/svgs/students";
 import { Add, Divide, Hero, Message, Multiply } from "@/components/svgs/teachers";
+import BookDemoDialog from "../dialogs/BookDemoDialog";
 
 const HeroSection = () => {
+    const [openDialog, setOpenDialog] = React.useState(false);
     return (
         <section className="relative overflow-hidden bg-white  py-10 px-6 md:px-12 h-full">
+            <BookDemoDialog open={openDialog} onClose={() => setOpenDialog(false)} />
             {/* Background decorative elements */}
 
             <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
@@ -40,12 +43,15 @@ const HeroSection = () => {
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4">
-                        <Button
-                            size="lg"
-                            className="bg-primary text-black border-black border-2 font-semibold py-6 px-8  transition-all duration-300 transform hover:-translate-y-1"
-                        >
-                            Book Free Demo Class
-                        </Button>
+                        <a href="#book-demo" >
+                            <Button
+                                // onClick={() => setOpenDialog(true)}
+                                size="lg"
+                                className="bg-primary text-black border-black border-2 font-semibold py-6 px-8  transition-all duration-300 transform hover:-translate-y-1"
+                            >
+                                Book Free Demo Class
+                            </Button>
+                        </a>
                         <Button
                             variant="outline"
                             size="lg"
