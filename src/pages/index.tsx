@@ -34,6 +34,7 @@ const inter = Inter({
 import Script from "next/script";
 import { useEffect } from "react";
 import BookDemo from "./components/booking/BookDemo";
+import FloatingWhatsAppButton from "./components/FloatingWhatsAppButton";
 
 export default function Home() {
 
@@ -90,6 +91,7 @@ export default function Home() {
           <section>
             <Footer />
           </section>
+          <FloatingWhatsAppButton phone="6376154428" />
         </main>
       </div>
     </>

@@ -18,7 +18,7 @@ export default function Footer() {
     }]
     return (
         <footer className="bg-primary/10 border-t border-black/20 mt-16">
-            <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 grid grid-cols-1 md:grid-cols-4 gap-10">
+            <div className="max-w-7xl mx-auto px-6 md:px-12 py-12 grid grid-cols-1 md:grid-cols-3 gap-10">
 
                 {/* 1. Branding & Tagline */}
                 <div>
@@ -61,7 +61,7 @@ export default function Footer() {
                 </div>
 
                 {/* 4. Social Proof & Community */}
-                <div>
+                {/* <div>
                     <h4 className="font-semibold text-gray-900 mb-3">Join Our Community</h4>
                     <p className="text-sm text-gray-700 mb-3">
                         Follow us for daily math tips & tricks:
@@ -81,7 +81,7 @@ export default function Footer() {
                         <span className="px-2 py-1 border border-black rounded">SSL Secure</span>
                         <span className="px-2 py-1 border border-black rounded">First Class Free</span>
                     </div>
-                </div>
+                </div> */}
             </div>
 
             {/* 5. Legal & Policies Strip */}
