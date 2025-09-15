@@ -6,7 +6,7 @@ const BookDemo = () => {
     useEffect(() => {
         const script = document.createElement("script");
         script.src =
-            "https://app.tutorbird.com/Widget/v4/Widget.ashx?settings=eyJTY2hvb2xJRCI6InNjaF9ZOGhKRCIsIldlYnNpdGVJRCI6Indic181TmJKeCIsIldlYnNpdGVCbG9ja0lEIjoid2JiX05UN1JKRCJ9"; // replace `id` with your actual TutorBird settings ID
+            "https://app.tutorbird.com/Widget/v4/Widget.ashx?settings=eyJTY2hvb2xJRCI6InNjaF9ZbFpKMCIsIldlYnNpdGVJRCI6Indic181d0NKcCIsIldlYnNpdGVCbG9ja0lEIjoid2JiX054TE5KciJ9"; // replace `id` with your actual TutorBird settings ID
         script.async = true;
         script.defer = true;
 
