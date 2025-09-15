@@ -150,3 +150,15 @@ body {
   height: 100% !important;
   background-color: #8AA624 !important;
 }
+
+
+.graph-path {
+  stroke-dasharray: 500;
+  /* Needs to be larger than the path length */
+  stroke-dashoffset: 500;
+  transition: stroke-dashoffset 2s ease-in-out;
+}
+
+.graph-container:hover .graph-path {
+  stroke-dashoffset: 0;
+}
