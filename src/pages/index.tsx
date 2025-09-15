@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Geist, Geist_Mono, Poppins, Inter } from "next/font/google";
+import { Geist, Poppins, Inter } from "next/font/google";
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/landing/HeroSection";
 import HowItWorks from "./components/landing/HowItWorks";
@@ -83,7 +83,6 @@ export default function Home() {
             <FAQS />
           </section>
           <BookDemo />
-          <TutorBirdLogin />
           <section>
             <Footer />
           </section>
