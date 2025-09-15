@@ -12,7 +12,7 @@ interface FloatingWhatsAppButtonProps {
 
 function normalizePhone(phone: string) {
     // Remove spaces, +, hyphens, parentheses
-    return phone.replace(/[^0-9]/g, "");
+    return phone?.replace(/[^0-9]/g, "");
 }
 
 function buildWhatsAppUrl(phone: string, message?: string) {
