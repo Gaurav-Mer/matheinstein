@@ -35,6 +35,7 @@ import Script from "next/script";
 import { useEffect } from "react";
 import BookDemo from "./components/booking/BookDemo";
 import FloatingWhatsAppButton from "./components/FloatingWhatsAppButton";
+import TutorBirdLogin from "./components/booking/TutorBirdLogin";
 
 export default function Home() {
 
@@ -82,6 +83,7 @@ export default function Home() {
             <FAQS />
           </section>
           <BookDemo />
+          <TutorBirdLogin />
           <section>
             <Footer />
           </section>
