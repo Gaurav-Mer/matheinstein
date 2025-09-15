@@ -40,12 +40,6 @@ export default function Home() {
 
   return (
     <>
-      {/* <Script
-        src="https://app.tutorbird.com/Widget/v4/Widget.ashx?settings=eyJTY2hvb2xJRCI6InNjaF9ZOGhKRCIsIldlYnNpdGVJRCI6Indic181TmJKeCIsIldlYnNpdGVCbG9ja0lEIjoid2JiX05UN0xKcSJ9"
-        strategy="afterInteractive"
-      /> */}
-
-
       <div
         className={`${geistSans.className} ${poppins.variable} ${inter.variable} font-sans min-h-screen flex flex-col`}
       >
