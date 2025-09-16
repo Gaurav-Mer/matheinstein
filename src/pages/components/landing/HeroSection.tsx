@@ -92,10 +92,10 @@ const HeroSection = () => {
                         // className="relative bg-secondary/20 rounded-4xl rotate-6 shadow-2xl p-6"
                         >
                             <Image
-                                src="/hero.png"
+                                src="/hero2.png"
                                 alt="Interactive Math Learning Visual"
-                                height={500}
-                                width={500}
+                                height={3000}
+                                width={1900}
                                 className="rounded-xl -rotate-6 md:block hidden"
                             />
                             {/* <Hero /> */}
