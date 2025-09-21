@@ -21,6 +21,6 @@ export default function StudentDetailsPage() {
     // Pass the student ID to the StudentDetails component.
     // The `canEdit` prop controls admin-level actions.
     return (
-        <StudentDetails studentId={id as string} canEdit={true} />
+        <StudentDetails canEdit={true} />
     );
 }
