@@ -5,6 +5,7 @@ import React from 'react';
 import { useRouter } from 'next/router'; // Or from 'next/navigation' for App Router
 import { Loader2 } from 'lucide-react';
 import StudentDetails from '@/components/Student/StudentDetails';
+import AdminLayout from '../_layout';
 
 export default function StudentDetailsPage() {
     const router = useRouter();
@@ -21,6 +22,8 @@ export default function StudentDetailsPage() {
     // Pass the student ID to the StudentDetails component.
     // The `canEdit` prop controls admin-level actions.
     return (
-        <StudentDetails canEdit={true} />
+        <AdminLayout>
+            <StudentDetails canEdit={true} />
+        </AdminLayout>
     );
 }

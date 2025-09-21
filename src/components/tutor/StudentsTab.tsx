@@ -77,7 +77,7 @@ export default function StudentsTab({ tutor, canEdit }: StudentsTabProps) {
             <CardContent>
                 {/* Assign Student Form */}
                 {canEdit && showAssignForm && (
-                    <div className="bg-primary/5 p-6 rounded-xl mb-6 border border-gray-200">
+                    <div className="bg-white p-6 rounded-xl mb-6 border border-gray-200">
                         <h4 className="flex items-center gap-2 text-lg font-semibold mb-4 text-gray-800">
                             <UserPlus className="h-5 w-5 text-primary" /> Assign a Student
                         </h4>
@@ -123,7 +123,7 @@ export default function StudentsTab({ tutor, canEdit }: StudentsTabProps) {
                             </TableHeader>
                             <TableBody>
                                 {assignedStudents.map((student: any) => (
-                                    <TableRow key={student.uid} className="hover:bg-primary/5 transition-colors">
+                                    <TableRow key={student.uid} className="hover:bg-white transition-colors">
                                         <TableCell className="font-medium">{student.name}</TableCell>
                                         <TableCell className="text-gray-500">{student.email}</TableCell>
                                         <TableCell>
@@ -137,7 +137,7 @@ export default function StudentsTab({ tutor, canEdit }: StudentsTabProps) {
                         </Table>
                     </div>
                 ) : (
-                    <div className="flex flex-col items-center justify-center p-10 bg-primary/5 rounded-lg">
+                    <div className="flex flex-col items-center justify-center p-10 bg-white rounded-lg">
                         <div className="p-4 rounded-full bg-primary/10 text-primary mb-4">
                             <Users className="h-10 w-10" />
                         </div>

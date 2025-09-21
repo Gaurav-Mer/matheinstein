@@ -20,20 +20,22 @@ const queryClient = new QueryClient({
 export default function App({ Component, pageProps }: AppProps) {
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Navbar />
-      <Component {...pageProps} />
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-    </QueryClientProvider>
+    <div className="flex flex-col h-dvh">
+      <QueryClientProvider client={queryClient}>
+        <Navbar />
+        <Component {...pageProps} />
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
+      </QueryClientProvider>
+    </div>
   )
 }

@@ -9,7 +9,7 @@ export default function Class1Curriculum() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -40 }}
             transition={{ duration: 0.5 }}
-            className=" bg-primary/5 border-2 border-primary -rotate-1  rounded-2xl p-8  max-w-full mx-auto"
+            className=" bg-white border-2 border-primary -rotate-1  rounded-2xl p-8  max-w-full mx-auto"
         >
             <div className="flex items-center gap-2 mb-6">
                 <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/30">

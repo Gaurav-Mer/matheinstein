@@ -101,7 +101,7 @@ const TutorList = () => {
     }
     const normalizeSubject = normalizeArray(allSubjects || [], "id")
     return (
-        <div className="space-y-8 p-6 bg-primary/5 min-h-dvh">
+        <div className="space-y-8 p-6 bg-white min-h-dvh">
             <EditTutorDialog open={!!editingTutor} onClose={() => setEditingTutor(null)} tutor={editingTutor} />
             {/* Header Section */}
             <div className="space-y-6">

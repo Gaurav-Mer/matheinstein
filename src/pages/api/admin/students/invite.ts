@@ -4,26 +4,19 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { addStudentSchema } from "@/lib/schemas/studentSchema";
 import { Resend } from 'resend';
-import nodemailer from "nodemailer"; // <-- Import Nodemailer
+import nodemailer from "nodemailer";
 
-
-// Initialize the Resend client using the API key from environment variables
+// Initialize the Resend client for production
 const resend = new Resend(process.env.RESEND_API_KEY);
 const useLocalSmtp = process.env.NODE_ENV === "development";
 
 // Initialize a Nodemailer transporter for local testing
-// const localTransporter = nodemailer.createTransport({
-//     host: "localhost",
-//     port: 1025,
-//     secure: false,
-// });
-
 const localTransporter = nodemailer.createTransport({
     host: 'smtp.ethereal.email',
     port: 587,
     auth: {
-        user: 'allie44@ethereal.email',
-        pass: 'cu3SWSrzYXXAqvFqW4'
+        user: 'ada.hyatt17@ethereal.email',
+        pass: '9Whqy3nVxKAz3N6Nth'
     }
 });
 
@@ -63,14 +56,6 @@ const sendInvitationEmail = async (studentName: string, email: string, resetLink
         </html>
     `;
 
-    // Use the Resend SDK to send the email
-    // await resend.emails.send({
-    //     from: 'onboarding@yourplatform.com', // Change this to a verified domain in Resend
-    //     to: email,
-    //     subject: "Welcome! Set Your Password to Get Started",
-    //     html: htmlTemplate,
-    // });
-    // Conditional sending logic
     const mailOptions = {
         from: 'onboarding@yourplatform.com',
         to: email,
@@ -79,11 +64,9 @@ const sendInvitationEmail = async (studentName: string, email: string, resetLink
     };
 
     if (useLocalSmtp) {
-        // Send email to a local fake server
         console.log("Sending email via local SMTP...");
         await localTransporter.sendMail(mailOptions);
     } else {
-        // Send email via the Resend API
         console.log("Sending email via Resend API...");
         await resend.emails.send(mailOptions);
     }
@@ -116,6 +99,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             displayName: validatedData.name,
         });
 
+        // This line is corrected: newUser.email is guaranteed to exist
         const resetLink = await adminAuth.generatePasswordResetLink(newUser.email ?? "");
 
         await sendInvitationEmail(validatedData.name, validatedData.email, resetLink);
@@ -124,6 +108,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             ...validatedData,
             role: "student",
             createdAt: new Date().toISOString(),
+            status: "active"
         });
 
         return res.status(201).json({

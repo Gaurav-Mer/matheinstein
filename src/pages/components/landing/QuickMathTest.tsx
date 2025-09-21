@@ -206,7 +206,7 @@ export default function QuickMathTest() {
 
                                         className={`group p-8 rounded-3xl border-2 font-bold text-left transition-all duration-300 w-full md:w-80 ${level === lvl.key
                                             ? "bg-primary text-white border-primary shadow-2xl scale-105"
-                                            : "bg-primary/5/80 hover:bg-white border-gray-200 text-gray-700 shadow-lg"
+                                            : "bg-white/80 hover:bg-white border-gray-200 text-gray-700 shadow-lg"
                                             }`}
                                     >
                                         {/* <div className="text-4xl mb-4"><QuickMathTest /></div> */}
@@ -253,7 +253,7 @@ export default function QuickMathTest() {
                                 initial={{ scale: 0.95, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 transition={{ type: "spring", stiffness: 120, damping: 15 }}
-                                className="bg-primary/5 rounded-3xl p-12 mb-10 border border-primary/10"
+                                className="bg-white rounded-3xl p-12 mb-10 border border-primary/10"
                             >
                                 <div className="text-5xl md:text-7xl font-black text-gray-800 mb-8 font-mono tracking-wider">
                                     {currentQ.q} = ?

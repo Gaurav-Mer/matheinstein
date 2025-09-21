@@ -1,11 +1,14 @@
 import SubjectsSection from '@/components/Admin/subjects/SubjectsSection'
 import React from 'react'
+import AdminLayout from './_layout'
 
 const Subjects = () => {
     return (
-        <div className=' p-6 mx-auto'>
-            <SubjectsSection />
-        </div>
+        <AdminLayout>
+            <div className=' p-6 '>
+                <SubjectsSection />
+            </div>
+        </AdminLayout>
     )
 }
 

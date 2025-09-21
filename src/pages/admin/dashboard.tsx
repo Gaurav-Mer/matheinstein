@@ -1,14 +1,13 @@
-// /pages/admin/dashboard.tsx
+import React from 'react';
+import AdminLayout from './_layout';
+import AdminDashboardData from '@/components/Admin/AdminDashboardData';
 
-import AdminLayout from "./_layout";
+export default function AdminDashboardPage() {
 
-export default function AdminDashboard() {
+
     return (
         <AdminLayout>
-            <div className="p-4">
-                <h1>Admin Dashboard</h1>
-                <p>Only admins can see this.</p>
-            </div>
+            <AdminDashboardData />
         </AdminLayout>
     );
 }

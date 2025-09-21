@@ -56,7 +56,7 @@ export default function TutorDetails({ tutorId, canEdit }: TutorDetailsProps) {
     };
 
     return (
-        <div className="space-y-4 p-6 lg:p-10 bg-primary/5 min-h-screen">
+        <div className="space-y-4 p-6 lg:p-10 bg-white min-h-screen">
             {/* Header */}
             <div onClick={() => canEdit ? router.push("/admin/tutors") : router.push("/")} className="flex items-center gap-2 cursor-pointer text-secondary/80" >
                 <MoveLeft />

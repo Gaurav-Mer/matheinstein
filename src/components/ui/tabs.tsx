@@ -72,7 +72,7 @@ function TabsTrigger({
     ),
     cards: cn(
       "data-[state=active]:bg-gradient-to-br data-[state=active]:from-white data-[state=active]:to-gray-50 data-[state=active]:text-gray-900 data-[state=active]:shadow-md data-[state=active]:shadow-gray-200/30 data-[state=active]:border data-[state=active]:border-gray-200/50",
-      "data-[state=inactive]:text-gray-500 data-[state=inactive]:hover:text-gray-700 data-[state=inactive]:hover:bg-primary/5/50"
+      "data-[state=inactive]:text-gray-500 data-[state=inactive]:hover:text-gray-700 data-[state=inactive]:hover:bg-white/50"
     ),
     gradient: cn(
       "relative overflow-hidden",
