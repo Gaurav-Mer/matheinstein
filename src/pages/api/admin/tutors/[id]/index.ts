@@ -1,0 +1,75 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// pages/api/admin/tutors/[uid].ts
+import type { NextApiRequest, NextApiResponse } from "next";
+import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    const { id: uid } = req.query;
+    if (!uid || typeof uid !== "string") {
+        return res.status(400).json({ error: "Tutor UID is required" });
+    }
+
+    try {
+        // 1️⃣ Verify admin token
+        const token = req.headers.authorization?.split(" ")[1];
+        if (!token) return res.status(401).json({ error: "Unauthorized" });
+        const decoded = await adminAuth.verifyIdToken(token);
+
+        const userDoc = await adminDb.collection("users").doc(decoded.uid).get();
+        if (!userDoc.exists || userDoc.data()?.role !== "admin") {
+            return res.status(403).json({ error: "Forbidden" });
+        }
+
+        // 2️⃣ GET single tutor
+        if (req.method === "GET") {
+            const tutorDoc = await adminDb.collection("users").doc(uid).get();
+            if (!tutorDoc.exists) return res.status(404).json({ error: "Tutor not found" });
+            return res.status(200).json({ uid: tutorDoc.id, ...tutorDoc.data() });
+        }
+
+        if (req.method === "PUT" || req.method === "PATCH") {
+            const { name, email, password, phone, bio, subjects, status, availability } = req.body;
+
+            // 2️⃣ Build update object dynamically
+            const updateData: any = {};
+            if (name !== undefined) updateData.name = name;
+            if (email !== undefined) updateData.email = email;
+            if (phone !== undefined) updateData.phone = phone;
+            if (bio !== undefined) updateData.bio = bio;
+            if (subjects !== undefined) updateData.subjects = subjects;
+            if (status !== undefined) updateData.status = status;
+            if (availability?.length) updateData.availability = availability
+
+
+            // 3️⃣ Update Firebase Auth if email or password changed
+            const authUpdate: any = {};
+            if (email) authUpdate.email = email;
+            if (password) authUpdate.password = password;
+
+            if (Object.keys(authUpdate).length > 0) {
+                await adminAuth.updateUser(uid, authUpdate);
+            }
+
+            // 4️⃣ Update Firestore
+            if (Object.keys(updateData).length > 0) {
+                await adminDb.collection("users").doc(uid).update(updateData);
+            }
+
+            return res.status(200).json({ message: "Tutor updated successfully" });
+        }
+
+        // DELETE example, you already have this
+        if (req.method === "DELETE") {
+            await adminAuth.deleteUser(uid);
+            await adminDb.collection("users").doc(uid).delete();
+            return res.status(200).json({ message: "Tutor deleted successfully" });
+        }
+
+        res.setHeader("Allow", ["PUT", "PATCH", "DELETE"]);
+        return res.status(405).end(`Method ${req.method} Not Allowed`);
+
+    } catch (error: any) {
+        console.error("Tutor update error:", error);
+        return res.status(500).json({ error: error.message || "Internal server error" });
+    }
+}

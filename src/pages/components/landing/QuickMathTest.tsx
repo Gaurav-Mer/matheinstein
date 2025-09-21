@@ -206,7 +206,7 @@ export default function QuickMathTest() {
 
                                         className={`group p-8 rounded-3xl border-2 font-bold text-left transition-all duration-300 w-full md:w-80 ${level === lvl.key
                                             ? "bg-primary text-white border-primary shadow-2xl scale-105"
-                                            : "bg-gray-50/80 hover:bg-white border-gray-200 text-gray-700 shadow-lg"
+                                            : "bg-primary/5/80 hover:bg-white border-gray-200 text-gray-700 shadow-lg"
                                             }`}
                                     >
                                         {/* <div className="text-4xl mb-4"><QuickMathTest /></div> */}
