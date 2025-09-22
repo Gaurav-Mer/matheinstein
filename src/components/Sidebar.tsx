@@ -7,7 +7,7 @@ import Image from 'next/image';
 import {
     LayoutDashboard, Users, GraduationCap, CalendarDays, BookOpen,
     Settings, LogOut, Home, MessageSquare, Plus, DollarSign, Crown,
-    Clock, Bell, User, Menu, X
+    Clock, Bell, User, Menu, X, Puzzle
 } from "lucide-react";
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
@@ -39,6 +39,7 @@ const navLinks = {
         { label: "Bookings", href: "/admin/bookings", icon: CalendarDays },
         { label: "Subjects", href: "/admin/subjects", icon: BookOpen },
         { label: "Admins", href: "/admin/admins", icon: Crown },
+        { label: "Apps & Integrations", href: "/admin/apps-and-integrations", icon: Puzzle },
         { label: "Settings", href: "/admin/settings", icon: Settings },
         { label: "Profile", href: "/admin/profile", icon: User },
         { label: "Demo Requests", href: "/admin/demo-requests", icon: Bell },
