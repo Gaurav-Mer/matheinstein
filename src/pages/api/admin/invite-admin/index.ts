@@ -54,7 +54,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // 3. Create a new user in Firebase Auth without a password
         const newUser = await adminAuth.createUser({ email, displayName: name });
-        const resetLink = await adminAuth.generatePasswordResetLink(newUser.email);
+        const resetLink = await adminAuth.generatePasswordResetLink(newUser.email ?? "");
 
         // 4. Send the invitation email
         await sendInvitationEmail(name, email, resetLink);

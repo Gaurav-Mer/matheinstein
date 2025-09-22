@@ -16,7 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, Menu, User } from "lucide-react";
 import { Button } from "./ui/button";
 
-const ignore = ["/auth/login", "/"]
+const ignore = ["/login", "/"]
 export default function Navbar() {
     const { user, role, logout } = useAuth();
     const router = useRouter();
@@ -24,7 +24,7 @@ export default function Navbar() {
 
     const onLogut = () => {
         logout();
-        router.replace("/auth/login")
+        router.replace("/login")
     }
 
     // A mapping of role to profile URL
@@ -59,7 +59,7 @@ export default function Navbar() {
         }
     }
     return (
-        <nav className="bg-white border-b shrink-0  z-50">
+        <nav className="bg-white border-b shrink-0 z-50">
             <div className="max-w-full px-12">
                 <div className="flex justify-between  items-center h-20">
                     {/* Logo and Sidebar Toggle */}

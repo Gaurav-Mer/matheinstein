@@ -6,7 +6,7 @@ import { z } from "zod";
 import { addTutorSchema } from "@/lib/schemas/tutorSchema";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const { uid } = req.query;
+    const { id: uid } = req.query;
     if (!uid || typeof uid !== "string") {
         return res.status(400).json({ error: "Tutor UID is required" });
     }

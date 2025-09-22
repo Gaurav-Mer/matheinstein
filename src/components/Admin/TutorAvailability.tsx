@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
+"use client";
+import React, { useState, useEffect } from 'react';
 import { useFieldArray, useWatch, } from "react-hook-form";
 import { Clock, ChevronUp, ChevronDown, PlusCircle, Trash2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
@@ -8,6 +9,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { AddTutorInput } from "@/lib/schemas/tutorSchema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { cn } from '@/lib/utils';
+import dayjs from 'dayjs';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
+
 
 const daysOfWeek = [
     { name: "monday", label: "Monday" },
@@ -38,7 +51,7 @@ interface TutorAvailabilityProps {
     initialData?: AddTutorInput['availability'];
 }
 
-export default function TutorAvailability({ control }: TutorAvailabilityProps) {
+export default function TutorAvailability({ control, initialData }: TutorAvailabilityProps) {
     const { fields, append, remove } = useFieldArray({
         control,
         name: "availability",
@@ -48,12 +61,17 @@ export default function TutorAvailability({ control }: TutorAvailabilityProps) {
 
     const [isExpanded, setIsExpanded] = useState(true);
 
+    useEffect(() => {
+        if (initialData) {
+            remove();
+            initialData.forEach(item => append(item));
+        }
+    }, [initialData, append, remove]);
+
     const handleToggleDay = (dayName: string, isChecked: boolean) => {
         if (isChecked) {
-            // Add a default slot for the day
             append({ day: dayName, startTime: "09:00", endTime: "17:30", slotDuration: 60 });
         } else {
-            // Remove all slots for the disabled day
             const dayIndices = fields
                 .map((field: any, index) => (field.day === dayName ? index : -1))
                 .filter((index) => index !== -1);
@@ -74,7 +92,7 @@ export default function TutorAvailability({ control }: TutorAvailabilityProps) {
     };
 
     return (
-        <div className="max-w-full w-full border p-4 mx-auto  rounded-xl bg-white shadow-sm">
+        <div className="max-w-full w-full border p-4 mx-auto rounded-xl bg-white shadow-sm overflow-hidden">
             {/* Header */}
             <div
                 className="flex items-center justify-between cursor-pointer"
@@ -96,15 +114,14 @@ export default function TutorAvailability({ control }: TutorAvailabilityProps) {
 
             {isExpanded && (
                 <div className="space-y-6 mt-4">
-                    {/* Days of the week with multiple slots */}
-                    <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
                         {daysOfWeek.map(({ name, label }) => {
                             const isEnabled = isDayEnabled(name);
                             const daySlots = getDaySlots(name);
 
                             return (
                                 <Card key={name} className="p-4 shadow-sm transition-all duration-300">
-                                    <CardHeader className="flex flex-row items-center justify-between p-0 mb-4">
+                                    <CardHeader className="flex  items-center justify-between p-0 mb-4">
                                         <CardTitle className="text-lg font-semibold">{label}</CardTitle>
                                         <Switch
                                             checked={isEnabled}
@@ -185,7 +202,7 @@ export default function TutorAvailability({ control }: TutorAvailabilityProps) {
                                                 type="button"
                                                 variant="outline"
                                                 onClick={() => append({ day: name, startTime: "09:00", endTime: "17:30", slotDuration: 60 })}
-                                                className="w-full gap-2 text-secondary border-secondary  hover:bg-secondary/20 "
+                                                className="w-full gap-2 text-secondary border-secondary hover:bg-secondary/20 "
                                             >
                                                 <PlusCircle className="w-4 h-4" /> Add Slot
                                             </Button>

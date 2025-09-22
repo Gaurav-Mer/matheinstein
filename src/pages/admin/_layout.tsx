@@ -5,12 +5,15 @@ import React from 'react'
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     return (
         <WithAuth allowedRoles={["admin"]}>
-            <div className=' flex-1 overflow-auto flex items-start h-dvh'>
+            {/* Full viewport container */}
+            <div className="flex h-full w-full">
+                {/* Sidebar fixed width */}
                 <Sidebar />
-                <div className='flex flex-col overflow-hidden flex-1'>
+                {/* Main content scrollable */}
+                <div className="flex-1 flex flex-col overflow-auto">
                     {children}
                 </div>
-            </div >
+            </div>
         </WithAuth>
     )
 }

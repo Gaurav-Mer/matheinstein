@@ -6,7 +6,7 @@ export const useStudentDashboard = () => {
     return useQuery({
         queryKey: ["student-dashboard"],
         queryFn: async () => {
-            const { data } = await api.get("/students");
+            const { data } = await api.get("/student");
             return data;
         },
     });

@@ -17,12 +17,12 @@ const navLinks = {
     public: [
         { label: "Home", href: "/", icon: Home },
         { label: "Find a Tutor", href: "/tutors", icon: GraduationCap },
-        { label: "Login", href: "/auth/login", icon: LogOut },
+        { label: "Login", href: "/login", icon: LogOut },
     ],
     student: [
         { label: "Dashboard", href: "/student/dashboard", icon: LayoutDashboard },
         { label: "Bookings", href: "/student/bookings", icon: CalendarDays },
-        { label: "My Tutors", href: "/student/tutors", icon: GraduationCap },
+        { label: "My Tutors", href: "/student/tutor", icon: GraduationCap },
         { label: "Messages", href: "/student/messages", icon: MessageSquare },
     ],
     tutor: [
@@ -30,7 +30,7 @@ const navLinks = {
         { label: "Availability", href: "/tutor/availability", icon: Clock },
         { label: "My Students", href: "/tutor/students", icon: Users },
         { label: "Bookings", href: "/tutor/bookings", icon: CalendarDays },
-        { label: "Earnings", href: "/tutor/earnings", icon: DollarSign },
+        // { label: "Earnings", href: "/tutor/earnings", icon: DollarSign },
     ],
     admin: [
         { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
@@ -58,7 +58,7 @@ const Sidebar = () => {
     const SidebarContent = () => (
         <div className="flex flex-col h-full">
             {/* Logo */}
-            <div className="flex items-center gap-3 p-6 border-b border-slate-100">
+            <div className="flex items-center gap-3 p-6 border-b">
                 <Image
                     src="/matheinstein.png"
                     width={32}
@@ -142,14 +142,14 @@ const Sidebar = () => {
             {/* Mobile Toggle */}
             <button
                 onClick={toggleMobileSidebar}
-                className="fixed top-4 left-4 z-50 md:hidden p-2 bg-white rounded-lg shadow-lg border border-slate-200"
+                className="fixed top-4 left-4 z-50 md:hidden p-2 bg-white rounded-lg  border border-slate-200"
             >
                 {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
 
             {/* Sidebar */}
             <aside className={cn(
-                "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 shadow-sm",
+                "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-slate-200 ",
                 "transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out",
                 isMobileOpen && "translate-x-0"
             )}>
