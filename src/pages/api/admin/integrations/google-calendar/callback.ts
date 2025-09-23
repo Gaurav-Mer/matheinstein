@@ -25,18 +25,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { tokens } = await oAuth2Client.getToken(code);
         oAuth2Client.setCredentials(tokens);
 
-        await saveTokens(userId, tokens);
-        console.log(`Tokens saved successfully for user ${userId}.`);
+        // Get the user's email address
+        const oauth2 = google.oauth2({ version: 'v2', auth: oAuth2Client });
+        const userInfo = await oauth2.userinfo.get();
+        const email = userInfo.data.email;
 
-        // Example API call to Google Calendar
-        const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
-        const calendarList = await calendar.calendarList.list();
-        console.log('User calendars:', calendarList.data.items);
+        if (!email) {
+            throw new Error("Could not retrieve email from Google account.");
+        }
+
+        await saveTokens(userId, tokens, email);
+        console.log(`Tokens saved successfully for user ${userId} with email ${email}.`);
 
         // Redirect back to the integrations page.
         res.redirect('/admin/apps-and-integrations');
     } catch (error) {
-        console.error('Error retrieving access token or fetching calendar data', error);
+        console.error('Error retrieving access token or user info', error);
         res.redirect('/admin/apps-and-integrations?error=true');
     }
 }

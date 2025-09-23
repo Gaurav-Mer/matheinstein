@@ -17,6 +17,11 @@ interface CalendarEvent {
     };
 }
 
+interface ConnectionStatus {
+    connected: boolean;
+    email?: string;
+}
+
 const integrations = [
     {
         name: 'Google Calendar',
@@ -25,6 +30,7 @@ const integrations = [
         statusUrl: '/admin/integrations/google-calendar/status',
         connectUrl: '/api/admin/integrations/google-calendar',
         eventsUrl: '/admin/integrations/google-calendar/events',
+        disconnectUrl: '/admin/integrations/google-calendar/disconnect',
     },
     {
         name: 'Stripe',
@@ -43,26 +49,30 @@ const integrations = [
 ];
 
 const AppsAndIntegrations = () => {
-    const [connectionStatus, setConnectionStatus] = useState<Record<string, boolean>>({});
+    const [connectionStatus, setConnectionStatus] = useState<Record<string, ConnectionStatus>>({});
     const [events, setEvents] = useState<CalendarEvent[]>([]);
     const [isLoadingEvents, setIsLoadingEvents] = useState(false);
+    const [eventsError, setEventsError] = useState<string | null>(null);
+    const [isDisconnecting, setIsDisconnecting] = useState(false);
+    const [isManageDialogOpen, setIsManageDialogOpen] = useState(false);
 
-    useEffect(() => {
-        const fetchStatus = async () => {
-            const status: Record<string, boolean> = {};
-            for (const integration of integrations) {
-                if (integration.statusUrl !== '#') {
-                    try {
-                        const res = await api.get(integration.statusUrl);
-                        status[integration.name] = res.data.connected;
-                    } catch (error) {
-                        console.error(`Failed to fetch status for ${integration.name}`, error);
-                        status[integration.name] = false;
-                    }
+    const fetchStatus = async () => {
+        const status: Record<string, ConnectionStatus> = {};
+        for (const integration of integrations) {
+            if (integration.statusUrl !== '#') {
+                try {
+                    const res = await api.get(integration.statusUrl);
+                    status[integration.name] = res.data;
+                } catch (error) {
+                    console.error(`Failed to fetch status for ${integration.name}`, error);
+                    status[integration.name] = { connected: false };
                 }
             }
-            setConnectionStatus(status);
-        };
+        }
+        setConnectionStatus(status);
+    };
+
+    useEffect(() => {
         fetchStatus();
     }, []);
 
@@ -81,13 +91,56 @@ const AppsAndIntegrations = () => {
     const handleFetchEvents = async (url: string) => {
         if (!url || url === '#') return;
         setIsLoadingEvents(true);
+        setEventsError(null);
+        setEvents([]);
         try {
             const res = await api.get(url);
-            setEvents(res.data);
+            if (res.data && res.data.length > 0) {
+                setEvents(res.data);
+            }
         } catch (error) {
             console.error('Failed to fetch events', error);
+            setEventsError('Failed to fetch calendar events. Please try again.');
         }
         setIsLoadingEvents(false);
+    };
+
+    const handleDisconnect = async (url: string) => {
+        if (!url || url === '#') return;
+        setIsDisconnecting(true);
+        try {
+            await api.post(url);
+            await fetchStatus(); // Refetch status to update UI
+            setIsManageDialogOpen(false); // Close dialog on success
+        } catch (error) {
+            console.error('Failed to disconnect', error);
+            // Optionally, show an error message to the user
+        }
+        setIsDisconnecting(false);
+    };
+
+    const renderEventsContent = () => {
+        if (isLoadingEvents) {
+            return <p>Loading events...</p>;
+        }
+        if (eventsError) {
+            return <p className="text-red-500">{eventsError}</p>;
+        }
+        if (events.length === 0) {
+            return <p>No upcoming events found in the next 7 days.</p>;
+        }
+        return (
+            <ul>
+                {events.map((event, index) => (
+                    <li key={index} className="mb-2">
+                        <strong>{event.summary}</strong>
+                        <p className="text-sm text-gray-500">
+                            {new Date(event.start.dateTime).toLocaleString()} - {new Date(event.end.dateTime).toLocaleString()}
+                        </p>
+                    </li>
+                ))}
+            </ul>
+        );
     };
 
     return (
@@ -95,7 +148,7 @@ const AppsAndIntegrations = () => {
             <h1 className="text-3xl font-bold mb-6">Apps & Integrations</h1>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {integrations.map((integration) => {
-                    const isConnected = connectionStatus[integration.name];
+                    const status = connectionStatus[integration.name] || { connected: false };
                     return (
                         <Card key={integration.name}>
                             <CardHeader className="flex flex-row items-center justify-between">
@@ -103,8 +156,8 @@ const AppsAndIntegrations = () => {
                                     {integration.icon}
                                     <CardTitle>{integration.name}</CardTitle>
                                 </div>
-                                {isConnected ? (
-                                    <Dialog>
+                                {status.connected ? (
+                                    <Dialog open={isManageDialogOpen} onOpenChange={setIsManageDialogOpen}>
                                         <DialogTrigger asChild>
                                             <Button variant="secondary" onClick={() => handleFetchEvents(integration.eventsUrl || '#')}>
                                                 Manage
@@ -114,20 +167,14 @@ const AppsAndIntegrations = () => {
                                             <DialogHeader>
                                                 <DialogTitle>{integration.name} Events</DialogTitle>
                                             </DialogHeader>
-                                            {isLoadingEvents ? (
-                                                <p>Loading events...</p>
-                                            ) : (
-                                                <ul>
-                                                    {events.map((event, index) => (
-                                                        <li key={index} className="mb-2">
-                                                            <strong>{event.summary}</strong>
-                                                            <p className="text-sm text-gray-500">
-                                                                {new Date(event.start.dateTime).toLocaleString()} - {new Date(event.end.dateTime).toLocaleString()}
-                                                            </p>
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            )}
+                                            <div className="py-4">{renderEventsContent()}</div>
+                                            <Button
+                                                variant="destructive"
+                                                onClick={() => handleDisconnect(integration.disconnectUrl || '#')}
+                                                disabled={isDisconnecting}
+                                            >
+                                                {isDisconnecting ? 'Disconnecting...' : 'Disconnect'}
+                                            </Button>
                                         </DialogContent>
                                     </Dialog>
                                 ) : (
@@ -138,6 +185,11 @@ const AppsAndIntegrations = () => {
                             </CardHeader>
                             <CardContent>
                                 <CardDescription>{integration.description}</CardDescription>
+                                {status.connected && status.email && (
+                                    <div className="mt-4 text-sm text-gray-600">
+                                        Connected as: <strong>{status.email}</strong>
+                                    </div>
+                                )}
                             </CardContent>
                         </Card>
                     );

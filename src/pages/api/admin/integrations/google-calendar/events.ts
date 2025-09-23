@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getTokens } from '@/lib/db';
+import { getIntegrationData } from '@/lib/db';
 import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
 import { adminAuth } from '@/lib/firebaseAdmin';
@@ -13,8 +13,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const decodedToken = await adminAuth.verifyIdToken(token);
         const uid = decodedToken.uid;
 
-        const tokens = await getTokens(uid);
-        if (!tokens) {
+        const integrationData = await getIntegrationData(uid);
+        if (!integrationData?.tokens) {
             return res.status(401).json({ error: 'Not connected to Google Calendar' });
         }
 
@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             process.env.GOOGLE_CLIENT_ID || 'YOUR_DUMMY_CLIENT_ID',
             process.env.GOOGLE_CLIENT_SECRET || 'YOUR_DUMMY_CLIENT_SECRET'
         );
-        oAuth2Client.setCredentials(tokens);
+        oAuth2Client.setCredentials(integrationData.tokens);
 
         const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
 
