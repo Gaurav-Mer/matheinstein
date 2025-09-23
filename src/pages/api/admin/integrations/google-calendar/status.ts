@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getTokens } from '@/lib/db';
+import { getIntegrationData } from '@/lib/db';
 import { adminAuth } from '@/lib/firebaseAdmin';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -11,9 +11,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const decodedToken = await adminAuth.verifyIdToken(token);
         const uid = decodedToken.uid;
 
-        const tokens = await getTokens(uid);
+        const integrationData = await getIntegrationData(uid);
 
-        res.status(200).json({ connected: !!tokens });
+        if (integrationData) {
+            res.status(200).json({ connected: true, email: integrationData.email });
+        } else {
+            res.status(200).json({ connected: false });
+        }
 
     } catch (error) {
         console.error('Error getting connection status', error);
