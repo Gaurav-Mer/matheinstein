@@ -2,10 +2,18 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { getTokens } from '@/lib/db';
 import { OAuth2Client } from 'google-auth-library';
 import { google } from 'googleapis';
+import { adminAuth } from '@/lib/firebaseAdmin';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
-        const tokens = await getTokens();
+        const token = req.headers.authorization?.split(" ")[1];
+        if (!token) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+        const decodedToken = await adminAuth.verifyIdToken(token);
+        const uid = decodedToken.uid;
+
+        const tokens = await getTokens(uid);
         if (!tokens) {
             return res.status(401).json({ error: 'Not connected to Google Calendar' });
         }

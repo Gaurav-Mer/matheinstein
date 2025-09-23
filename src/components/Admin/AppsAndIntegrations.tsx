@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Calendar, CreditCard, Video } from 'lucide-react';
+import api from '@/lib/axios';
+import { auth } from '@/lib/firebaseClient';
 
 interface CalendarEvent {
     summary: string;
@@ -20,9 +22,9 @@ const integrations = [
         name: 'Google Calendar',
         description: 'Sync your calendar to manage bookings and availability.',
         icon: <Calendar className="h-8 w-8" />,
-        statusUrl: '/api/admin/integrations/google-calendar/status',
+        statusUrl: '/admin/integrations/google-calendar/status',
         connectUrl: '/api/admin/integrations/google-calendar',
-        eventsUrl: '/api/admin/integrations/google-calendar/events',
+        eventsUrl: '/admin/integrations/google-calendar/events',
     },
     {
         name: 'Stripe',
@@ -51,9 +53,8 @@ const AppsAndIntegrations = () => {
             for (const integration of integrations) {
                 if (integration.statusUrl !== '#') {
                     try {
-                        const res = await fetch(integration.statusUrl);
-                        const data = await res.json();
-                        status[integration.name] = data.connected;
+                        const res = await api.get(integration.statusUrl);
+                        status[integration.name] = res.data.connected;
                     } catch (error) {
                         console.error(`Failed to fetch status for ${integration.name}`, error);
                         status[integration.name] = false;
@@ -65,13 +66,24 @@ const AppsAndIntegrations = () => {
         fetchStatus();
     }, []);
 
+    const handleConnect = async (url: string) => {
+        if (!url || url === '#') return;
+        try {
+            const user = auth.currentUser;
+            if (!user) throw new Error("User not logged in");
+            const token = await user.getIdToken();
+            window.location.href = `${url}?token=${token}`;
+        } catch (error) {
+            console.error("Error getting auth token for connect URL", error);
+        }
+    };
+
     const handleFetchEvents = async (url: string) => {
         if (!url || url === '#') return;
         setIsLoadingEvents(true);
         try {
-            const res = await fetch(url);
-            const data = await res.json();
-            setEvents(data);
+            const res = await api.get(url);
+            setEvents(res.data);
         } catch (error) {
             console.error('Failed to fetch events', error);
         }
@@ -119,8 +131,8 @@ const AppsAndIntegrations = () => {
                                         </DialogContent>
                                     </Dialog>
                                 ) : (
-                                    <Button asChild>
-                                        <a href={integration.connectUrl}>Connect</a>
+                                    <Button onClick={() => handleConnect(integration.connectUrl)}>
+                                        Connect
                                     </Button>
                                 )}
                             </CardHeader>

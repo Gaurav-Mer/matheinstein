@@ -1,39 +1,37 @@
-import fs from 'fs/promises';
-import path from 'path';
+import { adminDb } from './firebaseAdmin';
 import { Credentials } from 'google-auth-library';
 
-const dbPath = path.resolve(process.cwd(), 'db.json');
+const getIntegrationDocRef = (userId: string) =>
+    adminDb.collection('users').doc(userId).collection('integrations').doc('googleCalendar');
 
-interface DbData {
-    googleCalendar: {
-        tokens: Credentials | null;
-    };
+/**
+ * Saves the Google Calendar API tokens for a specific user in Firestore.
+ * @param userId The ID of the user.
+ * @param tokens The OAuth2 tokens to save.
+ */
+export async function saveTokens(userId: string, tokens: Credentials): Promise<void> {
+    const docRef = getIntegrationDocRef(userId);
+    await docRef.set({
+        tokens,
+        updatedAt: new Date().toISOString(),
+    });
+    console.log(`Tokens saved for user ${userId}`);
 }
 
-async function readDb(): Promise<DbData> {
-    try {
-        const data = await fs.readFile(dbPath, 'utf-8');
-        return JSON.parse(data);
-    } catch (error) {
-        // If the file doesn't exist, return a default structure
-        if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-            return { googleCalendar: { tokens: null } };
-        }
-        throw error;
+/**
+ * Retrieves the Google Calendar API tokens for a specific user from Firestore.
+ * @param userId The ID of the user.
+ * @returns The stored tokens, or null if not found.
+ */
+export async function getTokens(userId: string): Promise<Credentials | null> {
+    const docRef = getIntegrationDocRef(userId);
+    const docSnap = await docRef.get();
+
+    if (!docSnap.exists) {
+        console.log(`No tokens found for user ${userId}`);
+        return null;
     }
-}
 
-async function writeDb(data: DbData): Promise<void> {
-    await fs.writeFile(dbPath, JSON.stringify(data, null, 2));
-}
-
-export async function saveTokens(tokens: Credentials): Promise<void> {
-    const db = await readDb();
-    db.googleCalendar.tokens = tokens;
-    await writeDb(db);
-}
-
-export async function getTokens(): Promise<Credentials | null> {
-    const db = await readDb();
-    return db.googleCalendar.tokens;
+    const data = docSnap.data();
+    return data?.tokens || null;
 }
