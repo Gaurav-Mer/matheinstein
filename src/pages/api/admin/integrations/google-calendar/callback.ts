@@ -10,14 +10,23 @@ const oAuth2Client = new OAuth2Client(
 );
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const code = req.query.code as string;
+    const { code, state } = req.query;
+
+    if (typeof state !== 'string' || !state) {
+        return res.status(400).json({ error: 'Missing state parameter (userId)' });
+    }
+    const userId = state;
+
+    if (typeof code !== 'string' || !code) {
+        return res.status(400).json({ error: 'Missing code parameter' });
+    }
 
     try {
         const { tokens } = await oAuth2Client.getToken(code);
         oAuth2Client.setCredentials(tokens);
 
-        await saveTokens(tokens);
-        console.log('Tokens saved successfully.');
+        await saveTokens(userId, tokens);
+        console.log(`Tokens saved successfully for user ${userId}.`);
 
         // Example API call to Google Calendar
         const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
