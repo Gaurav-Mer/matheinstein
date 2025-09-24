@@ -11,6 +11,7 @@ import { Loader2, ArrowLeft, ShoppingCart, CheckCircle, Package, Receipt, Dollar
 import Link from 'next/link';
 import { toast } from 'react-toastify';
 import { usePurchasePackage } from '@/hooks/usePurchasePackage';
+import StudentLayout from '../_layout';
 
 // --- CURRENCY UTILITY ---
 const formatCurrency = (amount: number) => {
@@ -115,53 +116,51 @@ export default function StudentCheckoutPage() {
     };
 
     return (
-        <div className="p-6 md:p-10 min-h-screen bg-gray-50">
-            <Link href={`/tutors/${tutorId}`}>
-                <Button variant="outline" className="mb-6"><ArrowLeft className="h-4 w-4 mr-2" /> Back to Booking</Button>
-            </Link>
+        <StudentLayout>
+            <div className="p-6 md:p-10 min-h-screen bg-gray-50">
+                <h1 className="text-3xl font-bold text-slate-800 mb-2">Finalize Purchase</h1>
+                <p className="text-slate-500 mb-8">Securely purchase your lesson credits.</p>
 
-            <h1 className="text-3xl font-bold text-slate-800 mb-2">Finalize Purchase</h1>
-            <p className="text-slate-500 mb-8">Securely purchase your lesson credits.</p>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Left Column: Package Selection */}
+                    {renderPackageSelection()}
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Left Column: Package Selection */}
-                {renderPackageSelection()}
-
-                {/* Right Column: Order Summary & Payment */}
-                <Card className="lg:col-span-1 shadow-lg rounded-xl h-fit">
-                    <CardHeader className="border-b">
-                        <CardTitle className="flex items-center gap-2">
-                            <Receipt className='h-5 w-5' /> Order Summary
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-6 space-y-4">
-                        <div className="space-y-2">
-                            <p className="flex justify-between text-sm text-slate-600">
-                                <span>{selectedPackage?.credits || 0} x Lesson Credits</span>
-                                <span>{formatCurrency(totalCost)}</span>
-                            </p>
-                            <p className="flex justify-between text-sm text-slate-600">
-                                <span>Price Per Credit (INR Base)</span>
-                                <span>{formatCurrency(selectedPackage?.price || 0)}</span>
-                            </p>
-                            <div className="border-t pt-2 flex justify-between font-bold text-lg">
-                                <span>Total (Charged to Card)</span>
-                                <span>{formatCurrency(totalCost)}</span>
+                    {/* Right Column: Order Summary & Payment */}
+                    <Card className="lg:col-span-1 shadow-lg rounded-xl h-fit">
+                        <CardHeader className="border-b">
+                            <CardTitle className="flex items-center gap-2">
+                                <Receipt className='h-5 w-5' /> Order Summary
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-6 space-y-4">
+                            <div className="space-y-2">
+                                <p className="flex justify-between text-sm text-slate-600">
+                                    <span>{selectedPackage?.credits || 0} x Lesson Credits</span>
+                                    <span>{formatCurrency(totalCost)}</span>
+                                </p>
+                                <p className="flex justify-between text-sm text-slate-600">
+                                    <span>Price Per Credit (INR Base)</span>
+                                    <span>{formatCurrency(selectedPackage?.price || 0)}</span>
+                                </p>
+                                <div className="border-t pt-2 flex justify-between font-bold text-lg">
+                                    <span>Total (Charged to Card)</span>
+                                    <span>{formatCurrency(totalCost)}</span>
+                                </div>
                             </div>
-                        </div>
-                    </CardContent>
-                    <CardFooter>
-                        <Button
-                            onClick={handlePurchase}
-                            disabled={!selectedPackage || isPurchasing || packages.length === 0}
-                            className="w-full gap-2 h-12 bg-primary hover:bg-primary/90 transition-all duration-200"
-                        >
-                            {isPurchasing ? <Loader2 className="h-5 w-5 animate-spin" /> : <CreditCard className="h-5 w-5" />}
-                            Pay Now & Get {selectedPackage?.credits || 0} Credits
-                        </Button>
-                    </CardFooter>
-                </Card>
+                        </CardContent>
+                        <CardFooter>
+                            <Button
+                                onClick={handlePurchase}
+                                disabled={!selectedPackage || isPurchasing || packages.length === 0}
+                                className="w-full gap-2 h-12 bg-primary hover:bg-primary/90 transition-all duration-200"
+                            >
+                                {isPurchasing ? <Loader2 className="h-5 w-5 animate-spin" /> : <CreditCard className="h-5 w-5" />}
+                                Pay Now & Get {selectedPackage?.credits || 0} Credits
+                            </Button>
+                        </CardFooter>
+                    </Card>
+                </div>
             </div>
-        </div>
+        </StudentLayout>
     );
 }

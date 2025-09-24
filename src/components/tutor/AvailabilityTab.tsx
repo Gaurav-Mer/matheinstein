@@ -20,7 +20,7 @@ interface AvailabilityTabProps {
 
 export default function AvailabilityTab({ tutor, canEdit }: AvailabilityTabProps) {
     const { mutate: updateTutor, isPending: isUpdating } = useUpdateTutor();
-    const methods = useForm<Partial<any>>({
+    const methods = useForm<AddTutorInput>({
         resolver: zodResolver(addTutorSchema),
         defaultValues: {
             availability: tutor.availability || [],
@@ -31,11 +31,13 @@ export default function AvailabilityTab({ tutor, canEdit }: AvailabilityTabProps
                 minAdvanceNotice: minWindow / 24,
                 maxAdvanceNotice: maxWindow / 24
             },
+            name: tutor?.name,
+            email: tutor?.email
         },
     });
-    console.log("form", methods.formState.errors)
+    console.log("tutor", methods?.formState?.errors, methods?.watch())
 
-    const onSubmit = (data: Partial<any>) => {
+    const onSubmit = (data: AddTutorInput) => {
         if (!canEdit) {
             toast.error("You do not have permission to edit.");
             return;

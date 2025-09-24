@@ -27,15 +27,16 @@ export default function TutorPricingTab({ tutor, canEdit }: TutorPricingTabProps
     const methods = useForm<AddTutorInput>({
         resolver: zodResolver(addTutorSchema),
         defaultValues: {
-            // Only initialize the fields this tab controls
             paidLessons: tutor.paidLessons || [],
+            name: tutor?.name,
+            email: tutor?.email
         },
     });
 
     // 💡 FIX: Reset form when the tutor data prop changes (essential for edit flow)
     useEffect(() => {
         if (tutor) {
-            methods.reset({ paidLessons: tutor.paidLessons || [] });
+            methods.reset({ paidLessons: tutor.paidLessons || [], name: tutor?.name, email: tutor?.email });
         }
     }, [tutor, methods]);
 
