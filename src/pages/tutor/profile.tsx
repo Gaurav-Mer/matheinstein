@@ -17,6 +17,7 @@ import TutorLayout from './_layout';
 import { useTutorProfile, useUpdateTutorProfile } from '@/hooks/tutors/useTutorProfile';
 import TutorBookingSettings from '@/components/tutor/TutorBookingSettings';
 import TutorAvailability from '@/components/Admin/TutorAvailability';
+import TutorPackageManager from '@/components/packages/TutorPackageManager';
 
 export default function TutorProfilePage() {
     const { data: tutor, isLoading, error, refetch } = useTutorProfile();
@@ -35,6 +36,7 @@ export default function TutorProfilePage() {
     }, [tutor, methods]);
 
     const onSubmit: SubmitHandler<AddTutorInput> = (data) => {
+
         updateProfile(data, {
             onSuccess: () => {
                 toast.success("Profile updated successfully!");
@@ -102,9 +104,10 @@ export default function TutorProfilePage() {
                 <FormProvider {...methods}>
                     <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6">
                         <Tabs defaultValue="profile">
-                            <TabsList className="grid w-full grid-cols-2">
+                            <TabsList className="grid w-full grid-cols-3">
                                 <TabsTrigger value="profile">Profile</TabsTrigger>
                                 <TabsTrigger value="availability">Availability</TabsTrigger>
+                                <TabsTrigger value="pricing">Packages</TabsTrigger>
                             </TabsList>
 
                             <TabsContent value="profile" className="mt-4">
@@ -170,6 +173,11 @@ export default function TutorProfilePage() {
                             <TabsContent value="availability" className="space-y-6 mt-4">
                                 <TutorBookingSettings />
                                 <TutorAvailability control={methods.control} initialData={tutor.availability} />
+                            </TabsContent>
+
+                            {/* NEW: Pricing & Packages Tab */}
+                            <TabsContent value="pricing" className="space-y-6 mt-4">
+                                <TutorPackageManager />
                             </TabsContent>
                         </Tabs>
                     </form>

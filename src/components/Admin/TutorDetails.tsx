@@ -9,11 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Edit, User, MoveLeft, } from "lucide-react";
 import EditTutorDialog from "./EditTutor";
 import { AddTutorInput } from "@/lib/schemas/tutorSchema";
-import AvailabilitySection from "../tutor/AvailabilitySection";
 import TutorInfoCard from "../tutor/TutorInfoCard";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import StudentsTab from "../tutor/StudentsTab";
 import AvailabilityTab from "../tutor/AvailabilityTab";
+import TutorPricingTab from "../tutor/TutorPricingTab";
 
 interface TutorDetailsProps {
     tutorId?: string; // optional, for tutor self view
@@ -96,10 +96,12 @@ export default function TutorDetails({ tutorId, canEdit }: TutorDetailsProps) {
                             <TabsTrigger value="availability">
                                 Booking & Availability
                             </TabsTrigger>
+                            <TabsTrigger value="pricing">Pricing</TabsTrigger> {/* NEW TAB */}
                         </TabsList>
                     </Tabs>
                     {activeTab === "availability" && <AvailabilityTab tutor={tutor} canEdit />}
                     {activeTab === "students" && <StudentsTab tutor={tutor} canEdit />}
+                    {activeTab === "pricing" && <TutorPricingTab canEdit tutor={tutor} />}
                 </div>
             </div>
 

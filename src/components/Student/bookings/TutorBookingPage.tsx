@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { usePublicTutor } from "@/hooks/usePublicTutor";
+import { useAuth } from '@/hooks/useAuth'; // We need the user's credit balance
 import { Loader2, ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -11,17 +12,42 @@ import { Card, CardContent } from "@/components/ui/card";
 import TutorSummaryCard from './TutorSummaryCard';
 import BookingCalendar from './BookingCalendar';
 import BookingConfirmationPage from './BookingConfirmationPage';
+import { toast } from 'react-toastify';
 
 export default function TutorBookingPage() {
     const params = useParams();
+    const router = useRouter();
+    const { user, lessonCredits } = useAuth(); // Assume lessonCredits is available via useAuth
     const tutorId = params?.id as string;
 
     const { data: tutor, isLoading, error } = usePublicTutor(tutorId);
     const [selectedSlots, setSelectedSlots] = useState<any[]>([]);
     const [step, setStep] = useState(1); // 1: Calendar, 2: Confirmation
 
+    const isPackageBooking = (tutor?.paidLessons?.length ?? 0) > 0;
+
+    // Logic to handle slot selection (same as before)
     const handleSlotSelection = (slots: any[]) => {
         setSelectedSlots(slots);
+    };
+
+    // New Function: Final check before moving to confirmation
+    const handleNextStep = () => {
+        if (!user) {
+            toast.error("Please log in to book a session.");
+            router.push('/auth/login');
+            return;
+        }
+
+        // 🚨 CRITICAL LOGIC: Check credits for the number of selected slots
+        if (lessonCredits < selectedSlots.length) {
+            // Redirect to the dedicated checkout page if credits are insufficient
+            router.push(`/student/checkout/${tutorId}`);
+            return;
+        }
+
+        // If credits are sufficient, move to confirmation step (Step 2)
+        setStep(2);
     };
 
     if (isLoading) {
@@ -38,7 +64,6 @@ export default function TutorBookingPage() {
 
     return (
         <div className="p-6 md:p-10 min-h-screen bg-gray-50">
-            {/* Header */}
             <div className="flex items-center gap-4 mb-6">
                 <Link href="/student/dashboard" passHref>
                     <Button variant="outline" size="icon" className="h-10 w-10">
@@ -51,19 +76,18 @@ export default function TutorBookingPage() {
                 </div>
             </div>
 
-            {/* Main Content */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Tutor Info (Left Column) */}
                 <div className="lg:col-span-1 space-y-6">
                     <TutorSummaryCard tutor={tutor} />
                 </div>
 
-                {/* Booking Calendar (Right Column) */}
                 <Card className="lg:col-span-2 shadow-md rounded-xl">
                     <CardContent className="p-6">
                         {step === 1 && (
                             <>
-                                <h2 className="text-2xl font-bold text-gray-900 mb-6">Book Your Session</h2>
+                                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                                    {lessonCredits > 0 ? `Select Your Slots (${lessonCredits} Credits Left)` : 'Select Slot (Buy Package Required)'}
+                                </h2>
                                 <BookingCalendar
                                     tutor={tutor}
                                     onSlotSelect={handleSlotSelection}
@@ -71,11 +95,9 @@ export default function TutorBookingPage() {
                                 />
                                 {selectedSlots.length > 0 && (
                                     <div className="flex justify-end mt-6">
-                                        <Button
-                                            onClick={() => setStep(2)}
-                                            className="gap-2"
-                                        >
-                                            Next <ArrowRight className="h-4 w-4" />
+                                        <Button onClick={handleNextStep} className="gap-2">
+                                            {lessonCredits < selectedSlots.length ? 'Buy Credits' : 'Next'}
+                                            <ArrowRight className="h-4 w-4" />
                                         </Button>
                                     </div>
                                 )}

@@ -1,5 +1,14 @@
 // lib/schemas/tutorSchema.ts
 import { z } from "zod";
+// The structure of a single package/paid lesson
+export const paidLessonSchema = z.object({
+    id: z.string().optional(), // For internal tracking/deletion
+    name: z.string().min(3, "Package name is required."), // e.g., "60 Minute Session"
+    duration: z.number().int().min(15, "Min duration is 15 mins").max(180, "Max duration is 3 hours."), // in minutes
+    price: z.number().min(0, "Price must be non-negative."), // Price per session/credit
+    credits: z.number().int().min(1, "Must offer at least 1 credit.").max(30).optional(), // Number of credits in the package (optional, defaults to 1)
+});
+
 
 export const addTutorSchema = z.object({
     // Basic info
@@ -32,15 +41,6 @@ export const addTutorSchema = z.object({
         price: z.number().min(0).nullish(), // 0 for free demo
     }).nullish(),
 
-    // Paid lesson config
-    paidLessons: z.array(
-        z.object({
-            subject: z.string(),
-            duration: z.number().min(15).max(180),
-            price: z.number().min(0),
-        })
-    ).nullish(),
-
     // Optional profile image
     profileImage: z.string().url().nullish(),
 
@@ -58,7 +58,11 @@ export const addTutorSchema = z.object({
         minAdvanceNotice: z.number().int().min(1).max(24), // in hours
         maxAdvanceNotice: z.number().int().min(7).max(90), // in days
     }).nullish(),
+    paidLessons: z.array(paidLessonSchema).nullish(), // Now strongly typed
+
 });
+
+
 
 
 export type AddTutorInput = z.infer<typeof addTutorSchema>;

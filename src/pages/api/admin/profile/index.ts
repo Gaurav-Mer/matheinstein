@@ -3,19 +3,16 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { z } from "zod";
+// Assuming you have the comprehensive schema for admin that includes all tutor fields
+import { adminSchema } from "@/lib/schemas/adminSchema";
 
-// Define a schema for updating the admin profile
-const updateAdminProfileSchema = z.object({
-    name: z.string().optional(),
-    email: z.string().email("Invalid email address.").optional(),
-    password: z.string().min(6, "Password must be at least 6 characters.").optional(),
-});
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    // A single function to get the authenticated user's ID
+    // A function to securely get the authenticated admin's ID
     const getAuthenticatedUid = async (token: string) => {
         const decodedToken = await adminAuth.verifyIdToken(token);
         const userDoc = await adminDb.collection("users").doc(decodedToken.uid).get();
+        // The check remains simple for this specific endpoint
         if (userDoc.data()?.role !== "admin") {
             throw new Error("Forbidden: Not an admin account");
         }
@@ -28,6 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const uid = await getAuthenticatedUid(token);
 
+        // GET: Fetch the complete profile
         if (req.method === "GET") {
             const adminDoc = await adminDb.collection("users").doc(uid).get();
             if (!adminDoc.exists) return res.status(404).json({ error: "Admin profile not found" });
@@ -36,21 +34,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(200).json(profile);
         }
 
+        // PATCH: Update the profile, availability, and packages
         if (req.method === "PATCH") {
-            const validatedData = updateAdminProfileSchema.parse(req.body);
+            // Use a partial of the full adminSchema to accept any field from the tabs
+            const updateSchema = adminSchema.partial().extend({
+                password: z.string().min(6, "Password must be at least 6 characters.").optional(),
+            });
+            const validatedData = updateSchema.parse(req.body);
 
-            if (validatedData.email || validatedData.password) {
-                const authUpdate: any = {};
-                if (validatedData.email) authUpdate.email = validatedData.email;
-                if (validatedData.password) authUpdate.password = validatedData.password;
+            // Handle Firebase Auth Update (Email and Password)
+            const authUpdate: any = {};
+            if (validatedData.email) authUpdate.email = validatedData.email;
+            if (validatedData.password) authUpdate.password = validatedData.password;
+
+            if (Object.keys(authUpdate).length > 0) {
                 await adminAuth.updateUser(uid, authUpdate);
             }
 
+            // Update Firestore with the remaining profile and booking settings
             const firestoreUpdate: any = { ...validatedData };
             delete firestoreUpdate.email;
             delete firestoreUpdate.password;
 
             if (Object.keys(firestoreUpdate).length > 0) {
+                // This now safely updates name, phone, bio, subjects, paidLessons, availability, etc.
                 await adminDb.collection("users").doc(uid).update(firestoreUpdate);
             }
 

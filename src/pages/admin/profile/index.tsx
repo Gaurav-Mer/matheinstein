@@ -17,12 +17,14 @@ import { toast } from 'react-toastify';
 import { AdminInput, adminSchema } from '@/lib/schemas/adminSchema';
 import TutorBookingSettings from '@/components/tutor/TutorBookingSettings';
 import TutorAvailability from '@/components/Admin/TutorAvailability';
+import TutorPackageManager from '@/components/packages/TutorPackageManager';
 import AdminLayout from '../_layout';
 
 export default function AdminProfilePage() {
     const { data: admin, isLoading, error, refetch } = useAdminProfile();
     const { mutate: updateProfile, isPending: isUpdating } = useUpdateAdminProfile();
     const [isEditing, setIsEditing] = useState(false);
+    const [activeTab, setActiveTab] = useState("profile"); // State to manage active tab
 
     const methods = useForm<AdminInput>({
         resolver: zodResolver(adminSchema),
@@ -36,12 +38,36 @@ export default function AdminProfilePage() {
     }, [admin, methods]);
 
     const onSubmit: SubmitHandler<AdminInput> = (data) => {
+        // 🚨 CRITICAL FIX: Delete password from data if it's an empty string
+        const updatePayload = { ...data };
+        if (!updatePayload.password || updatePayload.password.trim() === '') {
+            delete updatePayload.password;
+        }
+
+        // Check for validation errors and switch to the correct tab
+        const errors = methods.formState.errors;
+        if (Object.keys(errors).length > 0) {
+            if (errors.name || errors.email || errors.password) {
+                setActiveTab("profile");
+            } else if (errors.availability) {
+                setActiveTab("availability");
+            } else if (errors.paidLessons) {
+                setActiveTab("pricing");
+            }
+            toast.error("Please fix the validation errors before saving.");
+            return;
+        }
+
         updateProfile(
-            { uid: admin.uid ?? "", password: data?.password || undefined, ...data },
+            {
+                uid: admin.uid ?? "",
+                ...updatePayload
+            },
             {
                 onSuccess: () => {
                     toast.success("Profile updated successfully!");
                     setIsEditing(false);
+                    refetch();
                 },
                 onError: (err: any) => {
                     toast.error(err?.response?.data?.error || "Failed to update profile.");
@@ -94,7 +120,8 @@ export default function AdminProfilePage() {
                                 <X className="h-4 w-4 mr-2" />
                                 Cancel
                             </Button>
-                            <Button className="gap-2" onClick={methods.handleSubmit(onSubmit)} disabled={isUpdating}>
+                            {/* Unified Save button for the whole form */}
+                            <Button type="submit" className="gap-2" onClick={methods.handleSubmit(onSubmit)} disabled={isUpdating}>
                                 {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                                 Save
                             </Button>
@@ -105,13 +132,14 @@ export default function AdminProfilePage() {
                 <FormProvider {...methods}>
                     <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-6 lg:max-w-4xl mx-auto">
                         {/* Main Tabs Section */}
-                        <Tabs defaultValue="profile">
-                            <TabsList className="grid w-full grid-cols-2">
+                        <Tabs value={activeTab} onValueChange={setActiveTab}>
+                            <TabsList className="grid w-full grid-cols-3">
                                 <TabsTrigger value="profile">Profile</TabsTrigger>
                                 <TabsTrigger value="availability">Availability</TabsTrigger>
+                                <TabsTrigger value="pricing">Pricing & Packages</TabsTrigger>
                             </TabsList>
 
-                            {/* Profile Tab */}
+                            {/* Profile Tab (Basic and Contact Info) */}
                             <TabsContent value="profile" className="mt-4">
                                 <Card className="shadow-sm">
                                     <CardContent className="p-6">
@@ -171,10 +199,15 @@ export default function AdminProfilePage() {
                                 </Card>
                             </TabsContent>
 
-                            {/* Availability Tab */}
+                            {/* Availability Tab (Booking Settings) */}
                             <TabsContent value="availability" className="space-y-6 mt-4">
                                 <TutorBookingSettings />
                                 <TutorAvailability control={methods.control} initialData={admin.availability} />
+                            </TabsContent>
+
+                            {/* NEW: Pricing & Packages Tab */}
+                            <TabsContent value="pricing" className="space-y-6 mt-4">
+                                <TutorPackageManager />
                             </TabsContent>
                         </Tabs>
                     </form>

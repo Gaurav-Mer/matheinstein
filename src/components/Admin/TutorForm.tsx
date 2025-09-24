@@ -89,8 +89,8 @@ export default function TutorForm({ initialData, onClose }: TutorFormProps) {
     };
 
     const assignedSubjectIdsExcludingCurrent = tutors
-        .filter((t: any) => t.uid !== initialData?.uid)
-        .flatMap((t: any) => t.subjects);
+        ?.filter((t: any) => t.uid !== initialData?.uid)
+        ?.flatMap((t: any) => t.subjects);
 
     const availableSubjects = allSubjects.filter(
         (sub: any) => !assignedSubjectIdsExcludingCurrent.includes(sub.id)
