@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Calendar, CreditCard, Video } from 'lucide-react';
 import api from '@/lib/axios';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { RazorpayConnectDialog } from './RazorpayConnectDialog';
 
 interface CalendarEvent {
     summary: string;
@@ -29,7 +30,7 @@ const integrations = [
         description: 'Sync your calendar to manage bookings and availability.',
         icon: <Calendar className="h-8 w-8" />,
         statusUrl: '/admin/integrations/google-calendar/status',
-        connectUrl: '/admin/integrations/google-calendar/connect',
+        connectUrl: '/api/admin/integrations/google-calendar',
         eventsUrl: '/admin/integrations/google-calendar/events',
         disconnectUrl: '/admin/integrations/google-calendar/disconnect',
     },
@@ -38,7 +39,7 @@ const integrations = [
         description: 'Connect your Stripe account to process payments for bookings.',
         icon: <CreditCard className="h-8 w-8" />,
         statusUrl: '/admin/integrations/stripe/status',
-        connectUrl: '/admin/integrations/stripe/connect',
+        connectUrl: '/api/admin/integrations/stripe/connect',
         disconnectUrl: '/api/admin/integrations/stripe/disconnect',
     },
     {
@@ -47,6 +48,14 @@ const integrations = [
         icon: <Video className="h-8 w-8" />,
         statusUrl: '#',
         connectUrl: '#',
+    },
+    {
+        name: 'Razorpay',
+        description: 'Connect your Razorpay account to process payments.',
+        icon: <CreditCard className="h-8 w-8" />,
+        statusUrl: '/admin/integrations/razorpay/status',
+        connectUrl: '#', // Handled by dialog
+        disconnectUrl: '/api/admin/integrations/razorpay/disconnect',
     },
 ];
 
@@ -174,7 +183,29 @@ const AppsAndIntegrations = () => {
                 </DialogHeader>
             );
         }
+        if (integrationName === 'Razorpay') {
+            return (
+                <DialogHeader>
+                    <DialogTitle>{integrationName} Connected</DialogTitle>
+                    <CardDescription>Your Razorpay account is connected.</CardDescription>
+                </DialogHeader>
+            );
+        }
         return null;
+    };
+
+    const renderConnectButton = (integration: typeof integrations[0]) => {
+        const { name, connectUrl } = integration;
+
+        if (name === 'Razorpay') {
+            return <RazorpayConnectDialog onConnectionSuccess={fetchStatus} />;
+        }
+
+        return (
+            <Button onClick={() => handleConnect(name, connectUrl)} disabled={isConnecting[name]}>
+                {isConnecting[name] ? 'Connecting...' : 'Connect'}
+            </Button>
+        );
     };
 
     return (
@@ -209,9 +240,7 @@ const AppsAndIntegrations = () => {
                                         </DialogContent>
                                     </Dialog>
                                 ) : (
-                                    <Button onClick={() => handleConnect(integration.name, integration.connectUrl)} disabled={isConnecting[integration.name]}>
-                                        {isConnecting[integration.name] ? 'Connecting...' : 'Connect'}
-                                    </Button>
+                                    renderConnectButton(integration)
                                 )}
                             </CardHeader>
                             <CardContent>

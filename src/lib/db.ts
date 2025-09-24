@@ -109,3 +109,56 @@ export async function deleteStripeIntegrationData(userId: string): Promise<void>
     });
     console.log(`Stripe integration data deleted for user ${userId}`);
 }
+
+const getRazorpayDocRef = (userId: string) =>
+    adminDb.collection('users').doc(userId).collection('integrations').doc('razorpay');
+
+/**
+ * Saves encrypted Razorpay API keys for a specific user in Firestore.
+ * @param userId The ID of the user.
+ * @param encryptedKeyId The encrypted Key ID.
+ * @param encryptedKeySecret The encrypted Key Secret.
+ */
+export async function saveRazorpayKeys(userId: string, encryptedKeyId: string, encryptedKeySecret: string): Promise<void> {
+    const docRef = getRazorpayDocRef(userId);
+    await docRef.set({
+        encryptedKeyId,
+        encryptedKeySecret,
+        updatedAt: new Date().toISOString(),
+    });
+    console.log(`Razorpay keys saved for user ${userId}`);
+}
+
+/**
+ * Retrieves the encrypted Razorpay API keys for a specific user from Firestore.
+ * @param userId The ID of the user.
+ * @returns The stored encrypted keys, or null if not found.
+ */
+export async function getRazorpayKeys(userId: string): Promise<{ encryptedKeyId: string, encryptedKeySecret: string } | null> {
+    const docRef = getRazorpayDocRef(userId);
+    const docSnap = await docRef.get();
+
+    if (!docSnap.exists) {
+        return null;
+    }
+
+    const data = docSnap.data();
+    if (!data?.encryptedKeyId || !data?.encryptedKeySecret) {
+        return null;
+    }
+
+    return {
+        encryptedKeyId: data.encryptedKeyId,
+        encryptedKeySecret: data.encryptedKeySecret,
+    };
+}
+
+/**
+ * Deletes the Razorpay integration data for a specific user from Firestore.
+ * @param userId The ID of the user.
+ */
+export async function deleteRazorpayKeys(userId: string): Promise<void> {
+    const docRef = getRazorpayDocRef(userId);
+    await docRef.delete();
+    console.log(`Razorpay integration data deleted for user ${userId}`);
+}
