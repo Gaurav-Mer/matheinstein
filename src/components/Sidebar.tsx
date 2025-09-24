@@ -7,7 +7,7 @@ import Image from 'next/image';
 import {
     LayoutDashboard, Users, GraduationCap, CalendarDays, BookOpen,
     Settings, LogOut, Home, MessageSquare, Plus, DollarSign, Crown,
-    Clock, Bell, User, Menu, X, Puzzle
+    Clock, Bell, User, Menu, X, Puzzle, ShoppingCart
 } from "lucide-react";
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
@@ -23,6 +23,7 @@ const navLinks = {
         { label: "Dashboard", href: "/student/dashboard", icon: LayoutDashboard },
         { label: "Bookings", href: "/student/bookings", icon: CalendarDays },
         { label: "My Tutors", href: "/student/tutor", icon: GraduationCap },
+        { label: "Buy Packages", href: "/student/packages", icon: ShoppingCart },
         { label: "Messages", href: "/student/messages", icon: MessageSquare },
     ],
     tutor: [
