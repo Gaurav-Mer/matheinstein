@@ -1,12 +1,1 @@
-{
-  "googleCalendar": {
-    "tokens": {
-      "access_token": "ya29.a0AQQ_BDT_ZoqkfzF95LbMjBzCcd-UAOms-O7XSFELkw7HsCsnmhUpROMRa48aAFP0QAG4ZLHizjtWm7_cXvrECIvvl2qI_y1iSdzlfVcrmQLmyu3lCkha9CXS-TEcRVpa7dZCw3gOfBBrOZxH4jYSjGpfXs8IbFO9XJkJtx4boCv3KQhMUvAcNcomANnjqaU3Vi6SF60aCgYKAT0SARASFQHGX2Mikoecjmw3kITR3TMfNMbIDw0206",
-      "refresh_token": "1//0g20YVjknvt9kCgYIARAAGBASNwF-L9IrexjwdRz4-Sds81XgwwcskNjS-mmW5ZiOPkl5Rr4ZfOaQXdLyC7wnGIqJqaNo5oYpcrI",
-      "scope": "https://www.googleapis.com/auth/calendar",
-      "token_type": "Bearer",
-      "refresh_token_expires_in": 604799,
-      "expiry_date": 1758646669238
-    }
-  }
-}
+{}
