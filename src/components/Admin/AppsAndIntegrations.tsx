@@ -40,7 +40,7 @@ const integrations = [
         icon: <CreditCard className="h-8 w-8" />,
         statusUrl: '/admin/integrations/stripe/status',
         connectUrl: '/api/admin/integrations/stripe/connect',
-        disconnectUrl: '/api/admin/integrations/stripe/disconnect',
+        disconnectUrl: '/admin/integrations/stripe/disconnect',
     },
     {
         name: 'Google Meet',
@@ -55,7 +55,7 @@ const integrations = [
         icon: <CreditCard className="h-8 w-8" />,
         statusUrl: '/admin/integrations/razorpay/status',
         connectUrl: '#', // Handled by dialog
-        disconnectUrl: '/api/admin/integrations/razorpay/disconnect',
+        disconnectUrl: '/admin/integrations/razorpay/disconnect',
     },
 ];
 
