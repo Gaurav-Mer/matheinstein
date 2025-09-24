@@ -10,8 +10,8 @@ const oAuth2Client = new OAuth2Client(
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
-        const { token } = req.query;
-        if (typeof token !== 'string' || !token) {
+        const token = req.headers.authorization?.split(" ")[1];
+        if (!token) {
             return res.status(401).json({ error: "Unauthorized: Missing token" });
         }
 
@@ -25,11 +25,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 'https://www.googleapis.com/auth/userinfo.email',
                 'https://www.googleapis.com/auth/userinfo.profile',
             ],
-            // Pass the user's UID in the state parameter to identify them in the callback
             state: uid,
         });
 
-        res.redirect(authorizeUrl);
+        // Instead of a redirect, return the URL to the client
+        res.status(200).json({ url: authorizeUrl });
+
     } catch (error) {
         console.error("Error generating auth URL", error);
         res.status(500).json({ error: "Failed to initiate Google authentication" });

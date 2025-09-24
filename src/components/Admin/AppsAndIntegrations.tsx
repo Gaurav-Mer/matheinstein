@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Calendar, CreditCard, Video } from 'lucide-react';
 import api from '@/lib/axios';
-import { auth } from '@/lib/firebaseClient';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 interface CalendarEvent {
     summary: string;
@@ -20,6 +20,7 @@ interface CalendarEvent {
 interface ConnectionStatus {
     connected: boolean;
     email?: string;
+    accountId?: string;
 }
 
 const integrations = [
@@ -28,7 +29,7 @@ const integrations = [
         description: 'Sync your calendar to manage bookings and availability.',
         icon: <Calendar className="h-8 w-8" />,
         statusUrl: '/admin/integrations/google-calendar/status',
-        connectUrl: '/api/admin/integrations/google-calendar',
+        connectUrl: '/admin/integrations/google-calendar/connect',
         eventsUrl: '/admin/integrations/google-calendar/events',
         disconnectUrl: '/admin/integrations/google-calendar/disconnect',
     },
@@ -36,8 +37,9 @@ const integrations = [
         name: 'Stripe',
         description: 'Connect your Stripe account to process payments for bookings.',
         icon: <CreditCard className="h-8 w-8" />,
-        statusUrl: '#',
-        connectUrl: '#',
+        statusUrl: '/admin/integrations/stripe/status',
+        connectUrl: '/admin/integrations/stripe/connect',
+        disconnectUrl: '/api/admin/integrations/stripe/disconnect',
     },
     {
         name: 'Google Meet',
@@ -54,7 +56,11 @@ const AppsAndIntegrations = () => {
     const [isLoadingEvents, setIsLoadingEvents] = useState(false);
     const [eventsError, setEventsError] = useState<string | null>(null);
     const [isDisconnecting, setIsDisconnecting] = useState(false);
-    const [isManageDialogOpen, setIsManageDialogOpen] = useState(false);
+    const [isManageDialogOpen, setIsManageDialogOpen] = useState<Record<string, boolean>>({});
+    const [isConnecting, setIsConnecting] = useState<Record<string, boolean>>({});
+
+    const searchParams = useSearchParams();
+    const router = useRouter();
 
     const fetchStatus = async () => {
         const status: Record<string, ConnectionStatus> = {};
@@ -73,19 +79,29 @@ const AppsAndIntegrations = () => {
     };
 
     useEffect(() => {
-        fetchStatus();
-    }, []);
-
-    const handleConnect = async (url: string) => {
-        if (!url || url === '#') return;
-        try {
-            const user = auth.currentUser;
-            if (!user) throw new Error("User not logged in");
-            const token = await user.getIdToken();
-            window.location.href = `${url}?token=${token}`;
-        } catch (error) {
-            console.error("Error getting auth token for connect URL", error);
+        if (searchParams.get('stripe_return')) {
+            api.post('/admin/integrations/stripe/return').then(() => {
+                router.replace('/admin/apps-and-integrations');
+                fetchStatus();
+            });
+        } else {
+            fetchStatus();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchParams]);
+
+    const handleConnect = async (name: string, url: string) => {
+        if (!url || url === '#') return;
+        setIsConnecting({ ...isConnecting, [name]: true });
+        try {
+            const res = await api.get(url);
+            if (res.data.url) {
+                window.location.href = res.data.url;
+            }
+        } catch (error) {
+            console.error(`Error creating connect link for ${name}`, error);
+        }
+        setIsConnecting({ ...isConnecting, [name]: false });
     };
 
     const handleFetchEvents = async (url: string) => {
@@ -105,42 +121,60 @@ const AppsAndIntegrations = () => {
         setIsLoadingEvents(false);
     };
 
-    const handleDisconnect = async (url: string) => {
+    const handleDisconnect = async (integrationName: string, url: string) => {
         if (!url || url === '#') return;
         setIsDisconnecting(true);
         try {
             await api.post(url);
-            await fetchStatus(); // Refetch status to update UI
-            setIsManageDialogOpen(false); // Close dialog on success
+            await fetchStatus();
+            setIsManageDialogOpen({ ...isManageDialogOpen, [integrationName]: false });
         } catch (error) {
             console.error('Failed to disconnect', error);
-            // Optionally, show an error message to the user
         }
         setIsDisconnecting(false);
     };
 
-    const renderEventsContent = () => {
-        if (isLoadingEvents) {
-            return <p>Loading events...</p>;
+    const handleOpenManageDialog = (integrationName: string, eventsUrl?: string) => {
+        if (integrationName === 'Google Calendar' && eventsUrl) {
+            handleFetchEvents(eventsUrl);
         }
-        if (eventsError) {
-            return <p className="text-red-500">{eventsError}</p>;
+        setIsManageDialogOpen({ ...isManageDialogOpen, [integrationName]: true });
+    };
+
+    const renderManageContent = (integrationName: string, status: ConnectionStatus) => {
+        if (integrationName === 'Google Calendar') {
+            return (
+                <>
+                    <DialogHeader>
+                        <DialogTitle>{integrationName} Events</DialogTitle>
+                    </DialogHeader>
+                    <div className="py-4">
+                        {isLoadingEvents ? <p>Loading events...</p> :
+                         eventsError ? <p className="text-red-500">{eventsError}</p> :
+                         events.length === 0 ? <p>No upcoming events found in the next 7 days.</p> :
+                         <ul>
+                            {events.map((event, index) => (
+                                <li key={index} className="mb-2">
+                                    <strong>{event.summary}</strong>
+                                    <p className="text-sm text-gray-500">
+                                        {new Date(event.start.dateTime).toLocaleString()} - {new Date(event.end.dateTime).toLocaleString()}
+                                    </p>
+                                </li>
+                            ))}
+                        </ul>}
+                    </div>
+                </>
+            );
         }
-        if (events.length === 0) {
-            return <p>No upcoming events found in the next 7 days.</p>;
+        if (integrationName === 'Stripe') {
+            return (
+                <DialogHeader>
+                    <DialogTitle>{integrationName} Connected</DialogTitle>
+                    <CardDescription>Your account {status.accountId} is connected and ready to process payments.</CardDescription>
+                </DialogHeader>
+            );
         }
-        return (
-            <ul>
-                {events.map((event, index) => (
-                    <li key={index} className="mb-2">
-                        <strong>{event.summary}</strong>
-                        <p className="text-sm text-gray-500">
-                            {new Date(event.start.dateTime).toLocaleString()} - {new Date(event.end.dateTime).toLocaleString()}
-                        </p>
-                    </li>
-                ))}
-            </ul>
-        );
+        return null;
     };
 
     return (
@@ -157,20 +191,17 @@ const AppsAndIntegrations = () => {
                                     <CardTitle>{integration.name}</CardTitle>
                                 </div>
                                 {status.connected ? (
-                                    <Dialog open={isManageDialogOpen} onOpenChange={setIsManageDialogOpen}>
+                                    <Dialog open={isManageDialogOpen[integration.name]} onOpenChange={(isOpen) => setIsManageDialogOpen({ ...isManageDialogOpen, [integration.name]: isOpen })}>
                                         <DialogTrigger asChild>
-                                            <Button variant="secondary" onClick={() => handleFetchEvents(integration.eventsUrl || '#')}>
+                                            <Button variant="secondary" onClick={() => handleOpenManageDialog(integration.name, integration.eventsUrl)}>
                                                 Manage
                                             </Button>
                                         </DialogTrigger>
                                         <DialogContent>
-                                            <DialogHeader>
-                                                <DialogTitle>{integration.name} Events</DialogTitle>
-                                            </DialogHeader>
-                                            <div className="py-4">{renderEventsContent()}</div>
+                                            {renderManageContent(integration.name, status)}
                                             <Button
                                                 variant="destructive"
-                                                onClick={() => handleDisconnect(integration.disconnectUrl || '#')}
+                                                onClick={() => handleDisconnect(integration.name, integration.disconnectUrl || '#')}
                                                 disabled={isDisconnecting}
                                             >
                                                 {isDisconnecting ? 'Disconnecting...' : 'Disconnect'}
@@ -178,8 +209,8 @@ const AppsAndIntegrations = () => {
                                         </DialogContent>
                                     </Dialog>
                                 ) : (
-                                    <Button onClick={() => handleConnect(integration.connectUrl)}>
-                                        Connect
+                                    <Button onClick={() => handleConnect(integration.name, integration.connectUrl)} disabled={isConnecting[integration.name]}>
+                                        {isConnecting[integration.name] ? 'Connecting...' : 'Connect'}
                                     </Button>
                                 )}
                             </CardHeader>
@@ -188,6 +219,11 @@ const AppsAndIntegrations = () => {
                                 {status.connected && status.email && (
                                     <div className="mt-4 text-sm text-gray-600">
                                         Connected as: <strong>{status.email}</strong>
+                                    </div>
+                                )}
+                                {status.connected && status.accountId && (
+                                    <div className="mt-4 text-sm text-gray-600">
+                                        Account ID: <strong>{status.accountId}</strong>
                                     </div>
                                 )}
                             </CardContent>
