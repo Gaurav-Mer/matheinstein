@@ -55,8 +55,8 @@ export const addTutorSchema = z.object({
 
     // New: Booking window controls
     bookingWindow: z.object({
-        minAdvanceNotice: z.number().int().min(1).max(24), // in hours
-        maxAdvanceNotice: z.number().int().min(7).max(90), // in days
+        minAdvanceNotice: z.number().int().min(1).max(24),
+        maxAdvanceNotice: z.number().int().min(7).max(90),
     }).nullish(),
     paidLessons: z.array(paidLessonSchema).nullish(), // Now strongly typed
 
