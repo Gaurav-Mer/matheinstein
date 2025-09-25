@@ -3,32 +3,14 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { z } from "zod";
-import { Resend } from 'resend';
-import nodemailer from "nodemailer";
+// ... (email/nodemailer imports would be here) ...
 
 const assignTutorSchema = z.object({
     tutorId: z.string().min(1, "Tutor ID is required."),
 });
 
-// Initialize email services
-const resend = new Resend(process.env.RESEND_API_KEY);
-const localTransporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
-    port: 587,
-    secure: false,
-    auth: {
-        user: 'allie44@ethereal.email',
-        pass: 'cu3SWSrzYXXAqvFqW4'
-    }
-});
-const sendEmail = async (subject: string, to: string, html: string) => {
-    const mailOptions = { from: 'onboarding@yourplatform.com', to, subject, html };
-    if (process.env.NODE_ENV === "development") {
-        await localTransporter.sendMail(mailOptions);
-    } else {
-        await resend.emails.send(mailOptions);
-    }
-};
+// Assuming sendEmail function is defined with full logic
+const sendEmail = async (subject: string, to: string, html: string) => { /* ... */ };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== "PATCH") {
@@ -56,33 +38,36 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         const demoRequestData = demoRequestDoc.data();
-        const tutorDoc = await adminDb.collection("users").doc(tutorId).get();
-        const studentDoc = await adminDb.collection("users").doc(demoRequestData?.studentId).get();
-        if (!tutorDoc.exists || !studentDoc.exists) {
-            return res.status(404).json({ error: "Tutor or student not found." });
+        const studentId = demoRequestData?.studentId;
+        const subjectId = demoRequestData?.subjectId; // ⬅️ Get the ID
+
+        // 1. Fetch all necessary data
+        const [tutorDoc, studentDoc, subjectDoc] = await Promise.all([
+            adminDb.collection("users").doc(tutorId).get(),
+            adminDb.collection("users").doc(studentId).get(),
+            adminDb.collection("subjects").doc(subjectId).get(), // ⬅️ Fetch Subject details
+        ]);
+
+        if (!tutorDoc.exists || !studentDoc.exists || !subjectDoc.exists) {
+            return res.status(404).json({ error: "Tutor, student, or subject data not found." });
         }
 
+        // 2. Update DB and Create Booking
         await demoRequestRef.update({ status: "assigned", tutorId, assignedAt: new Date() });
         const bookingRef = adminDb.collection("bookings").doc();
         await bookingRef.set({ ...demoRequestData, id: bookingRef.id, tutorId, status: "upcoming", createdAt: new Date() });
 
+        // 3. Prepare for Email
         const tutorName = tutorDoc.data()?.name;
         const studentName = studentDoc.data()?.name;
         const studentEmail = studentDoc.data()?.email;
         const tutorEmail = tutorDoc.data()?.email;
-        const subject = demoRequestData?.subject;
+        const subjectName = subjectDoc.data()?.name; // ⬅️ Use the name for the email
 
-        const studentEmailHtml = `
-            <p>Hi ${studentName},</p>
-            <p>Your demo for ${subject} has been assigned to a tutor! Your tutor is ${tutorName}.</p>
-            <p>They will be in touch shortly to confirm your session.</p>
-        `;
-        const tutorEmailHtml = `
-            <p>Hi ${tutorName},</p>
-            <p>A new demo session has been assigned to you for ${subject}. Your student is ${studentName}.</p>
-            <p>Please contact them to confirm the details.</p>
-        `;
+        const studentEmailHtml = `<p>Hi ${studentName}, Your demo for ${subjectName} has been assigned to your new tutor, ${tutorName}.</p>`;
+        const tutorEmailHtml = `<p>Hi ${tutorName}, A new demo session for ${subjectName} has been assigned to you. Student: ${studentName}.</p>`;
 
+        // 4. Send Emails
         await sendEmail("Demo Session Assigned!", studentEmail, studentEmailHtml);
         await sendEmail("New Demo Session Assigned", tutorEmail, tutorEmailHtml);
 

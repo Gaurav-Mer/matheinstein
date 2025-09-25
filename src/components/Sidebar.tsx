@@ -24,7 +24,8 @@ const navLinks = {
         { label: "Bookings", href: "/student/bookings", icon: CalendarDays },
         { label: "My Tutors", href: "/student/tutor", icon: GraduationCap },
         { label: "Buy Packages", href: "/student/packages", icon: ShoppingCart },
-        { label: "Messages", href: "/student/messages", icon: MessageSquare },
+        // { label: "Messages", href: "/student/messages", icon: MessageSquare },
+        { label: "Billings", href: "/student/billing", icon: DollarSign }
     ],
     tutor: [
         { label: "Dashboard", href: "/tutor/dashboard", icon: LayoutDashboard },
@@ -45,6 +46,7 @@ const navLinks = {
         { label: "Profile", href: "/admin/profile", icon: User },
         { label: "Demo Requests", href: "/admin/demo-requests", icon: Bell },
         { label: "Invite Admin", href: "/admin/invite-admin", icon: Plus },
+        { label: "Billings", href: "/admin/purchases", icon: DollarSign }
     ],
 };
 
