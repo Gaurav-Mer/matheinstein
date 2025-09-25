@@ -18,10 +18,15 @@ import {
 import { Badge } from '@/components/ui/badge';
 import TutorLayout from '@/pages/tutor/_layout';
 import { useTutorBookings } from '@/hooks/tutors/useTutorBookings';
+import CancellationDialog from '../CancellationDialog';
 
 export default function MyBookings() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedStatus, setSelectedStatus] = useState<'upcoming' | 'completed' | 'cancelled'>('upcoming');
+    const [cancelModalOpen, setCancelModalOpen] = useState(false);
+    const [selectedBooking, setSelectedBooking] = useState<any>(null);
+
+
 
     // ⚠️ Corrected: The useTutorBookings hook now uses the selectedStatus variable
     const { data: bookings, isLoading, error } = useTutorBookings({ status: selectedStatus });
@@ -68,6 +73,12 @@ export default function MyBookings() {
 
     return (
         <TutorLayout>
+            <CancellationDialog
+                bookingId={selectedBooking?.id}
+                isOpen={cancelModalOpen}
+                onClose={() => setCancelModalOpen(false)}
+                bookingDetails={selectedBooking}
+            />
             <div className="p-6  bg-white">
                 {/* Header */}
                 <Card className="shadow-lg rounded-xl mb-6">
@@ -131,6 +142,7 @@ export default function MyBookings() {
                                             <TableHead className="font-semibold text-slate-700 px-6 py-4 text-left">Date</TableHead>
                                             <TableHead className="font-semibold text-slate-700 px-6 py-4 text-left">Time</TableHead>
                                             <TableHead className="font-semibold text-slate-700 px-6 py-4 text-center">Status</TableHead>
+                                            <TableHead className="font-semibold text-slate-700 px-6 py-4 text-center">Action</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -158,6 +170,16 @@ export default function MyBookings() {
                                                 </TableCell>
                                                 <TableCell className="px-6 py-4 text-center">
                                                     {getStatusBadge(booking.status)}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Button
+                                                        onClick={() => {
+                                                            setSelectedBooking(booking);
+                                                            setCancelModalOpen(true);
+                                                        }}
+                                                    >
+                                                        Cancel
+                                                    </Button>
                                                 </TableCell>
                                             </TableRow>
                                         ))}

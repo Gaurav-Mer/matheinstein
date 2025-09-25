@@ -1,6 +1,6 @@
 import React from 'react'
-import StudentLayout from './_layout'
 import StudentBookingsPage from '@/components/Student/StudentBookingPage'
+import StudentLayout from '../_layout'
 
 const Bookings = () => {
     return (

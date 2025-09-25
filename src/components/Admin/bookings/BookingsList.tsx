@@ -17,12 +17,16 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Badge } from '@/components/ui/badge';
+import CancellationDialog from '@/components/CancellationDialog';
 
 export default function BookingsList() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedRole, setSelectedRole] = useState<'tutor' | 'student' | 'admin' | ''>('');
     const [selectedUserId, setSelectedUserId] = useState<string>('');
     const [selectedStatus, setSelectedStatus] = useState<'upcoming' | 'completed' | 'cancelled'>('upcoming');
+    const [cancelModalOpen, setCancelModalOpen] = useState(false);
+    const [selectedBooking, setSelectedBooking] = useState<any>(null);
+
 
     // Fetch the bookings based on the selected filters
     const { data: bookingData, isLoading, error } = useAdminBookings({
@@ -82,6 +86,12 @@ export default function BookingsList() {
 
     return (
         <div className="h-full">
+            <CancellationDialog
+                bookingId={selectedBooking?.id}
+                isOpen={cancelModalOpen}
+                onClose={() => setCancelModalOpen(false)}
+                bookingDetails={selectedBooking}
+            />
             {/* Header */}
             <Card className="shadow-lg rounded-xl mb-6">
                 <CardHeader>
@@ -162,6 +172,7 @@ export default function BookingsList() {
                                         <TableHead className="font-semibold text-slate-700 px-6 py-4 text-left">Date</TableHead>
                                         <TableHead className="font-semibold text-slate-700 px-6 py-4 text-left">Time</TableHead>
                                         <TableHead className="font-semibold text-semibold text-slate-700 px-6 py-4 text-center">Status</TableHead>
+                                        <TableHead className="font-semibold text-semibold text-slate-700 px-6 py-4 text-center">Action</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -192,6 +203,16 @@ export default function BookingsList() {
                                             </TableCell>
                                             <TableCell className="px-6 py-4 text-center">
                                                 {getStatusBadge(booking.status)}
+                                            </TableCell>
+                                            <TableCell>
+                                                <Button
+                                                    onClick={() => {
+                                                        setSelectedBooking(booking);
+                                                        setCancelModalOpen(true);
+                                                    }}
+                                                >
+                                                    Cancel
+                                                </Button>
                                             </TableCell>
                                         </TableRow>
                                     ))}
