@@ -20,12 +20,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         if (req.method === "PUT") {
-            const { name } = req.body;
+            const { name, status } = req.body;
             if (!name) return res.status(400).json({ error: "Subject name is required" });
 
             await adminDb.collection("subjects").doc(id).update({
                 name,
                 updatedAt: new Date(),
+                status
             });
 
             const updatedSubject = (await adminDb.collection("subjects").doc(id).get()).data();

@@ -124,7 +124,7 @@ export default function SubjectsSection() {
         if (!editState) return;
 
         updateSubject.mutate(
-            { id: editState.id, ...data },
+            { id: editState.id, ...data, status: editForm?.watch().status },
             {
                 onSuccess: () => {
                     toast.success("Subject updated successfully!");
