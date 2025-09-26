@@ -9,6 +9,8 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Loader2, CalendarDays, BookOpen, User, ChevronRight, ChevronLeft, CheckCircle, Clock, Star, Play, GraduationCap } from "lucide-react";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { DayPicker } from 'react-day-picker';
+import 'react-day-picker/dist/style.css';
 import dayjs from 'dayjs';
 import { usePublicSubjects } from '@/hooks/usePublicSubjects';
 import { useDemoRequestForm } from '@/hooks/useDemoRequestForm';
@@ -16,6 +18,7 @@ import { usePublicDemoSlots } from '@/hooks/usePublicDemoSlots';
 import { cn } from '@/lib/utils';
 import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(timezone);
+
 // --- ZOD SCHEMA (Central Validation) ---
 const bookingWizardSchema = z.object({
     subjectId: z.string().min(1, "Please select a subject."),
@@ -24,40 +27,50 @@ const bookingWizardSchema = z.object({
     studentEmail: z.string().email("A valid email is required."),
     adminId: z.string().min(1, "Internal error: Admin ID missing."),
 });
+
 type BookingWizardInput = z.infer<typeof bookingWizardSchema>;
+
 const DemoBookingWizard = () => {
     const [step, setStep] = useState(1);
     const { data: subjects, isLoading: isSubjectsLoading } = usePublicSubjects();
     const { mutate: submitDemoRequest, isPending: isSubmitting } = useDemoRequestForm();
+
     // ⚠️ HARDCODED ADMIN ID: This simulates the landing page pre-selecting a specialist
     const selectedAdmin = useMemo(() => ({ uid: 'QqgXVhlN3WN22mYVPNCKu5s5NDT2', name: 'Demo Specialist', timeZone: 'Asia/Kolkata' }), []);
+
     // --- FETCH REAL SLOTS ---
     const demoSlotsQuery = useMemo(() => ({ userId: selectedAdmin.uid, month: dayjs().toISOString() }), [selectedAdmin.uid]);
     const { data: adminData, isLoading: isSlotsLoading } = usePublicDemoSlots(demoSlotsQuery);
+
     // Process the slots for the dropdown
     const availableTimeSlots = useMemo(() => {
         return adminData?.bookedSlots?.map((slot: any) => ({
-            label: dayjs(slot.startTime).tz(selectedAdmin.timeZone).format('MMM D, h:mm A'),
+            label: dayjs(slot.startTime).format('MMM D, h:mm A'),
             value: slot.startTime,
         })) || [];
-    }, [adminData, selectedAdmin.timeZone]);
+    }, [adminData]);
+
     const methods = useForm<BookingWizardInput>({
         resolver: zodResolver(bookingWizardSchema),
         defaultValues: { adminId: selectedAdmin.uid, selectedSlot: '', subjectId: '' },
         mode: 'onTouched',
     });
+
     const { handleSubmit, register, formState: { errors }, watch, setValue, getValues } = methods;
+
     const handleNext = async (currentStep: number) => {
         const fieldsToValidate: (keyof BookingWizardInput)[] = ({
             1: ['subjectId'],
             2: ['selectedSlot'],
             3: ['studentName', 'studentEmail']
         } as Record<number, (keyof BookingWizardInput)[]>)[currentStep] || [];
+
         const result = await methods.trigger(fieldsToValidate);
         if (result) {
             setStep(currentStep + 1);
         }
     };
+
     const onSubmit: SubmitHandler<BookingWizardInput> = (data) => {
         const finalPayload = {
             studentName: data.studentName,
@@ -65,10 +78,12 @@ const DemoBookingWizard = () => {
             subjectId: data.subjectId,
             requestedDateTime: data.selectedSlot,
         };
+
         submitDemoRequest(finalPayload, {
             onSuccess: () => setStep(4)
         });
     };
+
     // Re-usable component for each step's header
     const StepHeader = ({ icon, title, subtitle }: { icon: React.ReactNode, title: string, subtitle: string }) => (
         <div className="text-center mb-8">
@@ -79,6 +94,7 @@ const DemoBookingWizard = () => {
             <p className="text-md text-gray-500 mt-1">{subtitle}</p>
         </div>
     );
+
     // --- STEP 1: Subject Selection ---
     const renderStep1 = () => (
         <div>
@@ -121,51 +137,79 @@ const DemoBookingWizard = () => {
             )}
         </div>
     );
+
     // --- STEP 2: Time Slot Selection ---
-    const renderStep2 = () => (
-        <div>
-            <StepHeader
-                icon={<CalendarDays className="w-8 h-8 text-blue-600" />}
-                title="Schedule your demo"
-                subtitle={`Select a time with our demo specialist, ${selectedAdmin.name}.`}
-            />
-            {isSlotsLoading ? (
-                <div className="flex justify-center py-10">
-                    <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+    const renderStep2 = () => {
+        const [selectedDay, setSelectedDay] = useState<Date | undefined>(undefined);
+
+        const dailySlots = useMemo(() => {
+            if (!selectedDay) return [];
+            return availableTimeSlots.filter(slot => dayjs(slot.value).isSame(selectedDay, 'day'));
+        }, [selectedDay, availableTimeSlots]);
+
+        return (
+            <div>
+                <StepHeader
+                    icon={<CalendarDays className="w-8 h-8 text-blue-600" />}
+                    title="Schedule your demo"
+                    subtitle={`Select a date and time with our demo specialist, ${selectedAdmin.name}.`}
+                />
+                <div className="flex flex-col md:flex-row gap-8">
+                    <div className="flex-1 flex justify-center">
+                        <DayPicker
+                            mode="single"
+                            selected={selectedDay}
+                            onSelect={setSelectedDay}
+                            disabled={{ before: new Date() }}
+                            className="w-full"
+                        />
+                    </div>
+                    <div className="flex-1 md:border-l md:pl-8">
+                        <h3 className="text-lg font-semibold mb-4 text-center md:text-left">
+                            {selectedDay ? `Available slots for ${dayjs(selectedDay).format('dddd, MMM D')}` : 'Please select a day'}
+                        </h3>
+                        {isSlotsLoading ? (
+                            <div className="flex justify-center py-10">
+                                <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+                            </div>
+                        ) : selectedDay ? (
+                            dailySlots.length > 0 ? (
+                                <div className="grid grid-cols-2 gap-3">
+                                    {dailySlots.map((slot: any) => (
+                                        <button
+                                            key={slot.value}
+                                            type="button"
+                                            onClick={() => setValue('selectedSlot', slot.value, { shouldValidate: true })}
+                                            className={cn(
+                                                "p-3 border-2 rounded-lg transition-all duration-200 text-center",
+                                                watch('selectedSlot') === slot.value
+                                                    ? "border-blue-500 bg-blue-50 shadow-lg"
+                                                    : "border-gray-200 hover:border-blue-300 hover:bg-gray-50"
+                                            )}
+                                        >
+                                            <div className="text-md font-bold text-blue-600">{dayjs(slot.value).format('h:mm A')}</div>
+                                        </button>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center text-gray-500 py-10 bg-gray-50 rounded-lg">
+                                    <p>No slots available for this day.</p>
+                                </div>
+                            )
+                        ) : (
+                            <div className="text-center text-gray-500 py-10 bg-gray-50 rounded-lg">
+                                <p>Select a date to see available times.</p>
+                            </div>
+                        )}
+                        {errors.selectedSlot && (
+                            <p className="text-red-500 text-sm mt-4 text-center">{errors.selectedSlot.message}</p>
+                        )}
+                    </div>
                 </div>
-            ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {availableTimeSlots.length > 0 ? (
-                        availableTimeSlots.map((slot: any) => (
-                            <button
-                                key={slot.value}
-                                type="button"
-                                onClick={() => setValue('selectedSlot', slot.value, { shouldValidate: true })}
-                                className={cn(
-                                    "p-4 border-2 rounded-lg transition-all duration-200 text-center",
-                                    watch('selectedSlot') === slot.value
-                                        ? "border-blue-500 bg-blue-50 shadow-lg"
-                                        : "border-gray-200 hover:border-blue-300 hover:bg-gray-50"
-                                )}
-                            >
-                                <div className="font-semibold text-gray-800">{dayjs(slot.value).format('ddd, MMM D')}</div>
-                                <div className="text-lg font-bold text-blue-600 mt-1">{dayjs(slot.value).format('h:mm A')}</div>
-                            </button>
-                        ))
-                    ) : (
-                        <div className="col-span-full text-center text-gray-500 py-10 bg-gray-50 rounded-lg">
-                            <CalendarDays className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                            <p className="font-semibold">No available slots</p>
-                            <p className="text-sm">Please check back later for new openings.</p>
-                        </div>
-                    )}
-                </div>
-            )}
-            {errors.selectedSlot && (
-                <p className="text-red-500 text-sm mt-4 text-center">{errors.selectedSlot.message}</p>
-            )}
-        </div>
-    );
+            </div>
+        );
+    };
+
     // --- STEP 3: Personal Information ---
     const renderStep3 = () => (
         <div>
@@ -199,6 +243,7 @@ const DemoBookingWizard = () => {
             </div>
         </div>
     );
+
     // --- FINAL STEP: Confirmation ---
     const renderStep4 = () => (
         <div className="text-center py-10">
@@ -234,6 +279,7 @@ const DemoBookingWizard = () => {
             </Button>
         </div>
     );
+
     const renderCurrentStep = () => {
         switch (step) {
             case 1: return renderStep1();
@@ -243,6 +289,7 @@ const DemoBookingWizard = () => {
             default: return null;
         }
     };
+
     // Side information panel
     const InfoPanel = () => {
         const subjectName = subjects?.find((s: any) => s.id === watch('subjectId'))?.name;
@@ -292,6 +339,7 @@ const DemoBookingWizard = () => {
             </div>
         );
     };
+
     return (
         <Card className="w-full max-w-5xl mx-auto shadow-2xl rounded-2xl border-0">
             <div className="flex">
@@ -353,4 +401,4 @@ const DemoBookingWizard = () => {
         </Card>
     );
 };
-export default DemoBookingWizard
+export default DemoBookingWizard;
