@@ -28,7 +28,7 @@ export default function AdminProfileForm({ initialData, onClose }: AdminProfileF
         defaultValues: initialData,
     });
     const { register, handleSubmit, formState: { errors }, control } = methods;
-
+    console.log("errors", errors)
     const onSubmit = (data: AdminInput) => {
         const updateData: any = {
             uid: initialData.uid,

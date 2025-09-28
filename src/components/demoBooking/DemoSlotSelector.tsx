@@ -57,7 +57,6 @@ export default function DemoSlotSelector({ selectedAdmin, subjectName }: DemoSlo
     }), [selectedAdmin.uid, calendarMonth]);
 
     const { data: adminData, isLoading: isSlotsLoading } = usePublicDemoSlots(demoSlotsQuery) as { data?: AvailabilityResponse; isLoading: boolean };
-
     // Create an efficient Map for instant lookups (Date String -> DayAvailability)
     const availabilityMap = useMemo(() => {
         if (!adminData?.availability) return new Map<string, DayAvailability>();
@@ -66,7 +65,6 @@ export default function DemoSlotSelector({ selectedAdmin, subjectName }: DemoSlo
             adminData.availability.map(day => [day.date, day])
         );
     }, [adminData]);
-
     // Determine which days to disable in the calendar based on the API response
     const disabledDays: Matcher[] = useMemo(() => {
         const today = new Date();
@@ -77,6 +75,7 @@ export default function DemoSlotSelector({ selectedAdmin, subjectName }: DemoSlo
         if (adminData?.availability) {
             adminData.availability.forEach(day => {
                 // Disable if the status is not 'available'
+                console.log("day is ", day)
                 if (day.status !== 'available') {
                     disabledMatchers.push(new Date(day.date + 'T00:00:00')); // Use T00:00:00 to avoid timezone issues
                 }
@@ -90,6 +89,7 @@ export default function DemoSlotSelector({ selectedAdmin, subjectName }: DemoSlo
         if (!selectedDay || !availabilityMap) return [];
 
         const selectedDateString = dayjs(selectedDay).format('YYYY-MM-DD');
+
         const dayData = availabilityMap.get(selectedDateString);
 
         if (!dayData || dayData.status !== 'available') return [];
@@ -99,7 +99,6 @@ export default function DemoSlotSelector({ selectedAdmin, subjectName }: DemoSlo
             value: slot.start_time, // Keep the full ISO string for the form value
         }));
     }, [selectedDay, availabilityMap, selectedAdmin.timeZone]);
-
 
     const handleDaySelect = (date: Date | undefined) => {
         if (date) {

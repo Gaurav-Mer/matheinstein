@@ -16,7 +16,7 @@ export const useDemoRequestForm = () => {
     return useMutation({
         mutationFn: async (data: DemoRequestData) => {
             // Calls the public API that handles user creation and pending demo request
-            const { data: response } = await axios.post("/api/admin/demo-request", data);
+            const { data: response } = await axios.post("/api/public/book-demo", data);
             return response;
         },
         onSuccess: () => {

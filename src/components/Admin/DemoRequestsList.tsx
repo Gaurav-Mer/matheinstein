@@ -7,8 +7,7 @@ import { useTutors } from '@/hooks/useTutors';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import { Loader2, Users, CalendarDays, Plus, UserPlus, BookOpen, Clock, Search } from "lucide-react";
-import { format } from 'date-fns';
+import { Loader2, UserPlus, BookOpen, Clock, Search } from "lucide-react";
 import { Input } from '@/components/ui/input';
 import {
     Select,
@@ -19,15 +18,23 @@ import {
 } from "@/components/ui/select";
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'react-toastify';
+import dayjs from 'dayjs';
+import { useStudents } from '@/hooks/useStudents';
+import { normalizeArray } from '@/lib/utils';
+import { useSubjects } from '@/hooks/useSubjects';
 
 export default function DemoRequestsList() {
     const { data: demoRequests, isLoading, error } = useAdminDemoRequests();
     const { data: tutors } = useTutors();
     const { mutate: assignDemo, isPending: isAssigning } = useAssignDemo();
+    const { data: allStudents, isLoading: isAllStudentsLoading } = useStudents();
+    const { data: allSubjects = [] } = useSubjects();
+
+
     const [searchQuery, setSearchQuery] = useState('');
     const [tutorAssignment, setTutorAssignment] = useState<Record<string, string>>({});
 
-    if (isLoading) {
+    if (isLoading || isAllStudentsLoading) {
         return (
             <div className="flex justify-center items-center h-dvh bg-slate-50">
                 <Loader2 className="h-10 w-10 animate-spin text-primary" />
@@ -46,10 +53,10 @@ export default function DemoRequestsList() {
         );
     }
 
-    const filteredRequests = demoRequests?.filter((req: any) =>
-        req.student?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        req.student?.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        req.subject.toLowerCase().includes(searchQuery.toLowerCase())
+    const filteredRequests = !searchQuery ? demoRequests : demoRequests?.filter((req: any) =>
+        req.student?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        req.student?.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        req.subject?.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];
 
     const handleAssignTutor = (requestId: string) => {
@@ -61,6 +68,9 @@ export default function DemoRequestsList() {
         assignDemo({ requestId, tutorId });
     };
 
+    const normalizedStudents = normalizeArray(allStudents || [], "uid")
+    const normalizedSub = normalizeArray(allSubjects || [], "id")
+    console.log("normalizedStudents", normalizedStudents)
     return (
         <div className="p-6 md:p-10 min-h-dvh ">
             {/* Header */}
@@ -102,9 +112,9 @@ export default function DemoRequestsList() {
                                 <TableHeader>
                                     <TableRow className="bg-slate-50 border-b border-slate-200/60 hover:bg-slate-50">
                                         <TableHead className="font-semibold text-slate-700 px-6 py-4 text-left">Student</TableHead>
-                                        <TableHead className="font-semibold text-slate-700 px-6 py-4 text-left">Subject</TableHead>
+                                        <TableHead className="font-semibold text-slate-700 px-6 py-4 text-left">Email</TableHead>
                                         <TableHead className="font-semibold text-slate-700 px-6 py-4 text-left">Requested Time</TableHead>
-                                        <TableHead className="font-semibold text-slate-700 px-6 py-4 text-center">Status</TableHead>
+                                        <TableHead className="font-semibold text-slate-700 px-6 py-4 text-center">Subject</TableHead>
                                         <TableHead className="font-semibold text-slate-700 px-6 py-4 text-center">Assign Tutor</TableHead>
                                     </TableRow>
                                 </TableHeader>
@@ -113,25 +123,25 @@ export default function DemoRequestsList() {
                                         <TableRow key={request.id} className="border-b border-slate-100 hover:bg-slate-50/30 transition-colors duration-150">
                                             <TableCell className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
-                                                    <span className="font-medium text-slate-800">{request.student.name}</span>
+                                                    <span className="font-medium text-slate-800">{normalizedStudents[request?.studentId ?? ""]?.name}</span>
                                                 </div>
                                             </TableCell>
                                             <TableCell className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-slate-600 font-medium">{request.subject}</span>
+                                                    <span className="text-slate-600 font-medium">{normalizedStudents[request?.studentId ?? ""]?.email}</span>
                                                 </div>
                                             </TableCell>
                                             <TableCell className="px-6 py-4">
                                                 <div className="flex items-center gap-2">
                                                     <Clock className="h-4 w-4 text-slate-400 flex-shrink-0" />
                                                     <span className="text-slate-600">
-                                                        {format(new Date(request.createdAt), 'PPP p')}
+                                                        {dayjs(new Date(request.createdAt?._seconds * 1000)).format("DD-MM-YYYY hh:mm a")}
                                                     </span>
                                                 </div>
                                             </TableCell>
                                             <TableCell className="px-6 py-4 text-center">
                                                 <Badge variant="default" className="bg-amber-100 text-amber-600 hover:bg-amber-100">
-                                                    Pending
+                                                    {normalizedSub[request?.subjectId]?.name}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="px-6 py-4 text-center">

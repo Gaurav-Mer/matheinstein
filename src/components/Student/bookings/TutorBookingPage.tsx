@@ -17,9 +17,9 @@ import { toast } from 'react-toastify';
 export default function TutorBookingPage() {
     const params = useParams();
     const router = useRouter();
-    const { user, lessonCredits } = useAuth(); // Assume lessonCredits is available via useAuth
+    const { user, lessonCredits: a } = useAuth(); // Assume lessonCredits is available via useAuth
     const tutorId = params?.id as string;
-
+    const lessonCredits = 2
     const { data: tutor, isLoading, error } = usePublicTutor(tutorId);
     const [selectedSlots, setSelectedSlots] = useState<any[]>([]);
     const [step, setStep] = useState(1); // 1: Calendar, 2: Confirmation

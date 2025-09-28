@@ -26,36 +26,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             .get();
 
         const demoRequests = demoRequestsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-        // 2. Collect UIDs and Subject IDs
-        const studentUids = demoRequests.map((req: any) => req.studentId).filter(Boolean);
-        const subjectIds = Array.from(new Set(demoRequests.map((req: any) => req.subjectId).filter(Boolean)));
-
-        // 3. ⚠️ FETCH STUDENTS AND SUBJECTS IN PARALLEL ⚠️
-        const [studentsSnapshot, subjectsSnapshot] = await Promise.all([
-            // Fetch Students (only if UIDs exist)
-            studentUids.length > 0
-                ? adminDb.collection("users").where("uid", "in", studentUids).get()
-                : Promise.resolve({ docs: [] }), // Return empty array if no UIDs
-
-            // Fetch Subjects (only if IDs exist)
-            subjectIds.length > 0
-                ? adminDb.collection("subjects").where(FieldPath.documentId(), "in", subjectIds).get()
-                : Promise.resolve({ docs: [] }), // Return empty array if no IDs
-        ]);
-
-        const studentsData = studentsSnapshot.docs.map(doc => ({ uid: doc.id, ...doc.data() }));
-        const subjectsData = subjectsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-        // 4. Normalize Data
-        const normalizedStudents = normalizeArray(studentsData, "uid");
-        const normalizedSubjects: any = normalizeArray(subjectsData, "id");
-
         // 5. Enrich demo requests with student and subject name
         const enrichedDemoRequests = demoRequests.map((request: any) => ({
             ...request,
-            student: normalizedStudents[request.studentId] || null,
-            subjectName: normalizedSubjects[request.subjectId]?.name || 'N/A',
         }));
 
         return res.status(200).json(enrichedDemoRequests);

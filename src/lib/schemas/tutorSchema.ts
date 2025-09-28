@@ -30,7 +30,7 @@ export const addTutorSchema = z.object({
             day: z.string(),
             startTime: z.string(), // "09:00"
             endTime: z.string(),   // "17:00"
-            slotDuration: z.number().min(15, "Minimum slot duration is 15 min").max(180, "Maximum slot is 3 hours"),
+            // slotDuration: z.number().min(15, "Minimum slot duration is 15 min").max(180, "Maximum slot is 3 hours"),
         }).nullish()
     ).nullish(),
 

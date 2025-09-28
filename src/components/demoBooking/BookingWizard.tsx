@@ -9,7 +9,6 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Loader2, CalendarDays, BookOpen, User, ChevronRight, ChevronLeft, CheckCircle, Clock, Star, Play, GraduationCap } from "lucide-react";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import dayjs from 'dayjs';
 import { usePublicSubjects } from '@/hooks/usePublicSubjects';
@@ -39,27 +38,8 @@ const DemoBookingWizard = () => {
     // ⚠️ HARDCODED ADMIN ID: This simulates the landing page pre-selecting a specialist
     const selectedAdmin = useMemo(() => ({ uid: 'QqgXVhlN3WN22mYVPNCKu5s5NDT2', name: 'Demo Specialist', timeZone: 'Asia/Kolkata' }), []);
 
-    const [calendarMonth, setCalendarMonth] = useState(dayjs());
-    const [selectedDay, setSelectedDay] = useState<Date | undefined>(undefined);
-
     // --- FIX 1: Define the Dynamic Date Range for API Call ---
-    const demoSlotsQuery = useMemo(() => ({
-        userId: selectedAdmin.uid,
-        // 🚨 Use start/end of the current calendar view for the API
-        startDate: calendarMonth.startOf('month').toISOString(),
-        endDate: calendarMonth.endOf('month').toISOString(),
-    }), [selectedAdmin.uid, calendarMonth]); // Query refetches only when month changes
-    // --- FETCH REAL SLOTS ---
-    const { data: adminData, isLoading: isSlotsLoading } = usePublicDemoSlots(demoSlotsQuery);
 
-    // Process the slots for the dropdown
-    const availableTimeSlots = useMemo(() => {
-        return adminData?.bookedSlots?.map((slot: any) => ({
-            label: dayjs(slot.startTime).format('MMM D, h:mm A'),
-            value: slot.startTime,
-        })) || [];
-    }, [adminData]);
-    console.log("availableTimeSlots", availableTimeSlots)
     const methods = useForm<BookingWizardInput>({
         resolver: zodResolver(bookingWizardSchema),
         defaultValues: { adminId: selectedAdmin.uid, selectedSlot: '', subjectId: '' },
@@ -148,10 +128,6 @@ const DemoBookingWizard = () => {
         </div>
     );
 
-    const dailySlots = useMemo(() => {
-        if (!selectedDay) return [];
-        return availableTimeSlots?.filter((slot: any) => dayjs(slot.value).isSame(selectedDay, 'day'));
-    }, [selectedDay, availableTimeSlots]);
 
     // --- STEP 2: Time Slot Selection ---
     const renderStep2 = () => {
@@ -326,7 +302,6 @@ const DemoBookingWizard = () => {
                                             onClick={() => step < 3 && handleNext(step)}
                                             disabled={
                                                 isSubmitting ||
-                                                isSlotsLoading ||
                                                 (step === 1 && !watch('subjectId')) ||
                                                 (step === 2 && !watch('selectedSlot'))
                                             }
