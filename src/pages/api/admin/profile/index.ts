@@ -3,9 +3,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { z } from "zod";
-// Assuming you have the comprehensive schema for admin that includes all tutor fields
-import { adminSchema } from "@/lib/schemas/adminSchema";
+import { adminSchema } from "@/lib/schemas/adminSchema"; // Assuming this is imported
 
+const DEFAULT_PAYOUT_RATE = 70; // 70% Payout is the default company policy
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     // A function to securely get the authenticated admin's ID
@@ -30,7 +30,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const adminDoc = await adminDb.collection("users").doc(uid).get();
             if (!adminDoc.exists) return res.status(404).json({ error: "Admin profile not found" });
             const adminData = adminDoc.data();
-            const profile = { uid: adminDoc.id, ...adminData };
+
+            // 🚨 FIX: Ensure payoutPercentage is returned with a default fallback
+            const profile = {
+                uid: adminDoc.id,
+                ...adminData,
+                // If payoutPercentage is missing from the DB, set it to the default policy (70%)
+                payoutPercentage: adminData?.payoutPercentage || DEFAULT_PAYOUT_RATE
+            };
             return res.status(200).json(profile);
         }
 
@@ -42,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
             const validatedData = updateSchema.parse(req.body);
 
-            // Handle Firebase Auth Update (Email and Password)
+            // 1. Handle Firebase Auth Update (Email and Password)
             const authUpdate: any = {};
             if (validatedData.email) authUpdate.email = validatedData.email;
             if (validatedData.password) authUpdate.password = validatedData.password;
@@ -51,13 +58,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 await adminAuth.updateUser(uid, authUpdate);
             }
 
-            // Update Firestore with the remaining profile and booking settings
+            // 2. Update Firestore with the remaining profile and booking settings
             const firestoreUpdate: any = { ...validatedData };
             delete firestoreUpdate.email;
             delete firestoreUpdate.password;
 
             if (Object.keys(firestoreUpdate).length > 0) {
-                // This now safely updates name, phone, bio, subjects, paidLessons, availability, etc.
+                // This now safely updates paidLessons, availability, and payoutPercentage.
                 await adminDb.collection("users").doc(uid).update(firestoreUpdate);
             }
 

@@ -5,14 +5,20 @@ import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { z } from "zod";
 import { addTutorSchema } from "@/lib/schemas/tutorSchema";
 
+// Define the global default payout rate for display and initial setup
+const DEFAULT_PAYOUT_RATE = 70; // 70%
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    // ⚠️ FIX: The route slug is usually accessed as 'uid' or 'id'. We must ensure it's accessed correctly.
+    // Assuming the file is named [id].ts and the variable should be accessed as id.
     const { id: uid } = req.query;
+
     if (!uid || typeof uid !== "string") {
         return res.status(400).json({ error: "Tutor UID is required" });
     }
 
     try {
-        // 1️⃣ Verify admin token
+        // 1️⃣ Verify admin token and role
         const token = req.headers.authorization?.split(" ")[1];
         if (!token) return res.status(401).json({ error: "Unauthorized" });
         const decoded = await adminAuth.verifyIdToken(token);
@@ -26,12 +32,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (req.method === "GET") {
             const tutorDoc = await adminDb.collection("users").doc(uid).get();
             if (!tutorDoc.exists) return res.status(404).json({ error: "Tutor not found" });
-            return res.status(200).json({ uid: tutorDoc.id, ...tutorDoc.data() });
+
+            const tutorData = tutorDoc.data();
+
+            // 🚨 FIX 1: Provide default payout rate for the frontend form
+            const finalData = {
+                uid: tutorDoc.id,
+                ...tutorData,
+                payoutPercentage: tutorData?.payoutPercentage || DEFAULT_PAYOUT_RATE
+            };
+            return res.status(200).json(finalData);
         }
 
         // 3️⃣ Handle PUT/PATCH to update a tutor
         if (req.method === "PUT" || req.method === "PATCH") {
-            // Use Zod to validate the partial update against the schema
+            // Use Zod partial update schema
             const updateSchema = addTutorSchema.partial().extend({
                 password: z.string().min(6).optional(),
             });
@@ -46,13 +61,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 await adminAuth.updateUser(uid, authUpdate);
             }
 
-            // Update Firestore with the validated data (after handling auth fields)
-            if (Object.keys(validatedData).length > 0) {
-                // To avoid sending email/password to Firestore
-                delete validatedData.email;
-                delete validatedData.password;
+            // Update Firestore with the remaining profile/booking settings
+            const firestoreUpdate: any = { ...validatedData };
+            delete firestoreUpdate.email;
+            delete firestoreUpdate.password;
 
-                await adminDb.collection("users").doc(uid).update(validatedData);
+            if (Object.keys(firestoreUpdate).length > 0) {
+                // This now safely updates paidLessons, availability, and payoutPercentage.
+                await adminDb.collection("users").doc(uid).update(firestoreUpdate);
             }
 
             return res.status(200).json({ message: "Tutor updated successfully" });
@@ -60,6 +76,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // 4️⃣ Handle DELETE to delete a tutor
         if (req.method === "DELETE") {
+            // No changes needed here, logic is sound
             await adminAuth.deleteUser(uid);
             await adminDb.collection("users").doc(uid).delete();
             return res.status(200).json({ message: "Tutor deleted successfully" });

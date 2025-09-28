@@ -12,6 +12,7 @@ import { AddTutorInput } from "@/lib/schemas/tutorSchema";
 
 export default function TutorPackageManager() {
     const { control, register, formState: { errors } } = useFormContext<AddTutorInput>();
+
     const { fields, append, remove } = useFieldArray({
         control,
         name: "paidLessons" as 'paidLessons',

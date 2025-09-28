@@ -15,13 +15,13 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, Menu, User } from "lucide-react";
 import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
 
 const ignore = ["/login", "/"]
 export default function Navbar() {
-    const { user, role, logout } = useAuth();
+    const { user, role, logout, status } = useAuth();
     const router = useRouter();
     const pathName = usePathname();
-
     const onLogut = () => {
         logout();
         router.replace("/login")
@@ -70,7 +70,8 @@ export default function Navbar() {
                     </div>
 
                     {/* User Dropdown */}
-                    <div className="flex items-center">
+                    <div className="flex items-center gap-2">
+                        {status === "pending_demo" && <p className="bg-red-200 rounded-md px-3 py-1 text-xs ">Request Pending- waiting for the Admin Approval</p>}
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button

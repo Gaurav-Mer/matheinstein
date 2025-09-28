@@ -11,10 +11,13 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import StudentLayout from '../_layout';
+import { PendingRequestStatus } from '@/components/Student/PendingRequestStatus';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function StudentTutorsPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const { data: tutors, isLoading, error } = useStudentTutors();
+    const { user, status } = useAuth()
 
     if (isLoading) {
         return (
@@ -40,9 +43,10 @@ export default function StudentTutorsPage() {
         tutor.email.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];
 
+
     return (
         <StudentLayout>
-            <div className="p-6 md:p-10 min-h-screen bg-gray-50">
+            {status === "pending_demo" ? <PendingRequestStatus studentName={user?.displayName ?? ""} subjectName='' /> : <div className="p-6 md:p-10 min-h-screen bg-gray-50">
                 {/* Header */}
                 <Card className="shadow-lg rounded-xl mb-6">
                     <CardHeader>
@@ -152,7 +156,7 @@ export default function StudentTutorsPage() {
                         )}
                     </CardContent>
                 </Card>
-            </div>
+            </div>}
         </StudentLayout>
     );
 }

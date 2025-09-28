@@ -34,7 +34,7 @@ export function useAuth() {
             const docSnap = await getDoc(doc(firestore, "users", firebaseUser.uid));
             if (!docSnap.exists()) throw new Error("User not found");
 
-            return docSnap.data() as { role: Role; lessonCredits: number;[key: string]: any }; // ⬅️ Ensure lessonCredits is typed
+            return docSnap.data() as { role: Role; lessonCredits: number; status: string;[key: string]: any, }; // ⬅️ Ensure lessonCredits is typed
         },
         enabled: !!firebaseUser, // only fetch if user is logged in
         staleTime: 1000 * 60 * 5, // ⬅️ Change to a limited time or remove entirely
@@ -58,5 +58,6 @@ export function useAuth() {
         loading,
         logout,
         lessonCredits: userProfile?.lessonCredits ?? 0, // ⬅️ Export credits directly
+        status: userProfile?.status
     };
 }

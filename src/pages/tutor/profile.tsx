@@ -22,11 +22,10 @@ import TutorPackageManager from '@/components/packages/TutorPackageManager';
 export default function TutorProfilePage() {
     const { data: tutor, isLoading, error, refetch } = useTutorProfile();
     const { mutate: updateProfile, isPending: isUpdating } = useUpdateTutorProfile();
-    const [isEditing, setIsEditing] = useState(false);
 
     const methods = useForm<AddTutorInput>({
         resolver: zodResolver(addTutorSchema),
-        defaultValues: tutor,
+        defaultValues: { ...tutor, payoutPercentage: Number(tutor?.payoutPercentage) ?? 70 },
     });
 
     useEffect(() => {
@@ -40,7 +39,6 @@ export default function TutorProfilePage() {
         updateProfile(data, {
             onSuccess: () => {
                 toast.success("Profile updated successfully!");
-                setIsEditing(false);
                 refetch();
             },
             onError: (err: any) => {
@@ -82,23 +80,10 @@ export default function TutorProfilePage() {
                             <p className="text-gray-500">{tutor.email}</p>
                         </div>
                     </div>
-                    {!isEditing ? (
-                        <Button className="gap-2" onClick={() => setIsEditing(true)}>
-                            <Edit className="h-4 w-4" />
-                            Edit Profile
-                        </Button>
-                    ) : (
-                        <div className="flex gap-2">
-                            <Button variant="outline" onClick={() => setIsEditing(false)}>
-                                <X className="h-4 w-4 mr-2" />
-                                Cancel
-                            </Button>
-                            <Button className="gap-2" onClick={methods.handleSubmit(onSubmit)} disabled={isUpdating}>
-                                {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                                Save
-                            </Button>
-                        </div>
-                    )}
+                    <Button className="gap-2" onClick={methods.handleSubmit(onSubmit)} disabled={isUpdating}>
+                        {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                        Save
+                    </Button>
                 </div>
 
                 <FormProvider {...methods}>
@@ -116,54 +101,58 @@ export default function TutorProfilePage() {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div className="space-y-4">
                                                 <h4 className="text-lg font-semibold mb-2">Basic Info</h4>
-                                                {isEditing ? (
-                                                    <div className="space-y-4">
-                                                        <div className="space-y-2">
-                                                            <Label htmlFor="name">Full Name</Label>
-                                                            <Input id="name" {...methods.register('name')} />
-                                                            {methods.formState.errors.name && <p className="text-sm text-red-500">{methods.formState.errors.name.message}</p>}
-                                                        </div>
-                                                        <div className="space-y-2">
-                                                            <Label htmlFor="email">Email</Label>
-                                                            <Input id="email" type="email" {...methods.register('email')} />
-                                                            {methods.formState.errors.email && <p className="text-sm text-red-500">{methods.formState.errors.email.message}</p>}
-                                                        </div>
-                                                        <div className="space-y-2">
-                                                            <Label htmlFor="password">New Password</Label>
-                                                            <Input id="password" type="password" placeholder="Leave blank to keep current" {...methods.register('password')} />
-                                                            {methods.formState.errors.password && <p className="text-sm text-red-500">{methods.formState.errors.password.message}</p>}
-                                                        </div>
+                                                <div className="space-y-4">
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="name">Full Name</Label>
+                                                        <Input id="name" {...methods.register('name')} />
+                                                        {methods.formState.errors.name && <p className="text-sm text-red-500">{methods.formState.errors.name.message}</p>}
                                                     </div>
-                                                ) : (
-                                                    <div className="space-y-4">
-                                                        {renderReadOnlyField("Full Name", tutor.name)}
-                                                        {renderReadOnlyField("Email", tutor.email)}
-                                                        {renderReadOnlyField("Role", tutor.role, "N/A")}
-                                                        {renderReadOnlyField("Joined", new Date(tutor.createdAt).toLocaleDateString())}
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="email">Email</Label>
+                                                        <Input id="email" type="email" {...methods.register('email')} />
+                                                        {methods.formState.errors.email && <p className="text-sm text-red-500">{methods.formState.errors.email.message}</p>}
                                                     </div>
-                                                )}
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="password">New Password</Label>
+                                                        <Input id="password" type="password" placeholder="Leave blank to keep current" {...methods.register('password')} />
+                                                        {methods.formState.errors.password && <p className="text-sm text-red-500">{methods.formState.errors.password.message}</p>}
+                                                    </div>
+                                                </div>
                                             </div>
 
                                             <div className="space-y-4">
                                                 <h4 className="text-lg font-semibold mb-2">Contact & Bio</h4>
-                                                {isEditing ? (
-                                                    <div className="space-y-4">
-                                                        <div className="space-y-2">
-                                                            <Label htmlFor="phone">Phone</Label>
-                                                            <Input id="phone" {...methods.register('phone')} />
-                                                        </div>
-                                                        <div className="space-y-2">
-                                                            <Label htmlFor="bio">Bio</Label>
-                                                            <Input id="bio" {...methods.register('bio')} />
-                                                        </div>
+                                                <div className="space-y-4">
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="phone">Phone</Label>
+                                                        <Input id="phone" {...methods.register('phone')} />
                                                     </div>
-                                                ) : (
-                                                    <div className="space-y-4">
-                                                        {renderReadOnlyField("Phone", tutor.phone)}
-                                                        {renderReadOnlyField("Bio", tutor.bio)}
-                                                        {renderReadOnlyField("Subjects", tutor.subjects?.join(', '))}
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="bio">Bio</Label>
+                                                        <Input id="bio" {...methods.register('bio')} />
                                                     </div>
-                                                )}
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-4">
+                                                <h4 className="text-lg font-semibold mb-2">Additional Settings</h4>
+                                                <div className="space-y-4">
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="phone">Payout Percentage (Price in % for each session for tutor )</Label>
+                                                        <Input
+                                                            placeholder="here value is consider in %"
+                                                            id="payoutPercentage"
+                                                            type="number"
+                                                            {...methods.register("payoutPercentage", {
+                                                                valueAsNumber: true, // <-- this automatically converts to number
+                                                            })}
+                                                            onChange={(e) => {
+                                                                methods.setValue("payoutPercentage", e.target.valueAsNumber ?? 0);
+                                                            }}
+                                                        />
+
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </CardContent>

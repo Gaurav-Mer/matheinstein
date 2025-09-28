@@ -11,10 +11,11 @@ import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import StudentLayout from '../_layout';
 import { useStudentPurchases } from '@/hooks/useStudentPurchases';
+import { PendingRequestStatus } from '@/components/Student/PendingRequestStatus';
 
 export default function StudentBillingPage() {
     // Assuming lessonCredits is available from useAuth (as we structured earlier)
-    const { lessonCredits } = useAuth();
+    const { lessonCredits, status, user } = useAuth();
     const { data: purchases, isLoading, error } = useStudentPurchases();
 
     // Calculate total spent for the metrics card
@@ -45,70 +46,72 @@ export default function StudentBillingPage() {
 
     return (
         <StudentLayout>
-            <div className="p-6 md:p-10 min-h-screen bg-gray-50">
-                <h1 className="text-3xl font-bold text-slate-800 mb-8">Billing & Credits</h1>
+            {status === "pending_demo" ? <PendingRequestStatus studentName={user?.displayName ?? ""} subjectName='' /> :
+                <div className="p-6 md:p-10 min-h-screen bg-gray-50">
+                    <h1 className="text-3xl font-bold text-slate-800 mb-8">Billing & Credits</h1>
 
-                {/* Metrics */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <Card className="shadow-lg rounded-xl bg-white border-l-4 border-green-500">
-                        <CardHeader><CardTitle className="text-xl font-bold text-green-700 flex items-center gap-2"><Package /> Remaining Credits</CardTitle></CardHeader>
-                        <CardContent><p className="text-4xl font-bold text-green-600">{lessonCredits || 0}</p></CardContent>
-                    </Card>
-                    <Card className="shadow-lg rounded-xl bg-white border-l-4 border-blue-500">
-                        <CardHeader><CardTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2"><DollarSign /> Total Spent (INR)</CardTitle></CardHeader>
-                        <CardContent><p className="text-4xl font-bold text-slate-800">{formatCurrency(totalSpent)}</p></CardContent>
-                    </Card>
-                    <Card className="shadow-lg rounded-xl bg-white border-l-4 border-slate-500">
-                        <CardHeader><CardTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2"><Receipt /> Total Purchases</CardTitle></CardHeader>
-                        <CardContent><p className="text-4xl font-bold text-slate-800">{purchases?.length || 0}</p></CardContent>
+                    {/* Metrics */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <Card className="shadow-lg rounded-xl bg-white border-l-4 border-green-500">
+                            <CardHeader><CardTitle className="text-xl font-bold text-green-700 flex items-center gap-2"><Package /> Remaining Credits</CardTitle></CardHeader>
+                            <CardContent><p className="text-4xl font-bold text-green-600">{lessonCredits || 0}</p></CardContent>
+                        </Card>
+                        <Card className="shadow-lg rounded-xl bg-white border-l-4 border-blue-500">
+                            <CardHeader><CardTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2"><DollarSign /> Total Spent (INR)</CardTitle></CardHeader>
+                            <CardContent><p className="text-4xl font-bold text-slate-800">{formatCurrency(totalSpent)}</p></CardContent>
+                        </Card>
+                        <Card className="shadow-lg rounded-xl bg-white border-l-4 border-slate-500">
+                            <CardHeader><CardTitle className="text-lg font-semibold text-slate-800 flex items-center gap-2"><Receipt /> Total Purchases</CardTitle></CardHeader>
+                            <CardContent><p className="text-4xl font-bold text-slate-800">{purchases?.length || 0}</p></CardContent>
+                        </Card>
+                    </div>
+
+                    {/* History Table */}
+                    <Card className="shadow-lg rounded-xl overflow-hidden">
+                        <CardHeader className="p-4 border-b"><CardTitle className="text-xl font-bold text-slate-800 flex items-center gap-2"><Receipt /> Purchase History</CardTitle></CardHeader>
+                        <CardContent className="p-0">
+                            {(purchases?.length ?? 0) > 0 ? (
+                                <div className="overflow-x-auto">
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow className="bg-slate-50">
+                                                <TableHead>Date</TableHead>
+                                                <TableHead>Package Name</TableHead>
+                                                <TableHead>Credits</TableHead>
+                                                <TableHead>Amount (INR)</TableHead>
+                                                <TableHead className='text-center'>Status</TableHead>
+                                                <TableHead className='text-center'>Invoice</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {purchases?.map((tx: any) => (
+                                                <TableRow key={tx.id}>
+                                                    <TableCell>{format(new Date(tx.purchaseDate), 'MMM d, yyyy')}</TableCell>
+                                                    <TableCell className='font-medium'>{tx.packageName}</TableCell>
+                                                    <TableCell>{tx.creditsPurchased}</TableCell>
+                                                    <TableCell className='font-bold text-slate-800'>{formatCurrency(tx.totalAmountINR)}</TableCell>
+                                                    <TableCell className='text-center'>
+                                                        <Badge className='bg-green-100 text-green-700'>
+                                                            <CheckCircle className='h-3 w-3 mr-1' /> Paid
+                                                        </Badge>
+                                                    </TableCell>
+                                                    <TableCell className='text-center'>
+                                                        <Button variant='link' size='sm' disabled>
+                                                            <Download className='h-4 w-4' />
+                                                        </Button>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </div>
+                            ) : (
+                                <p className='p-6 text-center text-slate-500'>No purchase history yet.</p>
+                            )}
+                        </CardContent>
                     </Card>
                 </div>
-
-                {/* History Table */}
-                <Card className="shadow-lg rounded-xl overflow-hidden">
-                    <CardHeader className="p-4 border-b"><CardTitle className="text-xl font-bold text-slate-800 flex items-center gap-2"><Receipt /> Purchase History</CardTitle></CardHeader>
-                    <CardContent className="p-0">
-                        {(purchases?.length ?? 0) > 0 ? (
-                            <div className="overflow-x-auto">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow className="bg-slate-50">
-                                            <TableHead>Date</TableHead>
-                                            <TableHead>Package Name</TableHead>
-                                            <TableHead>Credits</TableHead>
-                                            <TableHead>Amount (INR)</TableHead>
-                                            <TableHead className='text-center'>Status</TableHead>
-                                            <TableHead className='text-center'>Invoice</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {purchases?.map((tx: any) => (
-                                            <TableRow key={tx.id}>
-                                                <TableCell>{format(new Date(tx.purchaseDate), 'MMM d, yyyy')}</TableCell>
-                                                <TableCell className='font-medium'>{tx.packageName}</TableCell>
-                                                <TableCell>{tx.creditsPurchased}</TableCell>
-                                                <TableCell className='font-bold text-slate-800'>{formatCurrency(tx.totalAmountINR)}</TableCell>
-                                                <TableCell className='text-center'>
-                                                    <Badge className='bg-green-100 text-green-700'>
-                                                        <CheckCircle className='h-3 w-3 mr-1' /> Paid
-                                                    </Badge>
-                                                </TableCell>
-                                                <TableCell className='text-center'>
-                                                    <Button variant='link' size='sm' disabled>
-                                                        <Download className='h-4 w-4' />
-                                                    </Button>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </div>
-                        ) : (
-                            <p className='p-6 text-center text-slate-500'>No purchase history yet.</p>
-                        )}
-                    </CardContent>
-                </Card>
-            </div>
+            }
         </StudentLayout>
     );
 }

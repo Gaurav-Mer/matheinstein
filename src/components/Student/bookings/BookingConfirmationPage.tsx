@@ -49,7 +49,7 @@ export default function BookingConfirmationPage({ tutor, selectedSlots, onBack }
                 {/* Booking form for final details */}
                 <Card className="shadow-sm">
                     <CardContent className="p-6">
-                        <BookingForm isPackageBooking={true} tutor={tutor} selectedSlots={selectedSlots} onClose={onBack} />
+                        <BookingForm tutor={tutor} selectedSlots={selectedSlots} onClose={onBack} />
                     </CardContent>
                 </Card>
             </div>

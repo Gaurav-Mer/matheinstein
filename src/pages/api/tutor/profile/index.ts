@@ -5,6 +5,8 @@ import { adminAuth, adminDb } from "@/lib/firebaseAdmin";
 import { addTutorSchema } from "@/lib/schemas/tutorSchema";
 import { z } from "zod";
 
+const DEFAULT_PAYOUT_RATE = 70; // 70%
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
         const token = req.headers.authorization?.split(" ")[1];
@@ -18,7 +20,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // GET a single tutor's profile
         if (req.method === "GET") {
             if (!tutorDoc.exists) return res.status(404).json({ error: "Tutor not found" });
-            return res.status(200).json({ uid: tutorDoc.id, ...tutorDoc.data() });
+            const tutorData = tutorDoc.data();
+
+            // 🚨 CRITICAL FIX: Ensure payoutPercentage is returned with a default fallback
+            const profile = {
+                uid: tutorDoc.id,
+                ...tutorData,
+                payoutPercentage: tutorData?.payoutPercentage || DEFAULT_PAYOUT_RATE // ⬅️ Apply default here
+            };
+            return res.status(200).json(profile);
         }
 
         // PATCH to update a tutor's profile
@@ -28,18 +38,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             });
             const validatedData = updateSchema.parse(req.body);
 
+            // Handle Firebase Auth Update (Email and Password)
             const authUpdate: any = {};
             if (validatedData.email) authUpdate.email = validatedData.email;
             if (validatedData.password) authUpdate.password = validatedData.password;
 
             if (Object.keys(authUpdate).length > 0) {
                 await adminAuth.updateUser(uid, authUpdate);
-                delete validatedData.email;
-                delete validatedData.password;
             }
 
-            if (Object.keys(validatedData).length > 0) {
-                await adminDb.collection("users").doc(uid).update(validatedData);
+            // Prepare Firestore Update: Use validatedData directly (it preserves existing fields)
+            const firestoreUpdate: any = { ...validatedData };
+            delete firestoreUpdate.email;
+            delete firestoreUpdate.password;
+
+            if (Object.keys(firestoreUpdate).length > 0) {
+                // This saves any fields sent, including a newly defined payoutPercentage
+                await adminDb.collection("users").doc(uid).update(firestoreUpdate);
             }
 
             return res.status(200).json({ message: "Profile updated successfully" });

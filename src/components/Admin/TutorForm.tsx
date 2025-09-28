@@ -22,6 +22,7 @@ import { useSubjects } from "@/hooks/useSubjects";
 import Link from "next/link";
 import TutorAvailability from "./TutorAvailability";
 import TutorBookingSettings from "../tutor/TutorBookingSettings";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface TutorFormProps {
     initialData?: any; // for edit mode
@@ -31,6 +32,8 @@ interface TutorFormProps {
 export default function TutorForm({ initialData, onClose }: TutorFormProps) {
     const { mutate: addTutor, isPending: isAdding } = useAddTutor();
     const { data: tutors, isLoading } = useTutors();
+    const queryClient = useQueryClient();
+
 
     const { mutate: updateTutor, isPending: isUpdating } = useUpdateTutor();
     const { data: allSubjects = [] } = useSubjects();
@@ -49,6 +52,7 @@ export default function TutorForm({ initialData, onClose }: TutorFormProps) {
             bufferTime: 15,
             sessionDuration: { min: 30, max: 60 },
             bookingWindow: { minAdvanceNotice: 24, maxAdvanceNotice: 30 },
+            payoutPercentage: 70
         },
     });
 
@@ -71,12 +75,18 @@ export default function TutorForm({ initialData, onClose }: TutorFormProps) {
                     toast.success("Tutor updated successfully!");
                     reset();
                     onClose?.();
+                    if (initialData?.uid) {
+                        queryClient.setQueryData(["tutor", initialData?.uid], (oldData: any) => ({
+                            ...oldData,
+                            ...data,
+                        }));
+                    }
                 },
                 onError: (err: any) => toast.error(err?.response?.data?.error || "Failed to update tutor"),
             });
         } else {
             // For new tutors, don't send a password
-            const { password, ...newData } = data;
+            const { ...newData } = data;
             addTutor(newData, {
                 onSuccess: () => {
                     toast.success("Tutor invitation sent successfully!");
@@ -92,8 +102,8 @@ export default function TutorForm({ initialData, onClose }: TutorFormProps) {
         ?.filter((t: any) => t.uid !== initialData?.uid)
         ?.flatMap((t: any) => t.subjects);
 
-    const availableSubjects = allSubjects.filter(
-        (sub: any) => !assignedSubjectIdsExcludingCurrent.includes(sub.id)
+    const availableSubjects = allSubjects?.filter(
+        (sub: any) => !assignedSubjectIdsExcludingCurrent?.includes(sub.id)
     );
     if (isLoading) return <>loading...</>
 
@@ -189,9 +199,26 @@ export default function TutorForm({ initialData, onClose }: TutorFormProps) {
                         </Select>
                     </div>
 
+
                     {/* Booking Settings and Availability */}
                     <TutorBookingSettings />
                     <TutorAvailability control={control} initialData={initialData?.availability} />
+
+                    <div className="space-y-2">
+                        <Label htmlFor="phone">Payout Percentage (Price in % for each session for tutor )</Label>
+                        <Input
+                            placeholder="here value is consider in %"
+                            id="payoutPercentage"
+                            type="number"
+                            {...methods.register("payoutPercentage", {
+                                valueAsNumber: true, // <-- this automatically converts to number
+                            })}
+                            onChange={(e) => {
+                                methods.setValue("payoutPercentage", e.target.valueAsNumber ?? 0);
+                            }}
+                        />
+
+                    </div>
                 </div>
                 {/* Submit */}
                 <div className="flex gap-2 justify-end shrink-0 w-full p-4">

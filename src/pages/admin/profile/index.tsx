@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, User, Edit, Save, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
+import { useForm, FormProvider, SubmitHandler, Form } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -23,12 +23,11 @@ import AdminLayout from '../_layout';
 export default function AdminProfilePage() {
     const { data: admin, isLoading, error, refetch } = useAdminProfile();
     const { mutate: updateProfile, isPending: isUpdating } = useUpdateAdminProfile();
-    const [isEditing, setIsEditing] = useState(false);
     const [activeTab, setActiveTab] = useState("profile"); // State to manage active tab
 
     const methods = useForm<AdminInput>({
         resolver: zodResolver(adminSchema),
-        defaultValues: admin ? { ...admin, role: "admin" } : undefined,
+        defaultValues: admin ? { ...admin, role: "admin", payoutPercentage: Number(admin?.payoutPercentage) ?? 70 } : undefined,
     });
 
     useEffect(() => {
@@ -66,7 +65,6 @@ export default function AdminProfilePage() {
             {
                 onSuccess: () => {
                     toast.success("Profile updated successfully!");
-                    setIsEditing(false);
                     refetch();
                 },
                 onError: (err: any) => {
@@ -88,13 +86,6 @@ export default function AdminProfilePage() {
         return <p className="text-center text-red-500 mt-20">Failed to load admin profile.</p>;
     }
 
-    const renderReadOnlyField = (label: string, value: string | null | undefined, placeholder: string = "N/A") => (
-        <div>
-            <p className="text-sm font-medium text-gray-500">{label}</p>
-            <p className="text-gray-800">{value || placeholder}</p>
-        </div>
-    );
-
     return (
         <AdminLayout>
             <div className="p-6 md:p-10 min-h-dvh bg-white">
@@ -109,24 +100,10 @@ export default function AdminProfilePage() {
                             <p className="text-gray-500">{admin.email}</p>
                         </div>
                     </div>
-                    {!isEditing ? (
-                        <Button className="gap-2" onClick={() => setIsEditing(true)}>
-                            <Edit className="h-4 w-4" />
-                            Edit Profile
-                        </Button>
-                    ) : (
-                        <div className="flex gap-2">
-                            <Button variant="outline" onClick={() => setIsEditing(false)}>
-                                <X className="h-4 w-4 mr-2" />
-                                Cancel
-                            </Button>
-                            {/* Unified Save button for the whole form */}
-                            <Button type="submit" className="gap-2" onClick={methods.handleSubmit(onSubmit)} disabled={isUpdating}>
-                                {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                                Save
-                            </Button>
-                        </div>
-                    )}
+                    <Button type="submit" className="gap-2" onClick={methods.handleSubmit(onSubmit)} disabled={isUpdating}>
+                        {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                        Save
+                    </Button>
                 </div>
 
                 <FormProvider {...methods}>
@@ -146,53 +123,58 @@ export default function AdminProfilePage() {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div className="space-y-4">
                                                 <h4 className="text-lg font-semibold mb-2">Basic Info</h4>
-                                                {isEditing ? (
-                                                    <div className="space-y-4">
-                                                        <div className="space-y-2">
-                                                            <Label htmlFor="name">Full Name</Label>
-                                                            <Input id="name" {...methods.register('name')} />
-                                                            {methods.formState.errors.name && <p className="text-sm text-red-500">{methods.formState.errors.name.message}</p>}
-                                                        </div>
-                                                        <div className="space-y-2">
-                                                            <Label htmlFor="email">Email</Label>
-                                                            <Input id="email" type="email" {...methods.register('email')} />
-                                                            {methods.formState.errors.email && <p className="text-sm text-red-500">{methods.formState.errors.email.message}</p>}
-                                                        </div>
-                                                        <div className="space-y-2">
-                                                            <Label htmlFor="password">New Password</Label>
-                                                            <Input id="password" type="password" placeholder="Leave blank to keep current" {...methods.register('password')} />
-                                                            {methods.formState.errors.password && <p className="text-sm text-red-500">{methods.formState.errors.password.message}</p>}
-                                                        </div>
+                                                <div className="space-y-4">
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="name">Full Name</Label>
+                                                        <Input id="name" {...methods.register('name')} />
+                                                        {methods.formState.errors.name && <p className="text-sm text-red-500">{methods.formState.errors.name.message}</p>}
                                                     </div>
-                                                ) : (
-                                                    <div className="space-y-4">
-                                                        {renderReadOnlyField("Full Name", admin.name)}
-                                                        {renderReadOnlyField("Email", admin.email)}
-                                                        {renderReadOnlyField("Role", admin.role, "N/A")}
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="email">Email</Label>
+                                                        <Input id="email" type="email" {...methods.register('email')} />
+                                                        {methods.formState.errors.email && <p className="text-sm text-red-500">{methods.formState.errors.email.message}</p>}
                                                     </div>
-                                                )}
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="password">New Password</Label>
+                                                        <Input id="password" type="password" placeholder="Leave blank to keep current" {...methods.register('password')} />
+                                                        {methods.formState.errors.password && <p className="text-sm text-red-500">{methods.formState.errors.password.message}</p>}
+                                                    </div>
+                                                </div>
                                             </div>
 
                                             <div className="space-y-4">
                                                 <h4 className="text-lg font-semibold mb-2">Contact & Bio</h4>
-                                                {isEditing ? (
-                                                    <div className="space-y-4">
-                                                        <div className="space-y-2">
-                                                            <Label htmlFor="phone">Phone</Label>
-                                                            <Input id="phone" {...methods.register('phone')} />
-                                                        </div>
-                                                        <div className="space-y-2">
-                                                            <Label htmlFor="bio">Bio</Label>
-                                                            <Input id="bio" {...methods.register('bio')} />
-                                                        </div>
+                                                <div className="space-y-4">
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="phone">Phone</Label>
+                                                        <Input id="phone" {...methods.register('phone')} />
                                                     </div>
-                                                ) : (
-                                                    <div className="space-y-4">
-                                                        {renderReadOnlyField("Phone", admin.phone)}
-                                                        {renderReadOnlyField("Bio", admin.bio)}
-                                                        {renderReadOnlyField("Subjects", admin.subjects?.join(', '))}
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="bio">Bio</Label>
+                                                        <Input id="bio" {...methods.register('bio')} />
                                                     </div>
-                                                )}
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-4">
+                                                <h4 className="text-lg font-semibold mb-2">Additional Settings</h4>
+                                                <div className="space-y-4">
+                                                    <div className="space-y-2">
+                                                        <Label htmlFor="phone">Payout Percentage (Price in % for each session for tutor )</Label>
+                                                        <Input
+                                                            placeholder="here value is consider in %"
+                                                            id="payoutPercentage"
+                                                            type="number"
+                                                            {...methods.register("payoutPercentage", {
+                                                                valueAsNumber: true, // <-- this automatically converts to number
+                                                            })}
+                                                            onChange={(e) => {
+                                                                methods.setValue("payoutPercentage", e.target.valueAsNumber ?? 0);
+                                                            }}
+                                                        />
+
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </CardContent>

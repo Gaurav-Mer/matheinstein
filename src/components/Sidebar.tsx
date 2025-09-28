@@ -46,7 +46,8 @@ const navLinks = {
         { label: "Profile", href: "/admin/profile", icon: User },
         { label: "Demo Requests", href: "/admin/demo-requests", icon: Bell },
         { label: "Invite Admin", href: "/admin/invite-admin", icon: Plus },
-        { label: "Billings", href: "/admin/purchases", icon: DollarSign }
+        { label: "Billings", href: "/admin/earnings", icon: DollarSign }
+        // { label: "Billings", href: "/admin/purchases", icon: DollarSign }
     ],
 };
 
@@ -74,7 +75,7 @@ const Sidebar = () => {
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 p-6">
+            <nav className="flex-1 p-6 overflow-auto">
                 <ul className="space-y-2">
                     {links.map((link) => {
                         const Icon = link.icon;
@@ -119,15 +120,6 @@ const Sidebar = () => {
                             </p>
                         </div>
                     </div>
-
-                    {/* Logout Button */}
-                    <button
-                        onClick={logout}
-                        className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
-                    >
-                        <LogOut className="h-5 w-5" />
-                        <span>Sign Out</span>
-                    </button>
                 </div>
             )}
         </div>

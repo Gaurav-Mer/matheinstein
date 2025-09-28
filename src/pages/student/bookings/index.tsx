@@ -1,11 +1,15 @@
 import React from 'react'
 import StudentBookingsPage from '@/components/Student/StudentBookingPage'
 import StudentLayout from '../_layout'
+import { useAuth } from '@/hooks/useAuth'
+import { PendingRequestStatus } from '@/components/Student/PendingRequestStatus'
 
 const Bookings = () => {
+    const { status, user } = useAuth()
+    console.log("status", status)
     return (
         <StudentLayout>
-            <StudentBookingsPage />
+            {status === "pending_demo" ? <PendingRequestStatus studentName={user?.displayName ?? ""} subjectName='' /> : <StudentBookingsPage />}
         </StudentLayout>
     )
 }

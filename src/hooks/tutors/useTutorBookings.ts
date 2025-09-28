@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 interface BookingsQuery {
     page?: number;
     limit?: number;
-    status?: "upcoming" | "completed" | "cancelled";
+    status?: "upcoming" | "completed" | "cancelled" | "no_show";
 }
 
 export const useTutorBookings = (query?: BookingsQuery) => {

@@ -20,6 +20,7 @@ export const purchaseRecordSchema = z.object({
     totalAmountINR: z.number(),
     purchaseDate: z.date(),
     status: z.enum(['paid', 'pending', 'failed']).default('paid'),
+    tutorNetPayoutPerCredit: z.number()
 });
 
 export type PaidLessonPackage = z.infer<typeof paidLessonSchema>;

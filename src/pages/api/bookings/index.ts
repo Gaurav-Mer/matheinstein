@@ -15,6 +15,8 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+const useLocalSmtp = process.env.NODE_ENV === "development"; // ⬅️ DEFINED GLOBALLY
+
 
 // Initialize Nodemailer transporter for local testing
 const localTransporter = nodemailer.createTransport({
@@ -77,7 +79,6 @@ const sendBookingEmail = async (studentName: string, studentEmail: string, tutor
             </div>
         `;
     };
-    const useLocalSmtp = process.env.NODE_ENV
     if (useLocalSmtp) {
         await localTransporter.sendMail({ from: 'bookings@yourplatform.com', to: studentEmail, subject: subjectLine, html: htmlTemplate(studentName, false) });
         await localTransporter.sendMail({ from: 'bookings@yourplatform.com', to: tutorEmail, subject: subjectLine, html: htmlTemplate(tutorName, true) });

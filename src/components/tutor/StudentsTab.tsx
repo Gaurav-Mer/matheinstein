@@ -31,7 +31,6 @@ export default function StudentsTab({ tutor, canEdit }: StudentsTabProps) {
     const { data: assignedStudents, isLoading: isAssignedStudentsLoading, error } = useTutorStudents(tutor?.uid ?? "");
     const { handleSubmit, reset, setValue } = useForm<{ studentId: string }>();
 
-
     if (isAssignedStudentsLoading || isAllStudentsLoading) {
         return (
             <div className="flex justify-center items-center h-48">

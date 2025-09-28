@@ -69,7 +69,7 @@ export default function StudentBookingsPage() {
     };
 
     return (
-        <StudentLayout>
+        <>
             <div className="p-6 w-full bg-white">
                 <CancellationDialog
                     bookingId={selectedBooking?.id}
@@ -219,6 +219,6 @@ export default function StudentBookingsPage() {
                     </CardContent>
                 </Card>
             </div>
-        </StudentLayout>
+        </>
     );
 }

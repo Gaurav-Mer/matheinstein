@@ -60,6 +60,13 @@ export const addTutorSchema = z.object({
     }).nullish(),
     paidLessons: z.array(paidLessonSchema).nullish(), // Now strongly typed
 
+    // 💰 NEW: Tutor's payout percentage (Company Policy)
+    payoutPercentage: z.number()
+        .int()
+        .min(20, "Payout must be at least 20%")
+        .max(90, "Payout cannot exceed 90%")
+        .default(70) // Platform keeps 30% by default
+        .optional(),
 });
 
 

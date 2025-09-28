@@ -10,10 +10,12 @@ import { format } from "date-fns";
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import StudentLayout from './_layout';
+import { useAuth } from '@/hooks/useAuth';
+import { PendingRequestStatus } from '@/components/Student/PendingRequestStatus';
 
 export default function StudentDashboardPage() {
     const { data: dashboardData, isLoading, error } = useStudentDashboard();
-
+    const { status, user } = useAuth()
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-screen bg-gray-50">
@@ -42,7 +44,7 @@ export default function StudentDashboardPage() {
 
     return (
         <StudentLayout>
-            <div className="p-6">
+            {status === "pending_demo" ? <PendingRequestStatus studentName={user?.displayName ?? ""} subjectName='' /> : <div className="p-6">
                 {/* Header and Greeting */}
                 <div className="mb-8">
                     <h1 className="text-3xl font-bold text-slate-800">Welcome, {profile?.name}!</h1>
@@ -166,7 +168,7 @@ export default function StudentDashboardPage() {
                         </Card>
                     </div>
                 </div>
-            </div>
+            </div>}
         </StudentLayout>
     );
 }

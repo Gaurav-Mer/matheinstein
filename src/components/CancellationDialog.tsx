@@ -25,8 +25,7 @@ interface CancellationDialogProps {
 export default function CancellationDialog({ bookingId, isOpen, onClose, bookingDetails }: CancellationDialogProps) {
     const { mutate: cancelBooking, isPending: isCanceling } = useCancelBooking();
 
-    // Check if the lesson is within the 24-hour non-refundable window (frontend UX check)
-    const timeUntilLesson = new Date(bookingDetails.startTime.seconds * 1000).getTime() - new Date().getTime();
+    const timeUntilLesson = new Date(bookingDetails?.startTime?.seconds * 1000).getTime() - new Date().getTime();
     const hoursUntilLesson = timeUntilLesson / (1000 * 60 * 60);
     const isPastRefundWindow = hoursUntilLesson <= 24;
 
@@ -52,7 +51,7 @@ export default function CancellationDialog({ bookingId, isOpen, onClose, booking
                         Confirm Cancellation
                     </DialogTitle>
                     <DialogDescription className="text-center text-slate-600">
-                        This action cannot be undone. You are about to cancel your session for **{bookingDetails.subject}**.
+                        This action cannot be undone. You are about to cancel your session for **{bookingDetails?.subject}**.
                     </DialogDescription>
                 </DialogHeader>
 
