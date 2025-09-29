@@ -17,14 +17,12 @@ import { toast } from 'react-toastify';
 export default function TutorBookingPage() {
     const params = useParams();
     const router = useRouter();
-    const { user, lessonCredits: a } = useAuth(); // Assume lessonCredits is available via useAuth
+    const { user, lessonCredits } = useAuth(); // Assume lessonCredits is available via useAuth
     const tutorId = params?.id as string;
-    const lessonCredits = 2
     const { data: tutor, isLoading, error } = usePublicTutor(tutorId);
     const [selectedSlots, setSelectedSlots] = useState<any[]>([]);
     const [step, setStep] = useState(1); // 1: Calendar, 2: Confirmation
 
-    const isPackageBooking = (tutor?.paidLessons?.length ?? 0) > 0;
 
     // Logic to handle slot selection (same as before)
     const handleSlotSelection = (slots: any[]) => {
@@ -63,7 +61,7 @@ export default function TutorBookingPage() {
     }
 
     return (
-        <div className="p-6 md:p-10 min-h-screen bg-gray-50">
+        <div className="p-6  h-full">
             <div className="flex items-center gap-4 mb-6">
                 <Link href="/student/dashboard" passHref>
                     <Button variant="outline" size="icon" className="h-10 w-10">
@@ -76,12 +74,12 @@ export default function TutorBookingPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 <div className="lg:col-span-1 space-y-6">
                     <TutorSummaryCard tutor={tutor} />
                 </div>
 
-                <Card className="lg:col-span-2 shadow-md rounded-xl">
+                <Card className="lg:col-span-3 shadow-md rounded-xl">
                     <CardContent className="p-6">
                         {step === 1 && (
                             <>

@@ -15,11 +15,11 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, Menu, User } from "lucide-react";
 import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
+import { Coin } from "./svgs/others";
 
 const ignore = ["/login", "/"]
 export default function Navbar() {
-    const { user, role, logout, status } = useAuth();
+    const { user, role, logout, status, lessonCredits } = useAuth();
     const router = useRouter();
     const pathName = usePathname();
     const onLogut = () => {
@@ -45,7 +45,6 @@ export default function Navbar() {
     if (ignore.includes(pathName) || !user) return null
 
     const moveToHome = () => {
-        console.log("role", role)
         if (!role) return "/";
         switch (role) {
             case "admin":
@@ -72,6 +71,21 @@ export default function Navbar() {
                     {/* User Dropdown */}
                     <div className="flex items-center gap-2">
                         {status === "pending_demo" && <p className="bg-red-200 rounded-md px-3 py-1 text-xs ">Request Pending- waiting for the Admin Approval</p>}
+                        {status !== "pending_demo" && <div>
+                            <p className="text-sm text-secondary font-medium">{user?.displayName}</p>
+
+                            {role !== "student" ? null : lessonCredits && lessonCredits > 0 ? (
+                                <div className="flex items-center gap-1  text-green-700">
+                                    <Coin />
+                                    <span>{lessonCredits} Credits</span>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-1 rounded-lg bg-red-100 px-2 text-red-600 ">
+                                    <Coin />
+                                    <span className="text-[10px]">Insufficient Credits</span>
+                                </div>
+                            )}
+                        </div>}
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button

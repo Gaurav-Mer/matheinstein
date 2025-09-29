@@ -139,7 +139,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             studentEmail: studentDoc.data()?.email,
             tutorEmail: tutorDoc.data()?.email,
             subjectName: subjectDoc.data()?.name,
-            requestedDateTime: demoRequestData?.requestedDateTime.toISOString(),
+            requestedDateTime: demoRequestData?.requestedDateTime.toDate().toISOString(),
             tutorId,
         };
 

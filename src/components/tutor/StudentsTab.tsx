@@ -28,10 +28,10 @@ interface StudentsTabProps {
 export default function StudentsTab({ tutor, canEdit }: StudentsTabProps) {
     const [showAssignForm, setShowAssignForm] = useState(false);
     const { data: allStudents, isLoading: isAllStudentsLoading } = useStudents();
-    const { data: assignedStudents, isLoading: isAssignedStudentsLoading, error } = useTutorStudents(tutor?.uid ?? "");
+    // const { data: assignedStudents, isLoading: isAssignedStudentsLoading, error } = useTutorStudents(tutor?.uid ?? "");
     const { handleSubmit, reset, setValue } = useForm<{ studentId: string }>();
 
-    if (isAssignedStudentsLoading || isAllStudentsLoading) {
+    if (isAllStudentsLoading) {
         return (
             <div className="flex justify-center items-center h-48">
                 <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
@@ -39,13 +39,11 @@ export default function StudentsTab({ tutor, canEdit }: StudentsTabProps) {
         );
     }
 
-    if (error) {
-        return <p className="text-center text-gray-500">No data found.</p>;
-    }
 
     const unassignedStudents = allStudents?.filter(
-        (student: any) => !assignedStudents.some((assignedStudent: any) => assignedStudent.uid === student.uid)
-    ) || [];
+        (student: any) => tutor.uid === student.assignedTutorId)
+        || [];
+    const assignedStudents = allStudents?.filter((st: any) => st.assignedTutorId === tutor.uid)
 
     const onSubmit = (data: { studentId: string }) => {
         // This will be implemented in the next step
@@ -115,9 +113,10 @@ export default function StudentsTab({ tutor, canEdit }: StudentsTabProps) {
                         <Table className="bg-white rounded-lg overflow-hidden shadow-sm min-w-[600px]">
                             <TableHeader className="bg-gray-100 dark:bg-gray-800">
                                 <TableRow>
-                                    <TableHead className="text-gray-600 font-semibold">Name</TableHead>
+                                    <TableHead className="text-gray-600 font-semibold ">Name</TableHead>
                                     <TableHead className="text-gray-600 font-semibold">Email</TableHead>
-                                    <TableHead className="text-gray-600 font-semibold">Actions</TableHead>
+                                    <TableHead className="text-gray-600 font-semibold ">lessonCredits</TableHead>
+                                    <TableHead className="text-gray-600 font-semibold ">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -125,9 +124,10 @@ export default function StudentsTab({ tutor, canEdit }: StudentsTabProps) {
                                     <TableRow key={student.uid} className="hover:bg-white transition-colors">
                                         <TableCell className="font-medium">{student.name}</TableCell>
                                         <TableCell className="text-gray-500">{student.email}</TableCell>
+                                        <TableCell className="text-gray-500">{student.lessonCredits}</TableCell>
                                         <TableCell>
                                             <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">
-                                                Remove
+                                                View
                                             </Button>
                                         </TableCell>
                                     </TableRow>

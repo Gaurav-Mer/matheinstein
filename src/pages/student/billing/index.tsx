@@ -47,7 +47,7 @@ export default function StudentBillingPage() {
     return (
         <StudentLayout>
             {status === "pending_demo" ? <PendingRequestStatus studentName={user?.displayName ?? ""} subjectName='' /> :
-                <div className="p-6 md:p-10 min-h-screen bg-gray-50">
+                <div className="p-6 md:p-10 flex-1 h-full">
                     <h1 className="text-3xl font-bold text-slate-800 mb-8">Billing & Credits</h1>
 
                     {/* Metrics */}

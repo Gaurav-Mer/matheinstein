@@ -23,7 +23,7 @@ const navLinks = {
         { label: "Dashboard", href: "/student/dashboard", icon: LayoutDashboard },
         { label: "Bookings", href: "/student/bookings", icon: CalendarDays },
         { label: "My Tutors", href: "/student/tutor", icon: GraduationCap },
-        { label: "Buy Packages", href: "/student/packages", icon: ShoppingCart },
+        // { label: "Buy Packages", href: "/student/packages", icon: ShoppingCart },
         // { label: "Messages", href: "/student/messages", icon: MessageSquare },
         { label: "Billings", href: "/student/billing", icon: DollarSign }
     ],
