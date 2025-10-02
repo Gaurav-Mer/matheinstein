@@ -28,6 +28,8 @@ export default function TutorBookingSettings() {
         sessionDurationMax: watch("sessionDuration.max") || 60,
         bookingWindowMin: watch("bookingWindow.minAdvanceNotice") || 24,
         bookingWindowMax: watch("bookingWindow.maxAdvanceNotice") || 30,
+        cancellationPolicyHours: watch("cancellationPolicyHours") || 24,
+
     };
 
     return (
@@ -121,6 +123,24 @@ export default function TutorBookingSettings() {
                                 {errors.sessionDuration?.max && <p className="text-sm text-red-500 mt-1">{errors.sessionDuration.max.message}</p>}
                             </div>
                         </div>
+                    </div>
+
+                    <div className="space-y-3">
+                        <Label htmlFor="cancellationPolicyHours" className="text-base font-medium text-gray-900">Cancellation/Reschedule Policy</Label>
+                        <p className="text-sm text-gray-500">Students must give at least this much notice to avoid forfeiting their credit.</p>
+                        <div className="flex items-center gap-3">
+                            <Input
+                                id="cancellationPolicyHours"
+                                type="number"
+                                placeholder={watchedValues.cancellationPolicyHours.toString()}
+                                {...register("cancellationPolicyHours", { valueAsNumber: true })}
+                                className={cn("w-20 text-center", errors.cancellationPolicyHours && "border-red-500")}
+                                min="1"
+                                max="72"
+                            />
+                            <span className="text-sm text-gray-600">hours advance notice</span>
+                        </div>
+                        {errors.cancellationPolicyHours && <p className="text-sm text-red-500">{errors.cancellationPolicyHours.message}</p>}
                     </div>
 
                     {/* Booking Window */}

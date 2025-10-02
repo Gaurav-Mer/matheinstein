@@ -296,11 +296,11 @@ export default function AdminDashboardPage() {
                                                     <CalendarDays className="h-6 w-6 text-white" />
                                                 </div>
                                                 <div>
-                                                    <p className="font-semibold text-slate-800 text-lg">
+                                                    {/* <p className="font-semibold text-slate-800 text-lg">
                                                         {booking.subject} with {booking.tutor?.name}
-                                                    </p>
+                                                    </p> */}
                                                     <p className="text-sm text-slate-500 mt-1">
-                                                        {format(new Date(booking.startTime.seconds * 1000), "PPP")}
+                                                        {format(new Date(booking.startTime?._seconds * 1000), "PPP")}
                                                     </p>
                                                 </div>
                                             </div>
@@ -311,7 +311,7 @@ export default function AdminDashboardPage() {
                                                 <div className="flex items-center gap-2">
                                                     <Clock className="h-4 w-4 text-slate-400" />
                                                     <p className="text-sm font-medium text-slate-600">
-                                                        {format(new Date(booking.startTime.seconds * 1000), "p")}
+                                                        {format(new Date(booking.startTime._seconds * 1000), "p")}
                                                     </p>
                                                 </div>
                                             </div>

@@ -38,10 +38,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const bookingsSnapshot = await adminDb
             .collection("bookings")
             .where("studentId", "==", uid)
+            // 🚨 FIX: Filter by status array to exclude final states
+            .where("status", "in", ["upcoming", "pending_demo"]) // Only show active/pending sessions
             .where("startTime", ">", now)
             .orderBy("startTime")
             .get();
-
         const upcomingBookings = bookingsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
         // 5. Consolidate and return the data

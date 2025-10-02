@@ -67,6 +67,10 @@ export const addTutorSchema = z.object({
         .max(90, "Payout cannot exceed 90%")
         .default(70) // Platform keeps 30% by default
         .optional(),
+
+    // NEW FIELD: Cancellation policy setting
+    cancellationPolicyHours: z.number().int().min(1).max(72).optional(), // Hours needed for advance notice
+
 });
 
 

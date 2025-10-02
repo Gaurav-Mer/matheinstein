@@ -75,7 +75,7 @@ export default function TutorAvailabilityPage() {
                         <div className="flex justify-end">
                             <Button type="submit" className="gap-2" disabled={isUpdating}>
                                 {isUpdating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                                Save Settings
+                                1     Save Settings
                             </Button>
                         </div>
                     </form>

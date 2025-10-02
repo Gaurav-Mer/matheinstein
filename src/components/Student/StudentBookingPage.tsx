@@ -5,8 +5,8 @@ import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import { Loader2, CalendarDays, BookOpen, Clock, Users, X, Search, ArrowRight } from "lucide-react";
-import { format } from 'date-fns';
+import { Loader2, CalendarDays, BookOpen, Clock, Search } from "lucide-react";
+import { format, differenceInHours } from 'date-fns';
 import { Input } from '@/components/ui/input';
 import {
     Select,
@@ -16,17 +16,34 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Badge } from '@/components/ui/badge';
-import { useStudentBookings } from '@/hooks/students/useStudentBookings';
 import StudentLayout from '@/pages/student/_layout';
+import { useStudentBookings } from '@/hooks/students/useStudentBookings';
 import CancellationDialog from '../CancellationDialog';
 import Link from 'next/link';
 
+// ⚠️ BUSINESS RULE: Minimum hours required to cancel/reschedule without penalty.
+const MIN_ADVANCE_NOTICE_HOURS = 24;
+
 export default function StudentBookingsPage() {
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedStatus, setSelectedStatus] = useState<'upcoming' | 'completed' | 'cancelled'>('upcoming');
+    // 🚨 FIX: Ensure the state includes all possible final statuses
+    const [selectedStatus, setSelectedStatus] = useState<'upcoming' | 'completed' | 'cancelled' | 'rescheduled' | 'no_show'>('upcoming');
     const [cancelModalOpen, setCancelModalOpen] = useState(false);
     const [selectedBooking, setSelectedBooking] = useState<any>(null);
+
     const { data: bookings, isLoading, error } = useStudentBookings({ status: selectedStatus });
+
+    // Helper to safely convert Firestore Timestamp object to JavaScript Date
+    const getTime = (timestamp: any): Date => {
+        // Check for serialized JSON format (_seconds) or standard object (seconds)
+        const seconds = timestamp?._seconds ?? timestamp?.seconds;
+
+        if (timestamp && typeof seconds === 'number') {
+            return new Date(seconds * 1000);
+        }
+        // Fallback: If data is missing or malformed, return a default valid date.
+        return new Date();
+    };
 
     if (isLoading) {
         return (
@@ -63,6 +80,10 @@ export default function StudentBookingsPage() {
                 return <Badge variant="secondary" className="bg-green-100 text-green-600">Completed</Badge>;
             case "cancelled":
                 return <Badge variant="secondary" className="bg-red-100 text-red-600">Cancelled</Badge>;
+            case "rescheduled":
+                return <Badge variant="secondary" className="bg-indigo-100 text-indigo-600">Rescheduled</Badge>;
+            case "no_show":
+                return <Badge variant="secondary" className="bg-orange-100 text-orange-600">No Show</Badge>;
             default:
                 return <Badge variant="default" className="bg-primary/10 text-primary">Upcoming</Badge>;
         }
@@ -70,13 +91,14 @@ export default function StudentBookingsPage() {
 
     return (
         <>
-            <div className="p-6 w-full bg-white">
+            <div className="p-6 w-full bg-white min-h-screen">
                 <CancellationDialog
                     bookingId={selectedBooking?.id}
                     isOpen={cancelModalOpen}
                     onClose={() => setCancelModalOpen(false)}
                     bookingDetails={selectedBooking}
                 />
+
                 {/* Header */}
                 <Card className="shadow-lg rounded-xl mb-6">
                     <CardHeader>
@@ -109,7 +131,7 @@ export default function StudentBookingsPage() {
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                             />
-                            <Select value={selectedStatus} onValueChange={(value) => setSelectedStatus(value as 'upcoming' | 'completed' | 'cancelled')}>
+                            <Select value={selectedStatus} onValueChange={(value) => setSelectedStatus(value as 'upcoming' | 'completed' | 'cancelled' | 'rescheduled' | 'no_show')}>
                                 <SelectTrigger className="w-full h-11">
                                     <SelectValue placeholder="Filter by Status" />
                                 </SelectTrigger>
@@ -117,6 +139,8 @@ export default function StudentBookingsPage() {
                                     <SelectItem value="upcoming">Upcoming</SelectItem>
                                     <SelectItem value="completed">Completed</SelectItem>
                                     <SelectItem value="cancelled">Cancelled</SelectItem>
+                                    <SelectItem value="rescheduled">Rescheduled</SelectItem>
+                                    <SelectItem value="no_show">No Show</SelectItem>
                                 </SelectContent>
                             </Select>
                             <Button variant="outline" className="h-11 rounded-xl" onClick={clearFilters}>
@@ -143,56 +167,71 @@ export default function StudentBookingsPage() {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {filteredBookings.map((booking: any) => (
-                                            <TableRow key={booking.id} className="border-b border-slate-100 hover:bg-slate-50/30 transition-colors duration-150">
-                                                <TableCell className="px-6 py-4">
-                                                    <div className="flex items-center gap-2">
-                                                        <BookOpen className="h-4 w-4 text-slate-400 flex-shrink-0" />
-                                                        <span className="text-slate-600 font-medium">{booking.subject || 'N/A'}</span>
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell className="px-6 py-4">
-                                                    <span className="font-medium text-slate-800">{booking.tutor?.name || 'N/A'}</span>
-                                                </TableCell>
-                                                <TableCell className="px-6 py-4">
-                                                    <span className="text-slate-600">{format(new Date(booking.startTime.seconds * 1000), 'PPP')}</span>
-                                                </TableCell>
-                                                <TableCell className="px-6 py-4">
-                                                    <div className="flex items-center gap-2">
-                                                        <Clock className="h-4 w-4 text-slate-400 flex-shrink-0" />
-                                                        <span className="text-slate-600">
-                                                            {format(new Date(booking.startTime.seconds * 1000), 'p')} - {format(new Date(booking.endTime.seconds * 1000), 'p')}
-                                                        </span>
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell className="px-6 py-4 text-center">
-                                                    {getStatusBadge(booking.status)}
-                                                </TableCell>
-                                                <TableCell className='flex items-center gap-4'>
-                                                    <Button
-                                                        onClick={() => {
-                                                            setSelectedBooking(booking);
-                                                            setCancelModalOpen(true);
-                                                        }}
-                                                    >
-                                                        Cancel
-                                                    </Button>
+                                        {filteredBookings.map((booking: any) => {
+                                            const startTime = getTime(booking.startTime);
 
-                                                    {booking.status === 'upcoming' && (
-                                                        <Link href={`/student/bookings/reschedule/${booking.id}`} passHref>
-                                                            <Button
-                                                                variant="outline"
-                                                                size="sm"
-                                                                className="text-primary hover:bg-primary/10 border-primary/20"
-                                                            >
-                                                                <ArrowRight className="h-4 w-4 mr-1" />
-                                                                Reschedule
-                                                            </Button>
-                                                        </Link>
-                                                    )}
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
+                                            // 🚨 NEW GATING LOGIC: Check if session is far enough in the future
+                                            const timeUntilLessonHours = differenceInHours(startTime, new Date());
+                                            const isActionable = booking.status === 'upcoming' && timeUntilLessonHours >= MIN_ADVANCE_NOTICE_HOURS;
+
+                                            return (
+                                                <TableRow key={booking.id} className="border-b border-slate-100 hover:bg-slate-50/30 transition-colors duration-150">
+                                                    <TableCell className="px-6 py-4">
+                                                        <div className="flex items-center gap-2">
+                                                            <BookOpen className="h-4 w-4 text-slate-400 flex-shrink-0" />
+                                                            <span className="text-slate-600 font-medium">{booking.subject || 'N/A'}</span>
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell className="px-6 py-4">
+                                                        <span className="font-medium text-slate-800">{booking.tutor?.name || 'N/A'}</span>
+                                                    </TableCell>
+                                                    <TableCell className="px-6 py-4">
+                                                        <span className="text-slate-600">{format(startTime, 'PPP')}</span>
+                                                    </TableCell>
+                                                    <TableCell className="px-6 py-4">
+                                                        <div className="flex items-center gap-2">
+                                                            <Clock className="h-4 w-4 text-slate-400 flex-shrink-0" />
+                                                            <span className="text-slate-600">
+                                                                {format(startTime, 'p')} - {format(getTime(booking.endTime), 'p')}
+                                                            </span>
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell className="px-6 py-4 text-center">
+                                                        {getStatusBadge(booking.status)}
+                                                    </TableCell>
+                                                    <TableCell className='px-6 py-4 text-center'>
+                                                        {isActionable ? (
+                                                            <div className='flex items-center justify-center gap-2'>
+                                                                <Button
+                                                                    onClick={() => {
+                                                                        setSelectedBooking(booking);
+                                                                        setCancelModalOpen(true);
+                                                                    }}
+                                                                    size="sm"
+                                                                    variant="destructive"
+                                                                >
+                                                                    Cancel
+                                                                </Button>
+
+                                                                <Link href={`/student/bookings/reschedule/${booking.id}`} passHref>
+                                                                    <Button
+                                                                        variant="outline"
+                                                                        size="sm"
+                                                                        className="text-primary hover:bg-primary/10 border-primary/20"
+                                                                    >
+                                                                        Reschedule
+                                                                    </Button>
+                                                                </Link>
+                                                            </div>
+                                                        ) : (
+                                                            <Badge variant="secondary" className="bg-gray-100 text-gray-500">
+                                                                {booking.status === 'upcoming' ? 'Window Closed' : 'N/A'}
+                                                            </Badge>
+                                                        )}
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
                                     </TableBody>
                                 </Table>
                             </div>
@@ -202,7 +241,7 @@ export default function StudentBookingsPage() {
                                     <div className="w-20 h-20 bg-slate-100 rounded-2xl flex items-center justify-center">
                                         <CalendarDays className="h-10 w-10 text-slate-400" />
                                     </div>
-                                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-prmary rounded-xl flex items-center justify-center">
+                                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-primary rounded-xl flex items-center justify-center">
                                         <Search className="h-4 w-4 text-white" />
                                     </div>
                                 </div>

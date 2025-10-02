@@ -105,6 +105,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 rescheduleDate: new Date(),
             });
 
+            // 🚨 FIX: Explicitly check for calendarEventId to ensure it's null, not undefined
+            const calendarEventId = oldBookingData.calendarEventId || null;
+
             // 2. Create NEW Booking Record (Credits remain unchanged)
             const newBookingRef = adminDb.collection("bookings").doc();
             newBookingData = { // Prepare the new data object
@@ -114,7 +117,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 endTime: dayjs(newEndTime).toDate(),
                 status: "upcoming",
                 previousBookingId: bookingId,
-                calendarEventId: oldBookingData.calendarEventId, // ⚠️ Pass the original Event ID to the new record
+                calendarEventId: calendarEventId, // ⬅️ NOW GUARANTEED to be string or null
                 createdAt: new Date(),
             };
 

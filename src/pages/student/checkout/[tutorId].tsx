@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { toast } from 'react-toastify';
 import { usePurchasePackage } from '@/hooks/usePurchasePackage';
 import StudentLayout from '../_layout';
+import { twMerge } from 'tailwind-merge';
 
 // --- CURRENCY UTILITY ---
 const formatCurrency = (amount: number) => {
@@ -60,7 +61,7 @@ export default function StudentCheckoutPage() {
         purchasePackage({ tutorId, packageData: selectedPackage }, {
             onSuccess: () => {
                 // Critical step: Redirect student back to the booking calendar to use their new credits
-                router.push(`/tutors/${tutorId}`);
+                router.push(`/student/tutor/${tutorId}`);
             },
             onError: (err: any) => {
                 toast.error(err?.response?.data?.error || "Purchase failed.");
@@ -85,14 +86,13 @@ export default function StudentCheckoutPage() {
 
         return (
             <div className="lg:col-span-2 space-y-6">
-                <Card className="shadow-lg rounded-xl">
+                <Card className="shadow-none rounded-xl">
                     <CardHeader><CardTitle>Select Package</CardTitle></CardHeader>
                     <CardContent className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         {packages.map((pkg: any) => (
                             <Card
                                 key={pkg.id || pkg.name}
-                                className={`bg-white shadow-md rounded-xl transition-all duration-200 cursor-pointer ${selectedPackage?.name === pkg.name ? 'ring-4 ring-primary border-primary' : 'hover:shadow-lg'
-                                    }`}
+                                className={twMerge("shadow-md rounded-xl transition-all duration-200 cursor-pointer", selectedPackage?.name === pkg.name && "bg-primary/10 ring-2 ring-primary border-none")}
                                 onClick={() => setSelectedPackage(pkg)}
                             >
                                 <CardContent className="p-4 text-center">
@@ -110,14 +110,14 @@ export default function StudentCheckoutPage() {
                             </Card>
                         ))}
                     </CardContent>
-                </Card>
-            </div>
+                </Card >
+            </div >
         );
     };
 
     return (
         <StudentLayout>
-            <div className="p-6 md:p-10 min-h-screen bg-gray-50">
+            <div className="p-6">
                 <h1 className="text-3xl font-bold text-slate-800 mb-2">Finalize Purchase</h1>
                 <p className="text-slate-500 mb-8">Securely purchase your lesson credits.</p>
 

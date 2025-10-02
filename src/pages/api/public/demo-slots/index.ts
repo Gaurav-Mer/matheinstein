@@ -99,8 +99,8 @@ const generateAndFilterSlots = (
 
                 if (!isBooked && !isTooSoon) {
                     daySlots.push({
-                        start_time: slotStart.utc().toISOString(),
-                        end_time: slotEnd.utc().toISOString(),
+                        startTime: slotStart.utc().toISOString(),
+                        endTime: slotEnd.utc().toISOString(),
                         status: 'available',
                         invitees_remaining: 1,
                         duration_minutes: slotDuration, // Include actual duration

@@ -9,10 +9,10 @@ import { Loader2, ArrowLeft, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import TutorSummaryCard from './TutorSummaryCard';
 import BookingCalendar from './BookingCalendar';
 import BookingConfirmationPage from './BookingConfirmationPage';
 import { toast } from 'react-toastify';
+import { Coin } from '@/components/svgs/others';
 
 export default function TutorBookingPage() {
     const params = useParams();
@@ -68,24 +68,37 @@ export default function TutorBookingPage() {
                         <ArrowLeft className="h-4 w-4" />
                     </Button>
                 </Link>
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">{tutor?.name}</h1>
-                    <p className="text-gray-500 text-sm">Booking calendar</p>
+                <div className='flex items-center justify-between  gap-4 w-full'>
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900">{tutor?.name}</h1>
+                        <p className="text-gray-500 text-sm">Booking calendar</p>
+                    </div>
+                    <div className='flex items-center gap-4'>
+                        {lessonCredits && lessonCredits > 0 ? (
+                            <div className="flex items-center gap-1  text-green-700">
+                                <Coin />
+                                <span>{lessonCredits} Credits</span>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-3 text-red-600 bg-red-50 py-2 px-3 rounded-xl">
+                                <Coin />
+                                <span className="">Insufficient Credits</span>
+                            </div>
+                        )}
+                        {!lessonCredits && lessonCredits <= 0 && <Button onClick={() => router.push(`/student/checkout/${tutorId}`)}>Buy Credit</Button>}
+                    </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                <div className="lg:col-span-1 space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* <div className="lg:col-span-1 space-y-6">
                     <TutorSummaryCard tutor={tutor} />
-                </div>
+                </div> */}
 
-                <Card className="lg:col-span-3 shadow-md rounded-xl">
-                    <CardContent className="p-6">
+                <Card className="lg:col-span-3 h-full shadow-none rounded-xl py-0">
+                    <CardContent className="p-4 h-full">
                         {step === 1 && (
                             <>
-                                <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                                    {lessonCredits > 0 ? `Select Your Slots (${lessonCredits} Credits Left)` : 'Select Slot (Buy Package Required)'}
-                                </h2>
                                 <BookingCalendar
                                     tutor={tutor}
                                     onSlotSelect={handleSlotSelection}

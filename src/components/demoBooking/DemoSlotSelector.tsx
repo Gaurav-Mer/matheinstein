@@ -18,8 +18,8 @@ dayjs.extend(timezone);
 
 // --- Define Types for better code safety ---
 interface Slot {
-    start_time: string;
-    end_time: string;
+    startTime: string;
+    endTime: string;
     status: 'available';
     invitees_remaining: number;
 }
@@ -95,8 +95,8 @@ export default function DemoSlotSelector({ selectedAdmin, subjectName }: DemoSlo
         if (!dayData || dayData.status !== 'available') return [];
 
         return dayData.slots.map(slot => ({
-            label: dayjs(slot.start_time).tz(selectedAdmin.timeZone).format('h:mm A'),
-            value: slot.start_time, // Keep the full ISO string for the form value
+            label: dayjs(slot.startTime).tz(selectedAdmin.timeZone).format('h:mm A'),
+            value: slot.startTime, // Keep the full ISO string for the form value
         }));
     }, [selectedDay, availabilityMap, selectedAdmin.timeZone]);
 

@@ -15,7 +15,7 @@ export const usePurchasePackage = () => {
     return useMutation({
         mutationFn: async (data: PurchaseInput) => {
             // This POST request hits the API that simulates payment, creates the record, and adds credits.
-            const { data: response } = await api.post("/student/purchase-package", data);
+            const { data: response } = await api.post("/bookings/purchase-package", data);
             return response;
         },
         onSuccess: (response) => {

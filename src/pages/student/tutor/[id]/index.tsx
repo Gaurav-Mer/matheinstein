@@ -5,6 +5,7 @@ import React from 'react';
 import { useRouter } from 'next/router'; // Or use 'next/navigation' for App Router
 import { Loader2 } from 'lucide-react';
 import TutorBookingPage from '@/components/Student/bookings/TutorBookingPage';
+import StudentLayout from '../../_layout';
 
 export default function PublicTutorPage() {
     const router = useRouter();
@@ -20,6 +21,8 @@ export default function PublicTutorPage() {
     }
 
     return (
-        <TutorBookingPage />
+        <StudentLayout>
+            <TutorBookingPage />
+        </StudentLayout>
     );
 }

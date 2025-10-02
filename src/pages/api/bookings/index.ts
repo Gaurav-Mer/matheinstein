@@ -14,9 +14,9 @@ import { google } from 'googleapis';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+// --- Global Configuration ---
 const resend = new Resend(process.env.RESEND_API_KEY);
-const useLocalSmtp = process.env.NODE_ENV === "development"; // ⬅️ DEFINED GLOBALLY
-
+const useLocalSmtp = process.env.NODE_ENV === "development"; // ⬅️ DEFINED GLOBALLY AND USED BELOW
 
 // Initialize Nodemailer transporter for local testing
 const localTransporter = nodemailer.createTransport({
@@ -42,6 +42,7 @@ const bookingItemSchema = z.object({
 });
 const bookingsListSchema = z.array(bookingItemSchema);
 
+
 // --- 1. Email Logic (Consolidated Confirmation) ---
 const sendBookingEmail = async (studentName: string, studentEmail: string, tutorName: string, tutorEmail: string, bookedSlots: any[], totalBooked: number) => {
     const firstBooking = bookedSlots[0];
@@ -51,7 +52,6 @@ const sendBookingEmail = async (studentName: string, studentEmail: string, tutor
         const greeting = isTutor ? `Hello ${recipientName},` : `Hi ${recipientName},`;
         const actionText = isTutor ? `A student has booked ${totalBooked} session(s) with you.` : `Your booking for ${totalBooked} session(s) is confirmed.`;
 
-        // Generate list of all booked times
         const slotsHtml = bookedSlots.map((slot: any) =>
             `<li style="margin-left: 20px; padding-left: 5px; list-style-type: none;">${dayjs(slot.startTime).tz(slot.timeZone).format('ddd, MMM D')} at ${dayjs(slot.startTime).tz(slot.timeZone).format('h:mm A')}</li>`
         ).join('');
@@ -79,6 +79,8 @@ const sendBookingEmail = async (studentName: string, studentEmail: string, tutor
             </div>
         `;
     };
+
+    // ⚠️ FIX: The conditional logic correctly uses the global useLocalSmtp variable
     if (useLocalSmtp) {
         await localTransporter.sendMail({ from: 'bookings@yourplatform.com', to: studentEmail, subject: subjectLine, html: htmlTemplate(studentName, false) });
         await localTransporter.sendMail({ from: 'bookings@yourplatform.com', to: tutorEmail, subject: subjectLine, html: htmlTemplate(tutorName, true) });
@@ -91,7 +93,6 @@ const sendBookingEmail = async (studentName: string, studentEmail: string, tutor
 // --- 2. Calendar Write Logic ---
 const addEventToExternalCalendar = async (tutorId: string, studentEmail: string, tutorEmail: string, booking: any): Promise<string | undefined> => {
     try {
-        // ... (This function remains as defined in the previous response, but is a CRITICAL component) ...
         const integrationDoc = await adminDb
             .collection("users").doc(tutorId).collection("integrations").doc("googleCalendar").get();
         const tokens = integrationDoc.data()?.tokens;
@@ -110,6 +111,7 @@ const addEventToExternalCalendar = async (tutorId: string, studentEmail: string,
                 attendees: [{ email: studentEmail }, { email: tutorEmail }],
             },
         });
+
         return response.data.id || undefined;
     } catch (error) {
         console.error('Error writing to Google Calendar:', error);
@@ -135,6 +137,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const { uid: studentId } = decodedToken;
 
         const validatedSlots = bookingsListSchema.parse(req.body);
+        console.log("validatedSlots", validatedSlots)
         const totalSlotsRequested = validatedSlots.length;
         const tutorId = validatedSlots[0].tutorId;
 

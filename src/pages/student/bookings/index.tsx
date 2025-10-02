@@ -6,7 +6,6 @@ import { PendingRequestStatus } from '@/components/Student/PendingRequestStatus'
 
 const Bookings = () => {
     const { status, user } = useAuth()
-    console.log("status", status)
     return (
         <StudentLayout>
             {status === "pending_demo" ? <PendingRequestStatus studentName={user?.displayName ?? ""} subjectName='' /> : <StudentBookingsPage />}

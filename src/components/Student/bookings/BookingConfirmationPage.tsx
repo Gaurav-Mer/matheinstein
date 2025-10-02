@@ -15,7 +15,6 @@ interface BookingConfirmationPageProps {
 }
 
 export default function BookingConfirmationPage({ tutor, selectedSlots, onBack }: BookingConfirmationPageProps) {
-    const totalSlots = selectedSlots.length;
 
     return (
         <div className="flex flex-col h-full">

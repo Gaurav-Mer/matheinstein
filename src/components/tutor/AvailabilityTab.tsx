@@ -32,10 +32,10 @@ export default function AvailabilityTab({ tutor, canEdit }: AvailabilityTabProps
                 maxAdvanceNotice: maxWindow / 24
             },
             name: tutor?.name,
-            email: tutor?.email
+            email: tutor?.email,
+            cancellationPolicyHours: tutor?.cancellationPolicyHours ?? 24
         },
     });
-    console.log("tutor", methods?.formState?.errors, methods?.watch())
 
     const onSubmit = (data: AddTutorInput) => {
         if (!canEdit) {
@@ -50,6 +50,7 @@ export default function AvailabilityTab({ tutor, canEdit }: AvailabilityTabProps
             bufferTime: data.bufferTime,
             sessionDuration: data.sessionDuration,
             bookingWindow: data.bookingWindow,
+            cancellationPolicyHours: data?.cancellationPolicyHours
         }, {
             onSuccess: () => {
                 toast.success("Availability and booking settings updated successfully!");
