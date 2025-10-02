@@ -16,7 +16,7 @@ import { PendingRequestStatus } from '@/components/Student/PendingRequestStatus'
 export default function StudentDashboardPage() {
     const { data: dashboardData, isLoading, error } = useStudentDashboard();
 
-    const { status, user } = useAuth()
+    const { status, user } = useAuth();
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-screen bg-gray-50">
@@ -42,19 +42,50 @@ export default function StudentDashboardPage() {
     }
 
     const { profile, tutor, upcomingBookings } = dashboardData;
+    const upcomingCount = upcomingBookings?.length ?? 0;
+    const nextLesson = upcomingBookings?.[0];
+    const nextLessonDate = nextLesson?.startTime?._seconds
+        ? format(new Date(nextLesson.startTime._seconds * 1000), "PPP")
+        : null;
 
     return (
         <StudentLayout>
-            {status === "pending_demo" ? <PendingRequestStatus studentName={user?.displayName ?? ""} subjectName='' /> : <div className="p-6">
+            {status === "pending_demo" ? <PendingRequestStatus studentName={user?.displayName ?? ""} subjectName='' /> : <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6">
                 {/* Header and Greeting */}
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-slate-800">Welcome, {profile?.name}!</h1>
-                    <p className="text-slate-500 mt-1">Your student dashboard</p>
+                <div className="mb-8 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+                    <div>
+                        <h1 className="text-3xl font-bold text-slate-800">Welcome back, {profile?.name}!</h1>
+                        <p className="text-slate-500 mt-2 max-w-xl">
+                            Track your lessons, stay connected with your tutor, and keep your learning goals on pace.
+                        </p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 max-w-md">
+                        <Card className="bg-white/80 backdrop-blur border-0 shadow-lg">
+                            <CardContent className="p-4">
+                                <p className="text-xs uppercase tracking-wide text-slate-400 font-semibold">Upcoming Lessons</p>
+                                <p className="text-2xl font-bold text-slate-800 mt-1">{upcomingCount}</p>
+                                <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                                    <Clock className="h-3.5 w-3.5" />
+                                    {nextLessonDate ? `Next on ${nextLessonDate}` : "Schedule your next lesson"}
+                                </p>
+                            </CardContent>
+                        </Card>
+                        <Card className="bg-white/80 backdrop-blur border-0 shadow-lg">
+                            <CardContent className="p-4">
+                                <p className="text-xs uppercase tracking-wide text-slate-400 font-semibold">Tutor Status</p>
+                                <p className="text-2xl font-bold text-slate-800 mt-1">{tutor ? 'Assigned' : 'Pending'}</p>
+                                <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                                    <GraduationCap className="h-3.5 w-3.5" />
+                                    {tutor ? tutor.name : 'Matching in progress'}
+                                </p>
+                            </CardContent>
+                        </Card>
+                    </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                     {/* Main Content Column */}
-                    <div className="lg:col-span-1 space-y-6">
+                    <div className="xl:col-span-2 space-y-6">
                         {/* Profile Summary */}
                         <Card className="bg-white shadow-xl rounded-2xl border-0">
                             <CardHeader className="p-6 border-b border-slate-100">
@@ -81,6 +112,51 @@ export default function StudentDashboardPage() {
                                         <Button variant="outline">Edit Profile</Button>
                                     </Link>
                                 </div>
+                            </CardContent>
+                        </Card>
+                        {/* Quick Actions */}
+                        <Card className="bg-white shadow-xl rounded-2xl border-0">
+                            <CardHeader className="p-6 border-b border-slate-100">
+                                <CardTitle className="text-xl font-bold text-slate-800">Quick Actions</CardTitle>
+                                <p className="text-sm text-slate-500 mt-1">Jump back into learning with these shortcuts.</p>
+                            </CardHeader>
+                            <CardContent className="p-6 grid gap-4 md:grid-cols-2">
+                                <Link href="/student/bookings" className="group">
+                                    <div className="border border-slate-200 rounded-xl p-4 transition-all group-hover:border-primary group-hover:shadow-lg bg-white">
+                                        <div className="flex items-center gap-3">
+                                            <CalendarDays className="h-5 w-5 text-primary" />
+                                            <p className="font-semibold text-slate-800">Book a Lesson</p>
+                                        </div>
+                                        <p className="text-xs text-slate-500 mt-2">Find a time that works with your tutor.</p>
+                                    </div>
+                                </Link>
+                                <Link href="/student/resources" className="group">
+                                    <div className="border border-slate-200 rounded-xl p-4 transition-all group-hover:border-primary group-hover:shadow-lg bg-white">
+                                        <div className="flex items-center gap-3">
+                                            <BookOpen className="h-5 w-5 text-primary" />
+                                            <p className="font-semibold text-slate-800">Learning Resources</p>
+                                        </div>
+                                        <p className="text-xs text-slate-500 mt-2">Review notes, assignments, and study guides.</p>
+                                    </div>
+                                </Link>
+                                <Link href="/student/support" className="group">
+                                    <div className="border border-slate-200 rounded-xl p-4 transition-all group-hover:border-primary group-hover:shadow-lg bg-white">
+                                        <div className="flex items-center gap-3">
+                                            <User className="h-5 w-5 text-primary" />
+                                            <p className="font-semibold text-slate-800">Student Support</p>
+                                        </div>
+                                        <p className="text-xs text-slate-500 mt-2">Get help with scheduling or course materials.</p>
+                                    </div>
+                                </Link>
+                                <Link href="/student/profile" className="group">
+                                    <div className="border border-slate-200 rounded-xl p-4 transition-all group-hover:border-primary group-hover:shadow-lg bg-white">
+                                        <div className="flex items-center gap-3">
+                                            <ArrowRight className="h-5 w-5 text-primary" />
+                                            <p className="font-semibold text-slate-800">Update Preferences</p>
+                                        </div>
+                                        <p className="text-xs text-slate-500 mt-2">Adjust your goals, subjects, or availability.</p>
+                                    </div>
+                                </Link>
                             </CardContent>
                         </Card>
                         {/* Tutor Summary Card */}
@@ -113,7 +189,7 @@ export default function StudentDashboardPage() {
                     </div>
 
                     {/* Upcoming Lessons Section */}
-                    <div className="lg:col-span-1 space-y-6">
+                    <div className="space-y-6">
                         <Card className="bg-white shadow-xl rounded-2xl border-0">
                             <CardHeader className="p-6 border-b border-slate-100">
                                 <div className="flex justify-between items-center">
@@ -150,9 +226,12 @@ export default function StudentDashboardPage() {
                                                     </Badge>
                                                     <div className="flex items-center gap-2">
                                                         <Clock className="h-4 w-4 text-slate-400" />
-                                                        <p className="text-sm font-medium text-slate-600">
-                                                            {format(new Date(booking.startTime?._seconds * 1000), "p")}
-                                                        </p>
+                                                        <div className="text-left">
+                                                            <p className="text-sm font-medium text-slate-600">
+                                                                {format(new Date(booking.startTime?._seconds * 1000), "p")}
+                                                            </p>
+                                                            <p className="text-xs text-slate-400">{booking.duration ? `${booking.duration} mins` : '45 min session'}</p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </li>
@@ -165,6 +244,38 @@ export default function StudentDashboardPage() {
                                         </div>
                                     )}
                                 </ul>
+                            </CardContent>
+                        </Card>
+                        {/* Learning roadmap */}
+                        <Card className="bg-white shadow-xl rounded-2xl border-0">
+                            <CardHeader className="p-6 border-b border-slate-100">
+                                <CardTitle className="text-xl font-bold text-slate-800">Learning Roadmap</CardTitle>
+                                <p className="text-sm text-slate-500 mt-1">
+                                    Track your progress and stay motivated with a clear plan.
+                                </p>
+                            </CardHeader>
+                            <CardContent className="p-6 space-y-4">
+                                <div className="flex items-start gap-3">
+                                    <Badge variant="secondary" className="mt-1">1</Badge>
+                                    <div>
+                                        <p className="font-semibold text-slate-700">Set this week&rsquo;s learning goal</p>
+                                        <p className="text-sm text-slate-500">Outline what you want to achieve before your next lesson.</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <Badge variant="secondary" className="mt-1">2</Badge>
+                                    <div>
+                                        <p className="font-semibold text-slate-700">Review tutor feedback</p>
+                                        <p className="text-sm text-slate-500">Check notes from your last session to prepare effectively.</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-3">
+                                    <Badge variant="secondary" className="mt-1">3</Badge>
+                                    <div>
+                                        <p className="font-semibold text-slate-700">Practice &amp; reflect</p>
+                                        <p className="text-sm text-slate-500">Complete practice problems and jot down questions for your tutor.</p>
+                                    </div>
+                                </div>
                             </CardContent>
                         </Card>
                     </div>
