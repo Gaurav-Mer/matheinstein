@@ -18,16 +18,16 @@ export default function BookDemoDialog({ open, onClose }: IProps) {
                 <DialogHeader className="px-6 pt-6 pb-3 border-b">
                     <div className="flex items-center justify-between">
                         <div>
-                            <DialogTitle className="text-2xl font-bold text-gray-800">
+                            <DialogTitle className="text-2xl font-bold text-foreground">
                                 Book Your Free Demo
                             </DialogTitle>
-                            <DialogDescription className="text-gray-500 text-sm">
+                            <DialogDescription className="text-muted-foreground text-sm">
                                 Pick a subject, tutor, and time slot that works best for you.
                             </DialogDescription>
                         </div>
                         <button
                             onClick={onClose}
-                            className="text-gray-500 hover:text-gray-700"
+                            className="text-muted-foreground hover:text-muted-foreground"
                         >
                             <X className="w-6 h-6" />
                         </button>

@@ -40,7 +40,7 @@ const mathSymbols = ["π", "√", "∑", "∞", "+"];
 
 export default function WhyChooseUs() {
     return (
-        <section id="whyus" className="py-24 bg-white relative overflow-hidden">
+        <section id="why-us" className="py-24 bg-background relative overflow-hidden">
             {/* Background floating math symbols */}
             {mathSymbols.map((symbol, i) => (
                 <motion.span
@@ -68,46 +68,42 @@ export default function WhyChooseUs() {
             ))}
 
             {/* Heading */}
-            <motion.h2
-                initial={{ opacity: 0, y: -40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-                className="relative text-4xl md:text-6xl py-1 font-extrabold text-center bg-primary text-white -mx-12 -rotate-1"
-            >
-                Why Choose Us
-            </motion.h2>
+            <div className="relative z-10 mx-auto max-w-2xl text-center">
+                <span className="inline-flex items-center rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-foreground ring-1 ring-primary/15">
+                    Why choose us
+                </span>
+                <h2 className="mt-4 font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+                    Built to make math click
+                </h2>
+                <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+                    Everything about MathEinstein is designed for real understanding — and real confidence.
+                </p>
+            </div>
             <div className="max-w-6xl mx-auto px-6 text-center mt-20 relative z-10">
                 {/* Benefits Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
                     {benefits.map((item, index) => (
                         <motion.div
                             key={index}
-                            initial={{ opacity: 0, y: 50, rotateX: 15 }}
-                            whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-                            whileHover={{
-                                scale: 1.05,
-                                rotateX: 3,
-                                rotateY: -3,
-                                boxShadow: "0 20px 40px rgba(0,0,0,0.12)",
-                            }}
-                            transition={{ duration: 0.5, delay: index * 0.1 }}
+                            initial={{ opacity: 0, y: 40 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: index * 0.08 }}
                             viewport={{ once: true }}
-                            className="p-8 bg-white rounded-3xl shadow-lg relative group transform perspective-1000 border border-gray-100 hover:border-primary/40"
+                            className="group relative rounded-2xl border border-border bg-card p-8 text-left shadow-[0_10px_30px_-12px_rgba(15,23,42,0.12)] transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-[0_22px_50px_-12px_rgba(37,99,235,0.18)]"
                         >
-                            {/* Floating Icon */}
-                            <motion.div
-                                whileHover={{ y: -8, scale: 1.1 }}
-                                className="flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 text-primary shadow-md absolute -top-8 left-8"
-                            >
+                            {/* top edge highlight */}
+                            <span aria-hidden className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+
+                            {/* Floating Icon chip */}
+                            <div className="absolute -top-7 left-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-accent ring-1 ring-primary/15 shadow-[0_8px_20px_-6px_rgba(37,99,235,0.25)] transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-105">
                                 {item.icon}
-                            </motion.div>
+                            </div>
 
                             {/* Content */}
-                            <h3 className="mt-12 text-xl font-bold text-gray-800 group-hover:text-primary transition">
+                            <h3 className="mt-12 text-xl font-bold text-foreground transition-colors group-hover:text-primary">
                                 {item.title}
                             </h3>
-                            <p className="mt-3 text-gray-600 text-sm leading-relaxed">
+                            <p className="mt-3 text-muted-foreground text-sm leading-relaxed">
                                 {item.desc}
                             </p>
                         </motion.div>
@@ -118,7 +114,7 @@ export default function WhyChooseUs() {
                 <motion.button
                     whileHover={{ scale: 1.07, y: -3 }}
                     whileTap={{ scale: 0.97 }}
-                    className="mt-20 px-12 py-4 bg-primary  font-semibold text-sm rounded-2xl border-2 border-black text-black transition"
+                    className="mt-20 inline-flex items-center justify-center rounded-2xl bg-primary px-12 py-4 text-base font-bold text-primary-foreground shadow-[0_12px_34px_-8px_rgba(245,158,11,0.5)] transition"
                 >
                     Book a Free Trial Today
                 </motion.button>

@@ -1,264 +1,167 @@
-import Image from "next/image";
-import React from "react";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Bag } from "@/components/svgs/students";
-import { Add, Divide, Hero, Message, Multiply } from "@/components/svgs/teachers";
-import BookDemoDialog from "../dialogs/BookDemoDialog";
+
+const stats = [
+  { value: "3,600+", label: "lessons delivered" },
+  { value: "90%", label: "improved 2+ grade boundaries" },
+  { value: "98%", label: "course completion" },
+  { value: "4.9★", label: "from 84 parents" },
+  { value: "20+", label: "countries taught" },
+];
 
 const HeroSection = () => {
-    const [openDialog, setOpenDialog] = React.useState(false);
-    return (
-        <section className="relative overflow-hidden bg-white  py-10 px-6 md:px-12 h-full">
-            <BookDemoDialog open={openDialog} onClose={() => setOpenDialog(false)} />
-            {/* Background decorative elements */}
+  return (
+    <section id="top" className="relative overflow-hidden bg-background">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background:
+            "radial-gradient(52% 48% at 82% -8%, #DBEAFE 0%, rgba(219,234,254,0) 62%), radial-gradient(44% 42% at 2% 16%, #DCFCE7 0%, rgba(220,252,231,0) 58%)",
+        }}
+      />
+      <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-6 py-16 lg:grid-cols-2 lg:gap-10 lg:px-8 lg:py-24">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
+          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-semibold shadow-sm">
+            <span className="font-bold text-amber-500">★ 4.9</span>
+            <span className="text-muted-foreground">from 84 parents</span>
+            <span className="text-border">·</span>
+            <span className="font-semibold text-secondary">Super Tutor</span>
+          </span>
 
-            <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-16 items-center max-w-6xl mx-auto">
-                {/* Left side: Text content */}
-                <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="space-y-8"
-                >
-                    <div className="space-y-4 relative">
-                        <h1 className="text-5xl lg:text-6xl font-bold leading-tight text-slate-800 relative">
-                            Live 1-to-1
-                            <span className="bg-primary text-white inline-block transform -rotate-1 px-2 py-1 rounded">
-                                Visual Math
-                            </span>
+          <h1 className="mt-5 font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-[3.5rem]">
+            Stop memorizing.{" "}
+            <span
+              style={{
+                background: "linear-gradient(90deg,#2563eb 0%,#16a34a 100%)",
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+                color: "transparent",
+              }}
+            >
+              Start seeing.
+            </span>
+          </h1>
 
-                            Classes
+          <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted-foreground">
+            Math that finally <span className="font-semibold text-foreground">clicks</span>. We turn abstract concepts into{" "}
+            <span className="font-semibold text-foreground">interactive 3-D simulations</span> kids can see and explore —
+            building real understanding from Grade 1 to exam prep and Olympiad.
+          </p>
 
-                        </h1>
-                        <div className="absolute -top-7 left-1/2 transform translate-x-1/2 flex items-center gap-2">
-                            <Message className="h-12 w-12" />
-                        </div>
-                        <div className="w-24 h-1 bg-gradient-to-r from-primary to-secondary rounded-full"></div>
-                    </div>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <a
+              href="#book-demo"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-7 py-3.5 text-base font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5"
+            >
+              Book a free demo →
+            </a>
+            <a
+              href="#how-it-works"
+              className="inline-flex items-center justify-center rounded-xl border border-border bg-card px-7 py-3.5 text-base font-bold text-foreground shadow-sm transition-colors hover:border-primary hover:text-primary"
+            >
+              See how it works
+            </a>
+          </div>
 
-                    <p className="text-xl text-slate-600 leading-relaxed max-w-lg ">
-                        Transform math learning with engaging, interactive visual classes designed for <span className="text-primary font-bold">Grades 1–8</span>.
-                        Build confidence and strong foundations through personalized teaching.
-                    </p>
+          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5">
+              <Check /> No pressure, no commitment
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <Shield /> Secure booking &amp; payments
+            </span>
+          </div>
+        </motion.div>
 
-                    <div className="flex flex-col sm:flex-row gap-4">
-                        <a href="#book-demo" >
-                            <Button
-                                // onClick={() => setOpenDialog(true)}
-                                size="lg"
-                                className="bg-primary text-black border-black border-2 font-semibold py-6 px-8  transition-all duration-300 transform hover:-translate-y-1"
-                            >
-                                Book Free Demo Class
-                            </Button>
-                        </a>
-                        <Button
-                            variant="outline"
-                            size="lg"
-                            className="border-2 border-black hover:border-primary text-slate-700 hover:text-primary font-semibold py-6 px-8 rounded-xl transition-all duration-300"
-                        >
-                            Explore Curriculum
-                        </Button>
-                    </div>
+        <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, delay: 0.15 }} className="relative">
+          <SimPanel />
+        </motion.div>
+      </div>
 
-                    {/* Trust indicators */}
-                    <div className="flex items-center gap-6 pt-6 border-t border-slate-200">
-                        <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            <span className="text-sm font-medium text-slate-600">1000+ Happy Students</span>
-                        </div>
-                        <div className="text-slate-300">|</div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-                            <span className="text-sm font-medium text-slate-600">Expert Teachers</span>
-                        </div>
-                    </div>
-                </motion.div>
-                {/* Right side: Hero Image with clean design */}
-                <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                    className="relative flex justify-center lg:justify-end"
-                >
-                    <SVGLINE />
-                    {/* <SECONDSVG /> */}
-                    <div className="relative">
-                        {/* Main image container */}
-                        <motion.div
-                            initial={{ scale: 0.95, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{ duration: 0.8, delay: 0.3 }}
-                        // className="relative bg-secondary/20 rounded-4xl rotate-6 shadow-2xl p-6"
-                        >
-                            <Image
-                                src="/hero2.png"
-                                alt="Interactive Math Learning Visual"
-                                height={3000}
-                                width={1900}
-                                className="rounded-xl -rotate-6 md:block hidden"
-                            />
-                            {/* <Hero /> */}
-                        </motion.div>
-
-                        {/* Floating math elements - subtle and professional */}
-                        <motion.div
-                            animate={{
-                                y: [0, -10, 0],
-                                rotate: [0, 5, 0]
-                            }}
-                            transition={{
-                                duration: 4,
-                                repeat: Infinity,
-                                ease: "easeInOut"
-                            }}
-                            className="absolute -top-4 -left-4 bg-primary text-white w-12 h-12 rounded-xl flex items-center justify-center shadow-lg font-bold text-xl"
-                        >
-                            <Add className="h-6" />
-                        </motion.div>
-
-                        <motion.div
-                            animate={{
-                                y: [0, 10, 0],
-                                rotate: [0, -5, 0]
-                            }}
-                            transition={{
-                                duration: 3,
-                                repeat: Infinity,
-                                ease: "easeInOut",
-                                delay: 1
-                            }}
-                            className="absolute top-8 -right-6 bg-secondary text-white w-10 h-10 rounded-lg flex items-center justify-center shadow-lg font-bold text-lg"
-                        >
-                            <Multiply className="h-6" />
-                        </motion.div>
-
-                        <motion.div
-                            animate={{
-                                y: [0, -8, 0],
-                                rotate: [0, 3, 0]
-                            }}
-                            transition={{
-                                duration: 5,
-                                repeat: Infinity,
-                                ease: "easeInOut",
-                                delay: 0.5
-                            }}
-                            className="absolute bottom-12 -left-6 bg-secondary text-white w-11 h-11 rounded-xl flex items-center justify-center shadow-lg font-bold text-lg"
-                        >
-                            <Divide className="h-6" />
-                        </motion.div>
-
-                        <motion.div
-                            animate={{
-                                y: [0, 12, 0],
-                                rotate: [0, -3, 0]
-                            }}
-                            transition={{
-                                duration: 4.5,
-                                repeat: Infinity,
-                                ease: "easeInOut",
-                                delay: 1.5
-                            }}
-                            className="absolute -bottom-2 right-4 bg-primary text-white w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg font-bold text-xl"
-                        >
-                            <Bag />
-                        </motion.div>
-
-                        {/* Subtle grid pattern */}
-                        <div className="absolute inset-0 opacity-5">
-                            <div className="w-full h-full" style={{
-                                backgroundImage: `
-                                    linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
-                                    linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px)
-                                `,
-                                backgroundSize: '20px 20px'
-                            }}></div>
-                        </div>
-                    </div>
-                </motion.div>
-            </div >
-        </section >
-    );
+      {/* trust stats strip */}
+      <div className="border-y border-border bg-muted/60">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-y-6 px-6 py-8 sm:grid-cols-3 lg:grid-cols-5 lg:px-8">
+          {stats.map((s) => (
+            <div key={s.label} className="text-center">
+              <div className="font-display text-2xl font-extrabold text-foreground sm:text-3xl">{s.value}</div>
+              <div className="mt-1 text-xs leading-snug text-muted-foreground">{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 };
 
 export default HeroSection;
 
-
-
-const SVGLINE = () => {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 220" preserveAspectRatio="none" className="w-full absolute -top-20 -rotate-12 right-0">
-            <path d="M 0 120 C 140 40 260 200 420 120 C 580 40 700 200 860 120 C 1020 40 1140 200 1400 120"
-                fill="none" stroke="#F3F4F6" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" opacity="0.6" />
-            <path d="M 0 120 C 140 40 260 200 420 120 C 580 40 700 200 860 120 C 1020 40 1140 200 1400 120"
-                fill="none" stroke="#F59E0B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-            <circle cx="140" cy="40" r="6" fill="#F59E0B" />
-            <circle cx="420" cy="120" r="6" fill="#F59E0B" />
-            <circle cx="700" cy="200" r="6" fill="#F59E0B" />
-            <circle cx="980" cy="120" r="6" fill="#F59E0B" />
-            <circle cx="1160" cy="200" r="6" fill="#F59E0B" />
-            <text x="120" y="12" font-size="26" fill="#111827" font-family="Inter, system-ui, sans-serif" opacity="0.85">∑</text>
-            <text x="380" y="200" font-size="20" fill="#111827" font-family="Inter, system-ui, sans-serif" opacity="0.85">π</text>
-            <text x="680" y="26" font-size="20" fill="#111827" font-family="Inter, system-ui, sans-serif" opacity="0.85">√</text>
-            <text x="980" y="28" font-size="20" fill="#111827" font-family="Inter, system-ui, sans-serif" opacity="0.85">÷</text>
-        </svg>
-
-    )
+function Check() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 6L9 17l-5-5" />
+    </svg>
+  );
 }
 
-const SECONDSVG = () => {
-    return (
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 1400 220"
-            preserveAspectRatio="none"
-            className="w-full h-60 scale-125 absolute -top-40 -rotate-12 z-10"
-        >
-            {/* Background soft curve */}
-            <path
-                d="M 0 140 C 180 60 320 200 500 140 C 680 80 880 200 1100 140 C 1260 80 1400 160 1400 160"
-                fill="none"
-                stroke="url(#grad1)"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                opacity="0.8"
-            />
-            {/* Secondary subtle curve */}
-            <path
-                d="M 0 160 C 200 100 400 220 620 160 C 840 100 1040 220 1260 160 C 1350 140 1400 180 1400 180"
-                fill="none"
-                stroke="url(#grad2)"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                opacity="0.5"
-            />
+function Shield() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </svg>
+  );
+}
 
-            {/* Gradient defs */}
-            <defs>
-                <linearGradient id="grad1" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#F59E0B" />
-                    <stop offset="100%" stopColor="#EF4444" />
-                </linearGradient>
-                <linearGradient id="grad2" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stopColor="#3B82F6" />
-                    <stop offset="100%" stopColor="#8B5CF6" />
-                </linearGradient>
-            </defs>
+function SimPanel() {
+  return (
+    <div className="relative mx-auto max-w-md">
+      <div className="rounded-3xl border border-border bg-card p-5 shadow-xl">
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <span className="inline-flex items-center gap-2">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-secondary" /> 3-D simulation · live
+          </span>
+          <span className="font-mono">rotate to explore</span>
+        </div>
+        <div className="relative mt-4 aspect-square overflow-hidden rounded-2xl bg-[#f1f5fb] ring-1 ring-border">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(37,99,235,0.10) 1px,transparent 1px),linear-gradient(90deg,rgba(37,99,235,0.10) 1px,transparent 1px)",
+              backgroundSize: "28px 28px",
+            }}
+          />
+          <motion.svg viewBox="-60 -60 120 120" className="absolute inset-0 m-auto h-3/4 w-3/4" animate={{ rotate: 360 }} transition={{ duration: 26, repeat: Infinity, ease: "linear" }}>
+            <polygon points="0,-50 43,-25 43,25 0,50 -43,25 -43,-25" fill="none" stroke="#2563eb" strokeWidth="2.5" />
+            <line x1="0" y1="-50" x2="0" y2="0" stroke="#16a34a" strokeWidth="2.5" />
+            <line x1="43" y1="25" x2="0" y2="0" stroke="#16a34a" strokeWidth="2.5" />
+            <line x1="-43" y1="25" x2="0" y2="0" stroke="#16a34a" strokeWidth="2.5" />
+            <circle cx="0" cy="0" r="3.5" fill="#16a34a" />
+          </motion.svg>
+          <span className="absolute bottom-3 left-3 rounded-lg bg-white px-2 py-1 font-mono text-xs text-primary shadow-sm">f(x) = x³</span>
+        </div>
+        <div className="mt-4 grid grid-cols-3 gap-2">
+          {["∑", "π", "√"].map((s) => (
+            <div key={s} className="rounded-xl border border-border bg-muted py-2 text-center text-lg font-bold text-primary">
+              {s}
+            </div>
+          ))}
+        </div>
+      </div>
 
-            {/* Elegant math symbols placed along the curve */}
-            <text x="120" y="80" fontSize="20" fill="#111827" opacity="0.9">∑</text>
-            <text x="360" y="180" fontSize="20" fill="#111827" opacity="0.9">π</text>
-            <text x="680" y="90" fontSize="22" fill="#111827" opacity="0.9">√</text>
-            <text x="980" y="160" fontSize="20" fill="#111827" opacity="0.9">÷</text>
-            <text x="1240" y="100" fontSize="22" fill="#111827" opacity="0.9">∞</text>
-
-            {/* Subtle glowing circles as anchor points */}
-            <circle cx="180" cy="60" r="4" fill="#F59E0B" opacity="0.7" />
-            <circle cx="500" cy="140" r="4" fill="#EF4444" opacity="0.7" />
-            <circle cx="880" cy="200" r="4" fill="#3B82F6" opacity="0.7" />
-            <circle cx="1260" cy="160" r="4" fill="#8B5CF6" opacity="0.7" />
-        </svg>
-
-    )
+      <motion.div
+        animate={{ y: [0, -8, 0] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute -left-4 top-10 rounded-xl border border-border bg-card px-3 py-2 text-xs font-medium text-foreground shadow-lg"
+      >
+        📐 Geometry, unfolding
+      </motion.div>
+      <motion.div
+        animate={{ y: [0, 8, 0] }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        className="absolute -right-3 bottom-12 rounded-xl border border-border bg-card px-3 py-2 text-xs font-medium text-foreground shadow-lg"
+      >
+        ⚖️ Algebra, balancing
+      </motion.div>
+    </div>
+  );
 }

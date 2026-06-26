@@ -33,18 +33,16 @@ export default function FAQS() {
     return (
         <section id="faq" className="relative py-16 px-6 md:px-12">
             {/* Heading */}
-            {/* Heading */}
-            <motion.h2
-                initial={{ opacity: 0, y: -40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-                className="relative text-4xl md:text-6xl font-extrabold text-center bg-primary text-white -mx-12 -rotate-1"
-            >
-                FAQs
-            </motion.h2>
+            <div className="mx-auto max-w-2xl text-center">
+                <span className="inline-flex items-center rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-foreground ring-1 ring-primary/15">
+                    FAQ
+                </span>
+                <h2 className="mt-4 font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+                    Questions parents ask
+                </h2>
+            </div>
             {/* FAQ List */}
-            <div className="divide-y divide-black/20  max-w-3xl mx-auto mt-12">
+            <div className="divide-y divide-border  max-w-3xl mx-auto mt-12">
                 {faqs.map((faq, idx) => {
                     const isOpen = activeIndex === idx;
 
@@ -56,7 +54,7 @@ export default function FAQS() {
                                 className="w-full flex items-center justify-between py-10 text-left focus:outline-none"
                             >
                                 <span
-                                    className={`text-lg font-medium ${isOpen ? "text-black" : "text-gray-800"
+                                    className={`text-lg font-medium ${isOpen ? "text-foreground" : "text-foreground"
                                         }`}
                                 >
                                     {faq.question}
@@ -67,9 +65,9 @@ export default function FAQS() {
                                     className="ml-4 flex-shrink-0"
                                 >
                                     {isOpen ? (
-                                        <Minus className="w-5 h-5 text-black" />
+                                        <Minus className="w-5 h-5 text-foreground" />
                                     ) : (
-                                        <Plus className="w-5 h-5 text-black" />
+                                        <Plus className="w-5 h-5 text-foreground" />
                                     )}
                                 </motion.div>
                             </button>
@@ -87,7 +85,7 @@ export default function FAQS() {
                                         }}
                                         className="overflow-hidden"
                                     >
-                                        <p className="pb-5 text-gray-700 leading-relaxed">
+                                        <p className="pb-5 text-muted-foreground leading-relaxed">
                                             {faq.answer}
                                         </p>
                                     </motion.div>

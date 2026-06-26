@@ -51,7 +51,7 @@ const cardVariants: Variants = {
 
 export default function HowItWorks() {
     return (
-        <section className="relative overflow-hidden bg-white py-20  p-12 ">
+        <section id="how-it-works" className="relative overflow-hidden bg-card py-20  p-12 ">
             {/* Background Grid + Math Symbols */}
             <div className="absolute inset-0 pointer-events-none">
                 <div className="w-full h-full bg-[linear-gradient(to_right,rgba(0,0,0,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.04)_1px,transparent_1px)] [background-size:32px_32px]" />
@@ -74,18 +74,17 @@ export default function HowItWorks() {
             </div>
 
             {/* Heading */}
-            <motion.h2
-                initial={{ opacity: 0, y: -40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-                className="relative text-4xl md:text-6xl font-extrabold text-center bg-primary text-white -mx-12 -rotate-1"
-            >
-                How It Works
-            </motion.h2>
-            <p className="mt-4 text-center text-gray-600 text-lg">
-                A clear and simple journey to better math learning
-            </p>
+            <div className="relative z-10 mx-auto max-w-2xl text-center">
+                <span className="inline-flex items-center rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-foreground ring-1 ring-primary/15">
+                    How it works
+                </span>
+                <h2 className="mt-4 font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+                    Get started in 4 simple steps
+                </h2>
+                <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+                    A clear, simple journey to better math learning.
+                </p>
+            </div>
 
             {/* Steps */}
             <motion.div
@@ -105,7 +104,7 @@ export default function HowItWorks() {
                             boxShadow: "0 20px 45px rgba(0,0,0,0.12)",
                         }}
                         transition={{ type: "spring", stiffness: 120, damping: 14 }}
-                        className="relative flex flex-col md:flex-row items-center gap-6 p-10 rounded-3xl border border-gray-200 bg-white shadow-md overflow-hidden"
+                        className="relative flex flex-col md:flex-row items-center gap-6 p-10 rounded-3xl border border-border bg-card shadow-md overflow-hidden"
                     >
                         {/* Subtle background math grid */}
                         <div className="absolute inset-0 opacity-[0.04] pointer-events-none bg-[radial-gradient(circle_at_center,black_1px,transparent_1px)] [background-size:20px_20px]" />
@@ -114,17 +113,17 @@ export default function HowItWorks() {
                         <motion.div
                             whileHover={{ scale: 1.1, rotate: -2 }}
                             transition={{ type: "spring", stiffness: 150 }}
-                            className="flex items-center justify-center w-14 h-14 rounded-full bg-black text-white text-lg font-bold shadow-lg relative z-10"
+                            className="flex items-center justify-center w-14 h-14 rounded-full bg-primary text-primary-foreground text-lg font-bold shadow-lg relative z-10"
                         >
                             {`0${index + 1}`}
                         </motion.div>
 
                         {/* Text */}
                         <div className="flex-1 text-center md:text-left relative z-10">
-                            <h3 className="text-2xl md:text-3xl font-semibold text-gray-900">
+                            <h3 className="text-2xl md:text-3xl font-semibold text-foreground">
                                 {item.title}
                             </h3>
-                            <p className="mt-3 text-gray-600 text-base md:text-lg leading-relaxed">
+                            <p className="mt-3 text-muted-foreground text-base md:text-lg leading-relaxed">
                                 {item.desc}
                             </p>
                         </div>
@@ -137,7 +136,7 @@ export default function HowItWorks() {
                                 rotate: index % 2 === 0 ? 6 : -6,
                             }}
                             transition={{ type: "spring", stiffness: 120, damping: 10 }}
-                            className="flex-shrink-0 w-20 h-20 flex items-center justify-center rounded-2xl bg-white shadow-lg border border-gray-200 relative z-20"
+                            className="flex-shrink-0 w-20 h-20 flex items-center justify-center rounded-2xl bg-card shadow-lg border border-border relative z-20"
                             style={{ perspective: "1000px" }}
                         >
                             <motion.div

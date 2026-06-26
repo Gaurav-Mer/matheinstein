@@ -28,23 +28,19 @@ export default function CurriculumPath() {
     const [activeClass, setActiveClass] = useState(1);
 
     return (
-        <section id="path" className="py-20 px-6 md:px-0  overflow-hidden">
-            <motion.h2
-                initial={{ opacity: 0, y: -40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-                className="relative text-4xl md:text-6xl font-extrabold text-center bg-primary pb-1 text-white -mx-12 -rotate-1"
-            >
-                Learning Path
-            </motion.h2>
+        <section id="curriculum" className="py-20 px-6 md:px-0  overflow-hidden">
+            <div className="mx-auto max-w-2xl text-center">
+                <span className="inline-flex items-center rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-foreground ring-1 ring-primary/15">
+                    Learning path
+                </span>
+            </div>
             {/* Heading */}
             <div className="text-center max-w-3xl mx-auto my-16">
                 <motion.h2
                     initial={{ opacity: 0, y: -20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
-                    className="text-4xl md:text-5xl font-extrabold text-gray-900"
+                    className="text-4xl md:text-5xl font-extrabold text-foreground"
                 >
                     From Counting to Algebra —{" "}
                     <span className="text-primary  ">A Clear Path to Math Mastery</span>
@@ -53,7 +49,7 @@ export default function CurriculumPath() {
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     transition={{ delay: 0.3 }}
-                    className="mt-4 text-lg text-gray-600"
+                    className="mt-4 text-lg text-muted-foreground"
                 >
                     We’ve designed a grade-wise, structured program that makes math simple, visual, and fun.
                 </motion.p>
@@ -70,11 +66,11 @@ export default function CurriculumPath() {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className={`px-5 py-2 rounded-full font-semibold flex items-center gap-2 transition ${activeClass === cls.id
-                                ? "bg-secondary text-white  border-black "
-                                : "bg-white text-black border border-gray-200 hover:bg-secondary/10"
+                                ? "bg-secondary text-white  border-border "
+                                : "bg-card text-foreground border border-border hover:bg-secondary/10"
                                 }`}
                         >
-                            <Icon className={`w-5 h-5 ${activeClass === cls.id ? "text-white" : "text-gray-600"}`} />
+                            <Icon className={`w-5 h-5 ${activeClass === cls.id ? "text-white" : "text-muted-foreground"}`} />
                             {cls.label}
                         </motion.button>
                     );

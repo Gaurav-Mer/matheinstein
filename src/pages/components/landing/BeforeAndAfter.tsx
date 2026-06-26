@@ -21,26 +21,23 @@ const featuresAfter = [
 
 const BeforeAndAfter = () => {
     return (
-        <section className="relative py-24 px-6 md:px-12 bg-white text-neutral-900 overflow-hidden">
+        <section className="relative py-24 px-6 md:px-12 bg-card text-foreground overflow-hidden">
             {/* Subtle Grid */}
             <div className="absolute inset-0 opacity-[0.02] bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] bg-[size:70px_70px]" />
 
             {/* Heading */}
-            {/* Heading */}
-            <motion.h2
-                initial={{ opacity: 0, y: -40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-                className="relative text-4xl md:text-6xl font-extrabold text-center bg-primary text-white -mx-12 -rotate-1"
-            >
-                Before & After
-            </motion.h2>
-            <p className="mt-4 text-center text-lg text-neutral-600 max-w-2xl mx-auto">
-                From <span className="font-semibold ">confusion</span> to{" "}
-                <span className="font-semibold ">clarity</span> —
-                experience how visual-first learning transforms math.
-            </p>
+            <div className="relative z-10 mx-auto max-w-2xl text-center">
+                <span className="inline-flex items-center rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-foreground ring-1 ring-primary/15">
+                    The difference
+                </span>
+                <h2 className="mt-4 font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+                    Before &amp; After
+                </h2>
+                <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+                    From <span className="font-semibold text-foreground">confusion</span> to{" "}
+                    <span className="font-semibold text-foreground">clarity</span> — see how visual-first learning transforms math.
+                </p>
+            </div>
 
             <motion.div
                 initial={{ scale: 0.95, opacity: 0.6 }}
@@ -59,8 +56,8 @@ const BeforeAndAfter = () => {
             >
                 {/* BEFORE */}
                 <div className="flex flex-col items-center text-center md:text-left">
-                    <p className="text-lg md:text-4xl font-bold  mb-4 -rotate-1 rounded-sm bg-primary px-3 text-white">
-                        BEFORE
+                    <p className="mb-4 inline-flex items-center rounded-full bg-card px-4 py-1.5 text-sm font-bold uppercase tracking-widest text-rose-600">
+                        Before
                     </p>
                     <div className="space-y-3 mb-6">
                         {featuresBefore.map((item, i) => (
@@ -70,14 +67,14 @@ const BeforeAndAfter = () => {
                                 whileInView={{ opacity: 1, x: 0 }}
                                 transition={{ delay: i * 0.1 }}
                                 viewport={{ once: true }}
-                                className="flex items-center gap-2 text-sm md:text-lg text-neutral-600"
+                                className="flex items-center gap-2 text-sm md:text-lg text-muted-foreground"
                             >
                                 <CheckCircle className="h-5 w-5 text-red-400" />
                                 {item}
                             </motion.div>
                         ))}
                     </div>
-                    <div className="relative w-full max-w-[320px] md:max-w-[360px] aspect-[9/14] rounded-2xl overflow-hidden shadow-xl border border-neutral-200 bg-neutral-50">
+                    <div className="relative w-full max-w-[320px] md:max-w-[360px] aspect-[9/14] rounded-2xl overflow-hidden shadow-xl border border-border bg-muted">
                         <video
                             src="/videos/before.mp4"
                             autoPlay
@@ -92,8 +89,8 @@ const BeforeAndAfter = () => {
 
                 {/* AFTER */}
                 <div className="flex flex-col items-center text-center md:text-left">
-                    <p className="text-lg md:text-4xl font-bold text-white px-3 rounded-sm -rotate-1 bg-secondary mb-4">
-                        AFTER
+                    <p className="mb-4 inline-flex items-center rounded-full bg-secondary/15 px-4 py-1.5 text-sm font-bold uppercase tracking-widest text-secondary">
+                        After
                     </p>
                     <div className="space-y-3 mb-6">
                         {featuresAfter.map((item, i) => (
@@ -103,14 +100,14 @@ const BeforeAndAfter = () => {
                                 whileInView={{ opacity: 1, x: 0 }}
                                 transition={{ delay: i * 0.1 }}
                                 viewport={{ once: true }}
-                                className="flex items-center gap-2 text-sm md:text-lg font-mono  text-neutral-700"
+                                className="flex items-center gap-2 text-sm md:text-lg font-mono  text-muted-foreground"
                             >
                                 <SuccessSvg className="h-6 w-6 text-primary" />
                                 {item}
                             </motion.div>
                         ))}
                     </div>
-                    <div className="relative w-full max-w-[320px] md:max-w-[360px] aspect-[9/14] rounded-2xl overflow-hidden shadow-2xl border border-amber-300/60 bg-neutral-50">
+                    <div className="relative w-full max-w-[320px] md:max-w-[360px] aspect-[9/14] rounded-2xl overflow-hidden shadow-2xl border border-amber-300/60 bg-muted">
                         <video
                             src="/videos/after.mp4"
                             autoPlay
@@ -151,7 +148,7 @@ const BeforeAndAfter = () => {
                         <p className="text-4xl font-extrabold text-amber-600">
                             {stat.value}
                         </p>
-                        <p className="text-neutral-600 mt-2">{stat.label}</p>
+                        <p className="text-muted-foreground mt-2">{stat.label}</p>
                     </motion.div>
                 ))}
             </div>

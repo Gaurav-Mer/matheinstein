@@ -116,22 +116,24 @@ export default function QuickMathTest() {
     };
 
     return (
-        <section className="relative py-32 bg-white overflow-hidden">
+        <section className="relative py-32 bg-card overflow-hidden">
             {/* Premium background elements */}
             {/* <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(0,0,0,0.025),transparent_60%)] pointer-events-none" /> */}
             <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(0,0,0,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.015)_1px,transparent_1px)] bg-[size:100px_100px]" />
 
 
             {/* Heading */}
-            <motion.h2
-                initial={{ opacity: 0, y: -40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-                className="relative text-4xl md:text-6xl font-extrabold text-center bg-primary text-white -mx-12 -rotate-1"
-            >
-                BODMAS FUN CHALLENGE
-            </motion.h2>
+            <div className="relative z-10 mx-auto max-w-2xl text-center">
+                <span className="inline-flex items-center rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-foreground ring-1 ring-primary/15">
+                    Try it yourself
+                </span>
+                <h2 className="mt-4 font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+                    BODMAS fun challenge
+                </h2>
+                <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+                    Pick a level and give it a go — see how visual, step-by-step math feels.
+                </p>
+            </div>
             <div className="relative max-w-4xl mx-auto px-8">
                 {/* Premium heading */}
                 <motion.div
@@ -159,7 +161,7 @@ export default function QuickMathTest() {
                             transition={{ delay: 0.4 }}
                             className="text-center"
                         >
-                            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-12">
+                            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-12">
                                 Choose Your <span className="text-primary">Challenge</span> Level
                             </h2>
 
@@ -205,19 +207,19 @@ export default function QuickMathTest() {
                                         transition={{ type: "spring", stiffness: 120, damping: 14, delay: 0.6 + index * 0.1, }}
 
                                         className={`group p-8 rounded-3xl border-2 font-bold text-left transition-all duration-300 w-full md:w-80 ${level === lvl.key
-                                            ? "bg-primary text-white border-primary shadow-2xl scale-105"
-                                            : "bg-gray-50/80 hover:bg-white border-gray-200 text-gray-700 shadow-lg"
+                                            ? "bg-primary text-primary-foreground border-primary shadow-2xl scale-105"
+                                            : "bg-muted/80 hover:bg-card border-border text-muted-foreground shadow-lg"
                                             }`}
                                     >
                                         {/* <div className="text-4xl mb-4"><QuickMathTest /></div> */}
                                         <div className={twMerge("text-2xl font-black mb-2", level === lvl.key && "text-3xl")}>{lvl.label}</div>
-                                        <div className={`text-sm mb-4 leading-relaxed ${level === lvl.key ? "text-white/90" : "text-gray-600"
+                                        <div className={`text-sm mb-4 leading-relaxed ${level === lvl.key ? "text-white/90" : "text-muted-foreground"
                                             }`}>
                                             {lvl.desc}
                                         </div>
                                         <div className={`text-lg font-mono p-3 rounded-xl ${level === lvl.key
                                             ? "bg-white/20 text-white"
-                                            : "bg-primary/20 text-gray-800 group-hover:bg-primary/30"
+                                            : "bg-primary/20 text-foreground group-hover:bg-primary/30"
                                             }`}>
                                             {lvl.example}
                                         </div>
@@ -232,7 +234,7 @@ export default function QuickMathTest() {
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     onClick={startTest}
-                                    className="px-16 py-5 rounded-3xl bg-primary text-black font-bold text-2xl border-black border-2 transition-all duration-300"
+                                    className="px-16 py-5 rounded-3xl bg-primary text-foreground font-bold text-2xl border-border border-2 transition-all duration-300"
                                 >
                                     Start Challenge
                                 </motion.button>
@@ -255,7 +257,7 @@ export default function QuickMathTest() {
                                 transition={{ type: "spring", stiffness: 120, damping: 15 }}
                                 className="bg-primary/5 rounded-3xl p-12 mb-10 border border-primary/10"
                             >
-                                <div className="text-5xl md:text-7xl font-black text-gray-800 mb-8 font-mono tracking-wider">
+                                <div className="text-5xl md:text-7xl font-black text-foreground mb-8 font-mono tracking-wider">
                                     {currentQ.q} = ?
                                 </div>
 
@@ -264,7 +266,7 @@ export default function QuickMathTest() {
                                     value={answer}
                                     onChange={(e) => setAnswer(e.target.value)}
                                     onKeyPress={handleKeyPress}
-                                    className="border-3 border-gray-200 rounded-3xl px-8 py-6 w-64 text-center text-3xl font-bold shadow-inner focus:outline-none focus:border-primary focus:ring-6 focus:ring-primary/20 transition-all bg-white"
+                                    className="border-3 border-border rounded-3xl px-8 py-6 w-64 text-center text-3xl font-bold shadow-inner focus:outline-none focus:border-primary focus:ring-6 focus:ring-primary/20 transition-all bg-card"
                                     placeholder="Answer"
                                     autoFocus
                                     disabled={!!feedback}
@@ -279,7 +281,7 @@ export default function QuickMathTest() {
                                         whileHover={answer.trim() ? { scale: 1.05 } : {}}
                                         whileTap={answer.trim() ? { scale: 0.95 } : {}}
                                         className={`px-12 py-4 rounded-3xl font-bold text-xl transition-all ${answer.trim()
-                                            ? "bg-primary text-white shadow-xl hover:shadow-2xl"
+                                            ? "bg-primary text-primary-foreground shadow-xl hover:shadow-2xl"
                                             : "bg-gray-200 text-gray-400 cursor-not-allowed"
                                             }`}
                                     >
@@ -290,7 +292,7 @@ export default function QuickMathTest() {
                                         onClick={nextQuestion}
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        className="px-12 py-4 rounded-3xl bg-primary text-white font-bold text-xl shadow-xl hover:shadow-2xl transition-all"
+                                        className="px-12 py-4 rounded-3xl bg-primary text-primary-foreground font-bold text-xl shadow-xl hover:shadow-2xl transition-all"
                                     >
                                         Next Question →
                                     </motion.button>
@@ -300,7 +302,7 @@ export default function QuickMathTest() {
                                     onClick={resetTest}
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
-                                    className="px-12 py-4 rounded-3xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xl shadow-lg transition-all"
+                                    className="px-12 py-4 rounded-3xl bg-muted hover:bg-gray-200 text-muted-foreground font-bold text-xl shadow-lg transition-all"
                                 >
                                     Reset
                                 </motion.button>
@@ -313,8 +315,8 @@ export default function QuickMathTest() {
                                     animate={{ opacity: 1, scale: 1, y: 0 }}
                                     transition={{ type: "spring", stiffness: 200, damping: 20 }}
                                     className={`inline-flex items-center gap-4 px-10 py-6 rounded-3xl text-2xl font-bold shadow-xl border-2 ${feedback === "correct"
-                                        ? "bg-green-50 text-green-700 border-green-200"
-                                        : "bg-red-50 text-red-700 border-red-200"
+                                        ? "bg-card text-green-700 border-green-200"
+                                        : "bg-card text-red-700 border-red-200"
                                         }`}
                                 >
                                     <span className="text-4xl">

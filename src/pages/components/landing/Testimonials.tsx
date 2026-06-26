@@ -31,29 +31,28 @@ const testimonials = [
 
 export default function Testimonials() {
     return (
-        <section className="relative py-28 pt-12 px-6 md:px-0 bg-white text-primary overflow-hidden">
+        <section className="relative py-28 pt-12 px-6 md:px-0 bg-card text-foreground overflow-hidden">
             {/* Subtle backdrop */}
             <div className="absolute inset-0 bg-gradient-to-br from-white via-white to-white opacity-95" />
             <div className="absolute inset-0 opacity-[0.04] bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000,transparent_1px)] bg-[size:60px_60px]" />
 
 
             {/* Heading */}
-            <motion.h2
-                initial={{ opacity: 0, y: -40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-                className="relative text-4xl md:text-6xl font-extrabold text-center bg-primary text-white -mx-12 -rotate-1"
-            >
-                Testimonials
-            </motion.h2>
+            <div className="relative z-10 mx-auto max-w-2xl text-center">
+                <span className="inline-flex items-center rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-foreground ring-1 ring-primary/15">
+                    Loved by families
+                </span>
+                <h2 className="mt-4 font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+                    Parents &amp; students love it
+                </h2>
+            </div>
             <div className="relative mx-auto text-center">
                 <motion.p
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.2 }}
                     viewport={{ once: true }}
-                    className="mt-6 text-lg md:text-xl text-white max-w-2xl mx-auto"
+                    className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto"
                 >
                     Crafted with precision, trusted by minds that value logic and elegance.
                 </motion.p>
@@ -62,7 +61,7 @@ export default function Testimonials() {
                 <motion.div
                     className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"
                 >
-                    <h2 className="text-[4rem] break-all md:text-[6rem] font-extrabold tracking-wider text-black/10 select-none ">
+                    <h2 className="text-[4rem] break-all md:text-[6rem] font-extrabold tracking-wider text-foreground/10 select-none ">
                         Your Testimonial Awaits
                     </h2>
                 </motion.div>
@@ -87,18 +86,18 @@ export default function Testimonials() {
                         {[...testimonials,].map((t, i) => (
                             <div
                                 key={i}
-                                className="min-w-[350px] max-w-[350px] h-fit   bg-white border-primary border-3 rounded-3xl shadow-2xl  overflow-hidden flex-shrink-0"
+                                className="min-w-[350px] max-w-[350px] h-fit   bg-card border-primary border-3 rounded-3xl shadow-2xl  overflow-hidden flex-shrink-0"
                             >
                                 <div className="relative p-8 flex flex-col items-center text-center">
-                                    <Quote className="h-10 w-10 text-black mb-6" />
-                                    <p className="text-neutral-800 italic leading-relaxed text-lg">
+                                    <Quote className="h-10 w-10 text-foreground mb-6" />
+                                    <p className="text-foreground italic leading-relaxed text-lg">
                                         &quot;{highlightContent(t.content, t.highlight)}&quot;
                                     </p>
-                                    <div className="mt-8 pt-6 border-t border-neutral-200 w-full">
-                                        <h4 className="text-lg font-semibold text-black bg-primary rounded-md tracking-wide">
+                                    <div className="mt-8 pt-6 border-t border-border w-full">
+                                        <h4 className="text-lg font-semibold text-foreground bg-primary rounded-md tracking-wide">
                                             {t.name}
                                         </h4>
-                                        <span className="text-sm text-black font-medium">
+                                        <span className="text-sm text-foreground font-medium">
                                             {t.role}
                                         </span>
                                     </div>
@@ -140,7 +139,7 @@ function highlightContent(content: string, highlights: string[]) {
                     piece.toLowerCase() === h.toLowerCase() ? (
                         <span
                             key={piece + i}
-                            className="bg-black/60 text-white -rotate-1 px-1 rounded-sm"
+                            className="bg-primary/60 text-white -rotate-1 px-1 rounded-sm"
                         >
                             {piece}
                         </span>
