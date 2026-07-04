@@ -234,9 +234,9 @@ export default function QuickMathTest() {
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     onClick={startTest}
-                                    className="px-16 py-5 rounded-3xl bg-primary text-foreground font-bold text-2xl border-border border-2 transition-all duration-300"
+                                    className="px-16 py-5 rounded-3xl bg-primary text-primary-foreground font-bold text-2xl border-2 border-primary shadow-xl shadow-primary/25 transition-all duration-300 hover:shadow-2xl"
                                 >
-                                    Start Challenge
+                                    Start Challenge →
                                 </motion.button>
                             )}
                         </motion.div>

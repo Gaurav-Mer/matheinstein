@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const stats = [
   { value: "3,600+", label: "lessons delivered" },
@@ -19,17 +20,17 @@ const HeroSection = () => {
             "radial-gradient(52% 48% at 82% -8%, #DBEAFE 0%, rgba(219,234,254,0) 62%), radial-gradient(44% 42% at 2% 16%, #DCFCE7 0%, rgba(220,252,231,0) 58%)",
         }}
       />
-      <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-6 py-16 lg:grid-cols-2 lg:gap-10 lg:px-8 lg:py-24">
+      <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 px-6 py-16 lg:grid-cols-2 lg:gap-10 lg:px-8 lg:py-24">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-semibold shadow-sm">
             <span className="font-bold text-amber-500">★ 4.9</span>
             <span className="text-muted-foreground">from 84 parents</span>
             <span className="text-border">·</span>
-            <span className="font-semibold text-secondary">Super Tutor</span>
+            <span className="font-semibold text-secondary">kids ask to come back</span>
           </span>
 
-          <h1 className="mt-5 font-display text-4xl font-extrabold leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-[3.5rem]">
-            Stop memorizing.{" "}
+          <h1 className="mt-5 font-display text-4xl font-extrabold leading-[1.06] tracking-tight text-foreground sm:text-5xl lg:text-[3.5rem]">
+            We don&apos;t teach math.{" "}
             <span
               style={{
                 background: "linear-gradient(90deg,#2563eb 0%,#16a34a 100%)",
@@ -38,14 +39,16 @@ const HeroSection = () => {
                 color: "transparent",
               }}
             >
-              Start seeing.
+              We play with it.
             </span>
           </h1>
 
           <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted-foreground">
-            Math that finally <span className="font-semibold text-foreground">clicks</span>. We turn abstract concepts into{" "}
-            <span className="font-semibold text-foreground">interactive 3-D simulations</span> kids can see and explore —
-            building real understanding from Grade 1 to exam prep and Olympiad.
+            That little <span className="font-semibold text-foreground">gasp</span> when a hard problem suddenly{" "}
+            <span className="font-semibold text-foreground">clicks</span>. The{" "}
+            <span className="font-semibold text-foreground">&ldquo;wait — give me another one.&rdquo;</span>{" "}
+            We turn intimidating, abstract math into something your child actually plays with — one-to-one, at their
+            pace, from Grade&nbsp;1 to Olympiad.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -74,7 +77,7 @@ const HeroSection = () => {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, delay: 0.15 }} className="relative">
-          <SimPanel />
+          <EinsteinPanel />
         </motion.div>
       </div>
 
@@ -111,57 +114,64 @@ function Shield() {
   );
 }
 
-function SimPanel() {
+function EinsteinPanel() {
   return (
     <div className="relative mx-auto max-w-md">
-      <div className="rounded-3xl border border-border bg-card p-5 shadow-xl">
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span className="inline-flex items-center gap-2">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-secondary" /> 3-D simulation · live
-          </span>
-          <span className="font-mono">rotate to explore</span>
-        </div>
-        <div className="relative mt-4 aspect-square overflow-hidden rounded-2xl bg-[#f1f5fb] ring-1 ring-border">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(37,99,235,0.10) 1px,transparent 1px),linear-gradient(90deg,rgba(37,99,235,0.10) 1px,transparent 1px)",
-              backgroundSize: "28px 28px",
-            }}
-          />
-          <motion.svg viewBox="-60 -60 120 120" className="absolute inset-0 m-auto h-3/4 w-3/4" animate={{ rotate: 360 }} transition={{ duration: 26, repeat: Infinity, ease: "linear" }}>
-            <polygon points="0,-50 43,-25 43,25 0,50 -43,25 -43,-25" fill="none" stroke="#2563eb" strokeWidth="2.5" />
-            <line x1="0" y1="-50" x2="0" y2="0" stroke="#16a34a" strokeWidth="2.5" />
-            <line x1="43" y1="25" x2="0" y2="0" stroke="#16a34a" strokeWidth="2.5" />
-            <line x1="-43" y1="25" x2="0" y2="0" stroke="#16a34a" strokeWidth="2.5" />
-            <circle cx="0" cy="0" r="3.5" fill="#16a34a" />
-          </motion.svg>
-          <span className="absolute bottom-3 left-3 rounded-lg bg-white px-2 py-1 font-mono text-xs text-primary shadow-sm">f(x) = x³</span>
-        </div>
-        <div className="mt-4 grid grid-cols-3 gap-2">
-          {["∑", "π", "√"].map((s) => (
-            <div key={s} className="rounded-xl border border-border bg-muted py-2 text-center text-lg font-bold text-primary">
-              {s}
-            </div>
-          ))}
-        </div>
+      {/* the character + its floating overlays live in this box so the chips
+          anchor to the image, not to the caption below it */}
+      <div className="relative">
+        {/* soft brand glow behind the character */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-6 rounded-full blur-3xl"
+          style={{
+            background:
+              "radial-gradient(circle at 62% 42%, rgba(37,99,235,0.18), transparent 60%), radial-gradient(circle at 30% 68%, rgba(22,163,74,0.16), transparent 62%)",
+          }}
+        />
+
+        {/* thought bubble */}
+        <motion.div
+          animate={{ y: [0, -6, 0] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute right-2 top-2 z-20 rounded-2xl rounded-br-sm border border-border bg-white px-4 py-2 font-mono text-sm font-bold text-primary shadow-md"
+        >
+          E = mc²
+        </motion.div>
+
+        <Image
+          src="/einstein-hero.png"
+          alt="Friendly cartoon of Albert Einstein playing with math symbols"
+          width={900}
+          height={900}
+          priority
+          className="relative z-10 mx-auto h-auto w-full"
+        />
+
+        {/* floating joy chips */}
+        <motion.div
+          animate={{ y: [0, -8, 0] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-16 left-0 z-20 rounded-xl border border-border bg-card px-3 py-2 text-xs font-semibold text-foreground shadow-lg"
+        >
+          ✨ it just clicked
+        </motion.div>
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute bottom-8 right-0 z-20 rounded-xl border border-border bg-card px-3 py-2 text-xs font-semibold text-foreground shadow-lg"
+        >
+          🎉 &ldquo;do another one!&rdquo;
+        </motion.div>
       </div>
 
-      <motion.div
-        animate={{ y: [0, -8, 0] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -left-4 top-10 rounded-xl border border-border bg-card px-3 py-2 text-xs font-medium text-foreground shadow-lg"
-      >
-        📐 Geometry, unfolding
-      </motion.div>
-      <motion.div
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="absolute -right-3 bottom-12 rounded-xl border border-border bg-card px-3 py-2 text-xs font-medium text-foreground shadow-lg"
-      >
-        ⚖️ Algebra, balancing
-      </motion.div>
+      {/* caption */}
+      <div className="relative z-10 mt-3 text-center">
+        <p className="font-display text-lg font-extrabold text-foreground">
+          &ldquo;Ohhh — <span className="text-secondary">that&apos;s</span>{" "}how it works.&rdquo;
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">the moment math stops being scary</p>
+      </div>
     </div>
   );
 }

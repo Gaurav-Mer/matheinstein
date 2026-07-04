@@ -43,10 +43,8 @@ export default function Home() {
       <div
         className={`${geistSans.className} ${poppins.variable} ${inter.variable} font-sans min-h-screen flex flex-col`}
       >
-        {/* Navbar */}
-        <header className="sticky top-0 z-50">
-          <Navbar />
-        </header>
+        {/* Navbar (already position:sticky internally) */}
+        <Navbar />
 
         {/* Main content */}
         <main className="flex-1 overflow-y-auto">

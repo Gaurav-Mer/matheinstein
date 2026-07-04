@@ -112,6 +112,11 @@
     -webkit-text-size-adjust: 100%;
   }
 
+  /* Keep anchored sections clear of the sticky navbar when jumped to */
+  [id] {
+    scroll-margin-top: 5.5rem;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-sans);

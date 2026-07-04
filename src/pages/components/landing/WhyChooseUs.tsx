@@ -111,13 +111,14 @@ export default function WhyChooseUs() {
                 </div>
 
                 {/* CTA */}
-                <motion.button
-                    whileHover={{ scale: 1.07, y: -3 }}
+                <motion.a
+                    href="#book-demo"
+                    whileHover={{ scale: 1.05, y: -3 }}
                     whileTap={{ scale: 0.97 }}
-                    className="mt-20 inline-flex items-center justify-center rounded-2xl bg-primary px-12 py-4 text-base font-bold text-primary-foreground shadow-[0_12px_34px_-8px_rgba(245,158,11,0.5)] transition"
+                    className="mt-20 inline-flex items-center justify-center rounded-2xl bg-primary px-12 py-4 text-base font-bold text-primary-foreground shadow-[0_16px_34px_-10px_rgba(37,99,235,0.5)] transition hover:shadow-[0_22px_46px_-10px_rgba(37,99,235,0.6)]"
                 >
                     Book a Free Trial Today
-                </motion.button>
+                </motion.a>
             </div>
         </section>
     );
