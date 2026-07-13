@@ -1,170 +1,140 @@
-"use client";
+import { motion, type Variants } from "framer-motion";
+import { Check, X } from "lucide-react";
 
-import { SuccessSvg } from "@/components/svgs/others";
-import { motion } from "framer-motion";
-import { CheckCircle, ArrowRight } from "lucide-react";
-import React from "react";
-
-const featuresBefore = [
-    "Heavy focus on memorization",
-    "Minimal real-world connection",
-    "Low student engagement",
-    "Confusion builds frustration",
+const before = [
+  "Endless memorising, zero real understanding",
+  "Formulas with no “why” behind them",
+  "A stomach-ache before every test",
+  "Zoning out — and quietly falling behind",
 ];
 
-const featuresAfter = [
-    "Interactive visual explanations",
-    "Real-world connections to math",
-    "High engagement & curiosity",
-    "Confidence and clarity in learning",
+const after = [
+  "See it first, then genuinely get it",
+  "Real “aha” moments that actually stick",
+  "Walks into tests calm and ready",
+  "Leaning in — and asking for more",
 ];
 
-const BeforeAndAfter = () => {
-    return (
-        <section className="relative py-24 px-6 md:px-12 bg-card text-foreground overflow-hidden">
-            {/* Subtle Grid */}
-            <div className="absolute inset-0 opacity-[0.02] bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] bg-[size:70px_70px]" />
+const stats = [
+  { v: "1,000+", l: "students improved their grades", c: "#2563eb" },
+  { v: "95%", l: "of parents report more confidence", c: "#16a34a" },
+  { v: "5,000+", l: "hours of classes delivered", c: "#7c3aed" },
+];
 
-            {/* Heading */}
-            <div className="relative z-10 mx-auto max-w-2xl text-center">
-                <span className="inline-flex items-center rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-foreground ring-1 ring-primary/15">
-                    The difference
-                </span>
-                <h2 className="mt-4 font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-                    Before &amp; After
-                </h2>
-                <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-                    From <span className="font-semibold text-foreground">confusion</span> to{" "}
-                    <span className="font-semibold text-foreground">clarity</span> — see how visual-first learning transforms math.
-                </p>
-            </div>
-
-            <motion.div
-                initial={{ scale: 0.95, opacity: 0.6 }}
-                animate={{ scale: [0.95, 1, 0.95], opacity: [0.6, 1, 0.6] }}
-                transition={{ duration: 4, repeat: Infinity }}
-                className="absolute inset-0 rounded-2xl border-2 border-amber-400/70 pointer-events-none"
-            />
-
-            {/* Comparison */}
-            <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                viewport={{ once: true }}
-                className="relative mt-20 grid grid-cols-1 md:grid-cols-2 gap-16 items-start"
-            >
-                {/* BEFORE */}
-                <div className="flex flex-col items-center text-center md:text-left">
-                    <p className="mb-4 inline-flex items-center rounded-full bg-card px-4 py-1.5 text-sm font-bold uppercase tracking-widest text-rose-600">
-                        Before
-                    </p>
-                    <div className="space-y-3 mb-6">
-                        {featuresBefore.map((item, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, x: -20 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                transition={{ delay: i * 0.1 }}
-                                viewport={{ once: true }}
-                                className="flex items-center gap-2 text-sm md:text-lg text-muted-foreground"
-                            >
-                                <CheckCircle className="h-5 w-5 text-red-400" />
-                                {item}
-                            </motion.div>
-                        ))}
-                    </div>
-                    <div className="relative w-full max-w-[320px] md:max-w-[360px] aspect-[9/14] rounded-2xl overflow-hidden shadow-xl border border-border bg-muted">
-                        <video
-                            src="/videos/before.mp4"
-                            autoPlay
-                            muted
-                            loop
-                            playsInline
-                            className="w-full h-full object-cover rounded-2xl"
-                        />
-                        <div className="absolute inset-0 rounded-2xl ring-1 ring-neutral-200/50 pointer-events-none" />
-                    </div>
-                </div>
-
-                {/* AFTER */}
-                <div className="flex flex-col items-center text-center md:text-left">
-                    <p className="mb-4 inline-flex items-center rounded-full bg-secondary/15 px-4 py-1.5 text-sm font-bold uppercase tracking-widest text-secondary">
-                        After
-                    </p>
-                    <div className="space-y-3 mb-6">
-                        {featuresAfter.map((item, i) => (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, x: 20 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                transition={{ delay: i * 0.1 }}
-                                viewport={{ once: true }}
-                                className="flex items-center gap-2 text-sm md:text-lg font-mono  text-muted-foreground"
-                            >
-                                <SuccessSvg className="h-6 w-6 text-primary" />
-                                {item}
-                            </motion.div>
-                        ))}
-                    </div>
-                    <div className="relative w-full max-w-[320px] md:max-w-[360px] aspect-[9/14] rounded-2xl overflow-hidden shadow-2xl border border-amber-300/60 bg-muted">
-                        <video
-                            src="/videos/after.mp4"
-                            autoPlay
-                            muted
-                            loop
-                            playsInline
-                            className="w-full h-full object-cover rounded-2xl"
-                        />
-                        <div className="absolute inset-0 rounded-2xl ring-2 ring-amber-400/50 pointer-events-none" />
-                    </div>
-                </div>
-
-                {/* Divider */}
-                <motion.div
-                    initial={{ scaleY: 0 }}
-                    whileInView={{ scaleY: 1 }}
-                    transition={{ duration: 0.6 }}
-                    viewport={{ once: true }}
-                    className="hidden md:block absolute left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-transparent via-amber-400 to-transparent rounded-full"
-                />
-            </motion.div>
-
-            {/* Stats */}
-            <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
-                {[
-                    { value: "1000+", label: "Students Improved Grades" },
-                    { value: "95%", label: "Parents Report More Confidence" },
-                    { value: "5000+", label: "Hours of Classes Delivered" },
-                ].map((stat, i) => (
-                    <motion.div
-                        key={i}
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.2 }}
-                        viewport={{ once: true }}
-                        className="flex flex-col items-center"
-                    >
-                        <p className="text-4xl font-extrabold text-amber-600">
-                            {stat.value}
-                        </p>
-                        <p className="text-muted-foreground mt-2">{stat.label}</p>
-                    </motion.div>
-                ))}
-            </div>
-
-            {/* CTA */}
-            <div className="mt-16 flex justify-center">
-                <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="inline-flex items-center gap-2 px-7 py-3 rounded-full bg-amber-500 text-white font-semibold shadow-lg hover:bg-amber-400 transition"
-                >
-                    Experience the Change <ArrowRight className="h-5 w-5" />
-                </motion.button>
-            </div>
-        </section>
-    );
+const container: Variants = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
+const card: Variants = {
+  hidden: { opacity: 0, y: 40 },
+  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 80, damping: 14 } },
 };
 
-export default BeforeAndAfter;
+export default function BeforeAndAfter() {
+  return (
+    <section className="relative overflow-hidden bg-card py-24">
+      <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(15,23,42,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.03)_1px,transparent_1px)] bg-[size:44px_44px]" />
+
+      <div className="mx-auto max-w-5xl px-6 lg:px-8">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="inline-flex items-center rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-foreground ring-1 ring-primary/15">
+            The difference
+          </span>
+          <h2 className="mt-4 font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+            From dread to &ldquo;do another one&rdquo;
+          </h2>
+          <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+            The same child — a few weeks apart. This is the shift visual-first learning makes.
+          </p>
+        </div>
+
+        <motion.div
+          variants={container}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="mt-14 grid gap-6 md:grid-cols-2"
+        >
+          {/* BEFORE */}
+          <motion.div
+            variants={card}
+            className="relative overflow-hidden rounded-3xl border border-rose-200 p-8 shadow-[0_18px_44px_-20px_rgba(15,23,42,0.2)] ring-1 ring-rose-500/[0.06]"
+            style={{ background: "linear-gradient(to bottom right,#ffffff,#fff1f2)" }}
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl text-2xl shadow-md ring-1 ring-white/40" style={{ background: "linear-gradient(135deg,#fb7185,#e11d48)" }}>
+                😣
+              </div>
+              <div>
+                <div className="text-[11px] font-black uppercase tracking-widest text-rose-500">Before</div>
+                <h3 className="font-display text-xl font-extrabold text-foreground">The old way</h3>
+              </div>
+            </div>
+            <ul className="mt-6 space-y-3">
+              {before.map((p, i) => (
+                <li key={i} className="flex items-start gap-3 text-sm leading-relaxed text-muted-foreground">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-rose-100 text-rose-500">
+                    <X className="h-3.5 w-3.5" strokeWidth={3} />
+                  </span>
+                  {p}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* AFTER */}
+          <motion.div
+            variants={card}
+            className="relative overflow-hidden rounded-3xl border border-green-200 p-8 shadow-[0_22px_50px_-20px_rgba(22,163,74,0.28)] ring-1 ring-green-500/[0.08]"
+            style={{ background: "linear-gradient(to bottom right,#ffffff,#ecfdf5)" }}
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl text-2xl shadow-md ring-1 ring-white/40" style={{ background: "linear-gradient(135deg,#34d399,#16a34a)" }}>
+                🤩
+              </div>
+              <div>
+                <div className="text-[11px] font-black uppercase tracking-widest text-secondary">After</div>
+                <h3 className="font-display text-xl font-extrabold text-foreground">With MathEinstein</h3>
+              </div>
+            </div>
+            <ul className="mt-6 space-y-3">
+              {after.map((p, i) => (
+                <li key={i} className="flex items-start gap-3 text-sm leading-relaxed text-foreground">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-100 text-secondary">
+                    <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                  </span>
+                  {p}
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        </motion.div>
+
+        {/* stats */}
+        <div className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-3">
+          {stats.map((s, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.12 }}
+              viewport={{ once: true }}
+              className="text-center"
+            >
+              <div className="font-display text-4xl font-extrabold" style={{ color: s.c }}>
+                {s.v}
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">{s.l}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="mt-14 text-center">
+          <a
+            href="#book-demo"
+            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:-translate-y-0.5"
+          >
+            Experience the change →
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}

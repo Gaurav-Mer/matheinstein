@@ -1,125 +1,114 @@
-import { CalendarSvg, ChartSvg, CuveSvg, MathSvg, PlanSvg, StudentSvg } from "@/components/svgs/others";
-import { motion } from "framer-motion";
-import { Star, Clock, BookOpen, BarChart2, Users, Sparkles } from "lucide-react";
+import { motion, type Variants } from "framer-motion";
+import FloatingMath from "@/components/FloatingMath";
 
 const benefits = [
-    {
-        title: "1-to-1 Personalized Attention",
-        desc: "Every child learns at their own pace with full focus from the tutor.",
-        icon: <PlanSvg />,
-    },
-    {
-        title: "Visual & Interactive Math",
-        desc: "Concepts explained with visuals so learning feels engaging, not boring.",
-        icon: <MathSvg />,
-    },
-    {
-        title: "Covers School Curriculum",
-        desc: "Our program is aligned with grades 1–8 school standards.",
-        icon: <StudentSvg />,
-    },
-    {
-        title: "Flexible Scheduling",
-        desc: "Choose times that fit your child’s daily routine.",
-        icon: <CalendarSvg />
-    },
-    {
-        title: "Experienced Tutors",
-        desc: "Friendly, engaging, and trained in making math fun.",
-        icon: <CuveSvg />,
-    },
-    {
-        title: "Progress Tracking",
-        desc: "Parents receive regular updates on student improvement.",
-        icon: <ChartSvg />,
-    },
+  {
+    emoji: "🎯",
+    title: "One-to-one, all-in",
+    desc: "Your child, one tutor, zero distractions — learning at exactly their pace, not the class average.",
+    tint: "#eff6ff",
+    badge: "linear-gradient(135deg,#3b82f6,#2563eb)",
+  },
+  {
+    emoji: "👀",
+    title: "Math you can see",
+    desc: "Abstract ideas become visuals, stories and games — so it clicks instead of dragging.",
+    tint: "#ecfdf5",
+    badge: "linear-gradient(135deg,#22c55e,#16a34a)",
+  },
+  {
+    emoji: "📚",
+    title: "Built on their syllabus",
+    desc: "Aligned to school from Grade 1 — then exam prep and Olympiad when they're hungry for more.",
+    tint: "#fff7ed",
+    badge: "linear-gradient(135deg,#fbbf24,#f59e0b)",
+  },
+  {
+    emoji: "⏰",
+    title: "Fits your week",
+    desc: "Flexible slots around school, sport and dinner. You pick the times — we show up.",
+    tint: "#faf5ff",
+    badge: "linear-gradient(135deg,#a855f7,#7c3aed)",
+  },
+  {
+    emoji: "🧑‍🏫",
+    title: "Tutors kids adore",
+    desc: "Warm, patient specialists trained to make math feel like play, never a lecture.",
+    tint: "#ecfeff",
+    badge: "linear-gradient(135deg,#22d3ee,#0891b2)",
+  },
+  {
+    emoji: "📈",
+    title: "You see the progress",
+    desc: "A simple note after every session — no more guessing how your child is really doing.",
+    tint: "#fdf2f8",
+    badge: "linear-gradient(135deg,#f472b6,#db2777)",
+  },
 ];
 
-// Floating math symbols
-const mathSymbols = ["π", "√", "∑", "∞", "+"];
+const container: Variants = { hidden: {}, show: { transition: { staggerChildren: 0.08 } } };
+const card: Variants = {
+  hidden: { opacity: 0, y: 40 },
+  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 80, damping: 14 } },
+};
 
 export default function WhyChooseUs() {
-    return (
-        <section id="why-us" className="py-24 bg-background relative overflow-hidden">
-            {/* Background floating math symbols */}
-            {mathSymbols.map((symbol, i) => (
-                <motion.span
-                    key={i}
-                    initial={{ opacity: 0, y: 0 }}
-                    animate={{
-                        opacity: [0.05, 0.15, 0.05],
-                        y: [0, -20, 0],
-                        x: [0, i % 2 === 0 ? 15 : -15, 0],
-                    }}
-                    transition={{
-                        duration: 6 + i,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                    }}
-                    className="absolute text-7xl md:text-8xl font-bold text-gray-300 select-none pointer-events-none"
-                    style={{
-                        top: `${20 + i * 12}%`,
-                        left: `${10 + i * 15}%`,
-                        zIndex: 0,
-                    }}
-                >
-                    {symbol}
-                </motion.span>
-            ))}
+  return (
+    <section id="why-us" className="relative overflow-hidden bg-background py-24">
+      <FloatingMath />
 
-            {/* Heading */}
-            <div className="relative z-10 mx-auto max-w-2xl text-center">
-                <span className="inline-flex items-center rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-foreground ring-1 ring-primary/15">
-                    Why choose us
-                </span>
-                <h2 className="mt-4 font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-                    Built to make math click
-                </h2>
-                <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-                    Everything about MathEinstein is designed for real understanding — and real confidence.
-                </p>
-            </div>
-            <div className="max-w-6xl mx-auto px-6 text-center mt-20 relative z-10">
-                {/* Benefits Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
-                    {benefits.map((item, index) => (
-                        <motion.div
-                            key={index}
-                            initial={{ opacity: 0, y: 40 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: index * 0.08 }}
-                            viewport={{ once: true }}
-                            className="group relative rounded-2xl border border-border bg-card p-8 text-left shadow-[0_10px_30px_-12px_rgba(15,23,42,0.12)] transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-[0_22px_50px_-12px_rgba(37,99,235,0.18)]"
-                        >
-                            {/* top edge highlight */}
-                            <span aria-hidden className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+      <div className="mx-auto max-w-6xl px-6 lg:px-8">
+        <div className="mx-auto max-w-2xl text-center">
+          <span className="inline-flex items-center rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-foreground ring-1 ring-primary/15">
+            Why choose us
+          </span>
+          <h2 className="mt-4 font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+            Everything a nervous kid (and parent) needs
+          </h2>
+          <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+            Built for real understanding and real confidence — not just another worksheet.
+          </p>
+        </div>
 
-                            {/* Floating Icon chip */}
-                            <div className="absolute -top-7 left-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-accent ring-1 ring-primary/15 shadow-[0_8px_20px_-6px_rgba(37,99,235,0.25)] transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-105">
-                                {item.icon}
-                            </div>
+        <motion.div
+          variants={container}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        >
+          {benefits.map((item, i) => (
+            <motion.div
+              key={i}
+              variants={card}
+              whileHover={{ y: -8 }}
+              transition={{ type: "spring", stiffness: 200, damping: 16 }}
+              className="group relative overflow-hidden rounded-3xl border border-white/70 p-7 text-left shadow-[0_18px_44px_-20px_rgba(15,23,42,0.22)] ring-1 ring-black/[0.04]"
+              style={{ background: `linear-gradient(to bottom right,#ffffff,${item.tint})` }}
+            >
+              <div
+                className="flex h-14 w-14 items-center justify-center rounded-2xl text-2xl shadow-lg ring-1 ring-white/40 transition-transform duration-300 group-hover:-translate-y-1 group-hover:scale-105"
+                style={{ background: item.badge }}
+              >
+                {item.emoji}
+              </div>
+              <h3 className="mt-5 font-display text-xl font-extrabold text-foreground">{item.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.desc}</p>
+            </motion.div>
+          ))}
+        </motion.div>
 
-                            {/* Content */}
-                            <h3 className="mt-12 text-xl font-bold text-foreground transition-colors group-hover:text-primary">
-                                {item.title}
-                            </h3>
-                            <p className="mt-3 text-muted-foreground text-sm leading-relaxed">
-                                {item.desc}
-                            </p>
-                        </motion.div>
-                    ))}
-                </div>
-
-                {/* CTA */}
-                <motion.a
-                    href="#book-demo"
-                    whileHover={{ scale: 1.05, y: -3 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="mt-20 inline-flex items-center justify-center rounded-2xl bg-primary px-12 py-4 text-base font-bold text-primary-foreground shadow-[0_16px_34px_-10px_rgba(37,99,235,0.5)] transition hover:shadow-[0_22px_46px_-10px_rgba(37,99,235,0.6)]"
-                >
-                    Book a Free Trial Today
-                </motion.a>
-            </div>
-        </section>
-    );
+        <div className="mt-14 text-center">
+          <motion.a
+            href="#book-demo"
+            whileHover={{ scale: 1.04, y: -3 }}
+            whileTap={{ scale: 0.97 }}
+            className="inline-flex items-center justify-center rounded-2xl bg-primary px-10 py-4 text-base font-bold text-primary-foreground shadow-[0_16px_34px_-10px_rgba(37,99,235,0.5)] transition"
+          >
+            Book a free trial today
+          </motion.a>
+        </div>
+      </div>
+    </section>
+  );
 }

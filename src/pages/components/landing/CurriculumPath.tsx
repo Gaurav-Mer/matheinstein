@@ -11,6 +11,7 @@ import Class6Curriculum from "./curriculum/Class6Curriculum";
 import Class7Curriculum from "./curriculum/Class7Curriculum";
 import Class8Curriculum from "./curriculum/Class8Curriculum";
 import { Calculator, PieChart, Ruler, FunctionSquare, BarChart3, BookOpen, Grid, } from "lucide-react";
+import FloatingMath from "@/components/FloatingMath";
 
 
 const classes = [
@@ -28,22 +29,40 @@ export default function CurriculumPath() {
     const [activeClass, setActiveClass] = useState(1);
 
     return (
-        <section id="curriculum" className="py-20 px-6 md:px-0  overflow-hidden">
+        <section id="curriculum" className="relative overflow-hidden py-24 px-6 md:px-0">
+            <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 -z-10"
+                style={{
+                    background:
+                        "radial-gradient(55% 45% at 88% -5%, #DBEAFE 0%, rgba(219,234,254,0) 60%), radial-gradient(50% 42% at 5% 25%, #DCFCE7 0%, rgba(220,252,231,0) 60%)",
+                }}
+            />
+            <FloatingMath />
             <div className="mx-auto max-w-2xl text-center">
                 <span className="inline-flex items-center rounded-full bg-accent px-3 py-1 text-xs font-bold uppercase tracking-wider text-accent-foreground ring-1 ring-primary/15">
                     Learning path
                 </span>
             </div>
             {/* Heading */}
-            <div className="text-center max-w-3xl mx-auto my-16">
+            <div className="text-center max-w-3xl mx-auto mt-4 mb-14">
                 <motion.h2
                     initial={{ opacity: 0, y: -20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
-                    className="text-4xl md:text-5xl font-extrabold text-foreground"
+                    className="font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl"
                 >
-                    From Counting to Algebra —{" "}
-                    <span className="text-primary  ">A Clear Path to Math Mastery</span>
+                    From counting to algebra —{" "}
+                    <span
+                        style={{
+                            background: "linear-gradient(90deg,#2563eb,#16a34a)",
+                            WebkitBackgroundClip: "text",
+                            backgroundClip: "text",
+                            color: "transparent",
+                        }}
+                    >
+                        a clear path to mastery
+                    </span>
                 </motion.h2>
                 <motion.p
                     initial={{ opacity: 0 }}
@@ -65,9 +84,9 @@ export default function CurriculumPath() {
                             onClick={() => setActiveClass(cls.id)}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className={`px-5 py-2 rounded-full font-semibold flex items-center gap-2 transition ${activeClass === cls.id
-                                ? "bg-secondary text-white  border-border "
-                                : "bg-card text-foreground border border-border hover:bg-secondary/10"
+                            className={`px-5 py-2.5 rounded-full font-semibold flex items-center gap-2 transition ${activeClass === cls.id
+                                ? "bg-primary text-primary-foreground border border-primary shadow-lg shadow-primary/25"
+                                : "bg-card text-foreground border border-border hover:border-primary/40 hover:bg-accent"
                                 }`}
                         >
                             <Icon className={`w-5 h-5 ${activeClass === cls.id ? "text-white" : "text-muted-foreground"}`} />
